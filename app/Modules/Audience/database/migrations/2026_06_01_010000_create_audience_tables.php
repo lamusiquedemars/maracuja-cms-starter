@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->text('notes')->nullable();
             $table->boolean('accepts_email')->default(true);
+            $table->string('unsubscribe_token', 64)->nullable()->unique();
             $table->timestamp('unsubscribed_at')->nullable();
             $table->timestamp('last_contacted_at')->nullable();
             $table->timestamps();

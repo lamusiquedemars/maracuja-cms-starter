@@ -18,13 +18,20 @@ class PageController extends Controller
             ->where('is_published', true)
             ->firstOrFail();
 
-        $view = view()->exists("site.pages.{$page->template}")
-            ? "site.pages.{$page->template}"
-            : 'site.page';
+        abort_if($page->isModule(), 404);
+
+        if ($page->isText()) {
+            $view = 'site.page';
+        } else {
+            $view = view()->exists("site.pages.{$page->template}")
+                ? "site.pages.{$page->template}"
+                : 'site.page';
+        }
 
         return view($view, [
             'settings' => SiteSetting::current(),
             'page' => $page,
+            'contactUrl' => Modules::enabled('contact_form') ? route('contact') : null,
         ]);
     }
 }

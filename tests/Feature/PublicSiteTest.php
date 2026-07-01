@@ -7,6 +7,7 @@ use App\Modules\ContactForm\Mail\ContactMessageReceived;
 use App\Modules\Articles\Models\Article;
 use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\ContentSlots\Models\ContentSlot;
+use App\Modules\Gallery\Models\Gallery;
 use App\Modules\Gallery\Models\GalleryImage;
 use App\Modules\News\Models\NewsPost;
 use App\Modules\Notices\Models\SiteNotice;
@@ -55,9 +56,6 @@ class PublicSiteTest extends TestCase
             'slug' => 'services',
             'template' => 'services',
             'hero_title' => 'Des sites vitrines administrables',
-            'body_blocks' => [
-                'essence_price' => 'À partir de 1500',
-            ],
             'is_published' => true,
             'published_at' => now(),
         ]);
@@ -96,6 +94,47 @@ class PublicSiteTest extends TestCase
             ->assertDontSee('À partir de 1500');
     }
 
+    public function test_home_hides_contact_and_services_ctas_when_targets_are_unavailable(): void
+    {
+        config(['maracuja.modules.contact_form' => false]);
+
+        SiteSetting::current();
+
+        Page::query()->create([
+            'title' => 'Accueil',
+            'slug' => 'accueil',
+            'hero_title' => 'Un site clair',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('href="http://localhost/contact"', false)
+            ->assertDontSee('href="http://localhost/services"', false);
+    }
+
+    public function test_services_page_hides_contact_ctas_when_contact_module_is_disabled(): void
+    {
+        config(['maracuja.modules.contact_form' => false]);
+
+        SiteSetting::current();
+
+        Page::query()->create([
+            'title' => 'Services',
+            'slug' => 'services',
+            'template' => 'services',
+            'type' => Page::TYPE_SYSTEM,
+            'hero_title' => 'Des sites vitrines administrables',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $this->get('/services')
+            ->assertOk()
+            ->assertDontSee('href="http://localhost/contact"', false);
+    }
+
     public function test_home_gallery_uses_configured_layout(): void
     {
         config(['maracuja.gallery.layout' => 'featured']);
@@ -109,8 +148,14 @@ class PublicSiteTest extends TestCase
             'published_at' => now(),
         ]);
 
+        $gallery = Gallery::query()->updateOrCreate(['slug' => 'home'], [
+            'title' => 'Galerie home',
+            'is_published' => true,
+        ]);
+
         GalleryImage::query()->create([
             'title' => 'Image démo',
+            'gallery_id' => $gallery->id,
             'caption' => 'Légende démo',
             'image_path' => '/demo/admin-simple.svg',
             'width' => 1200,
@@ -123,6 +168,50 @@ class PublicSiteTest extends TestCase
             ->assertOk()
             ->assertSee('showcase--featured')
             ->assertSee('/demo/admin-simple.svg');
+    }
+
+    public function test_home_uses_only_the_configured_gallery(): void
+    {
+        SiteSetting::current();
+
+        Page::query()->create([
+            'title' => 'Accueil',
+            'slug' => 'accueil',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $homeGallery = Gallery::query()->updateOrCreate(['slug' => 'home'], [
+            'title' => 'Galerie home',
+            'is_published' => true,
+        ]);
+
+        $otherGallery = Gallery::query()->create([
+            'title' => 'Autre galerie',
+            'slug' => 'autre',
+            'is_published' => true,
+        ]);
+
+        GalleryImage::query()->create([
+            'title' => 'Image home',
+            'gallery_id' => $homeGallery->id,
+            'image_path' => '/demo/admin-simple.svg',
+            'position' => 1,
+            'is_published' => true,
+        ]);
+
+        GalleryImage::query()->create([
+            'title' => 'Image autre',
+            'gallery_id' => $otherGallery->id,
+            'image_path' => '/demo/theme-system.svg',
+            'position' => 1,
+            'is_published' => true,
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('/demo/admin-simple.svg')
+            ->assertDontSee('Image autre');
     }
 
     public function test_home_renders_active_notice_only(): void
@@ -198,25 +287,50 @@ class PublicSiteTest extends TestCase
             ->assertDontSee('Actualité expirée');
     }
 
-    public function test_published_page_is_available_by_slug(): void
+    public function test_text_page_is_available_by_slug(): void
     {
         SiteSetting::current();
 
         Page::query()->create([
-            'title' => 'Méthode',
-            'slug' => 'methode',
-            'hero_title' => 'Une structure avant les options',
-            'body_blocks' => ['section' => 'Admin simple'],
+            'title' => 'Mentions légales',
+            'slug' => 'mentions-legales',
+            'type' => Page::TYPE_TEXT,
+            'hero_title' => 'Mentions légales',
+            'content' => '<p>Éditeur du site: Maracuja CMS.</p>',
             'is_published' => true,
             'published_at' => now(),
         ]);
 
-        $this->get('/methode')
+        $this->get('/mentions-legales')
             ->assertOk()
             ->assertSee('Fil d Ariane')
-            ->assertSee('Une structure avant les options')
-            ->assertSee('Admin simple')
-            ->assertSee('Retour a l accueil');
+            ->assertSee('Mentions légales')
+            ->assertSee('Éditeur du site: Maracuja CMS')
+            ->assertSee('Retour à l&#039;accueil', false);
+    }
+
+    public function test_contact_page_uses_page_registry_metadata(): void
+    {
+        SiteSetting::current();
+
+        Page::query()->create([
+            'title' => 'Contact',
+            'slug' => 'contact',
+            'type' => Page::TYPE_SYSTEM,
+            'template' => 'contact',
+            'hero_title' => 'Parlons du projet',
+            'hero_subtitle' => 'Un message suffit pour démarrer.',
+            'seo_title' => 'Contact SEO',
+            'seo_description' => 'Contacter le studio.',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $this->get('/contact')
+            ->assertOk()
+            ->assertSee('<title>Contact SEO</title>', false)
+            ->assertSee('Parlons du projet')
+            ->assertSee('Un message suffit pour démarrer.');
     }
 
     public function test_contact_form_stores_inquiry_and_sends_mail_when_inquiries_module_is_enabled(): void

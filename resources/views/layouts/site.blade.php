@@ -62,11 +62,13 @@
                 <a href="{{ route('news.index') }}">Actualités</a>
             @endif
             @if (\App\Support\Modules::enabled('articles'))
-                <a href="{{ route('articles.index') }}">{{ config('maracuja.articles.public_label', 'Articles') }}</a>
+                <a href="{{ route('articles.index') }}">{{ \App\Support\ContentSlots::value('articles.public_label', 'Articles') }}</a>
+            @endif
+            @if (\App\Support\Modules::enabled('events'))
+                <a href="{{ route('events.index') }}">{{ \App\Support\ContentSlots::value('events.public_label', 'Événements') }}</a>
             @endif
             @if (\App\Support\Modules::enabled('pages'))
                 <a href="{{ route('pages.show', 'services') }}">Services</a>
-                <a href="{{ route('pages.show', 'methode') }}">Méthode</a>
             @endif
             @if (\App\Support\Modules::enabled('contact_form'))
                 <a href="{{ route('contact') }}">Contact</a>
@@ -83,6 +85,9 @@
         <p>&copy; {{ now()->year }} {{ $settings->site_name }}</p>
         @if ($settings->contact_email)
             <a href="mailto:{{ $settings->contact_email }}">{{ $settings->contact_email }}</a>
+        @endif
+        @if (\App\Support\Modules::enabled('pages'))
+            <a href="{{ route('pages.show', 'mentions-legales') }}">Mentions légales</a>
         @endif
     </footer>
 

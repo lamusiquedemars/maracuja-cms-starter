@@ -1,15 +1,13 @@
 @extends('layouts.site', [
     'seoTitle' => $label . ' - ' . $settings->site_name,
-    'seoDescription' => config('maracuja.theme') === 'atelier'
-        ? 'Réflexions sur l’archèterie, la matière, le geste et l’histoire.'
-        : 'Articles éditoriaux publiés sur le site.',
+    'seoDescription' => $subtitle,
 ])
 
 @section('content')
     <x-site.hero
         :eyebrow="$label"
         :title="$label"
-        :subtitle="config('maracuja.theme') === 'atelier' ? 'Réflexions sur l’archèterie, la matière, le geste et l’histoire.' : 'Articles éditoriaux publiés sur le site.'"
+        :subtitle="$subtitle"
         variant="page"
     />
 

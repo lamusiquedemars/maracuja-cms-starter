@@ -1,6 +1,7 @@
 # Audit Atelier Ivo Incidit
 
-Date: 2026-05-26
+Date: 2026-05-26  
+Dernière vérification: 2026-06-22
 
 ## Verdict offre
 
@@ -10,7 +11,7 @@ Ce n’est pas une Signature simple, car le site ne se limite pas à des pages, 
 
 Ce n’est pas non plus du sur-mesure illimité: le besoin est cadrable en un module métier propre, réutilisable pour d’autres artisans, catalogues ou ateliers.
 
-## État actuel
+## État historique
 
 Architecture actuelle:
 
@@ -22,6 +23,64 @@ Architecture actuelle:
 - admin PHP maison dans `app/admin`;
 - base MySQL exportée dans `storage/private/ivoin2573774.sql`;
 - images d’archets dans `public/assets/images/archets/{code}`.
+
+## État Laravel actuel au 2026-06-22
+
+Le projet `/Users/ivocorreiademelo/Sites/atelierivoincidit` est déjà un Laravel + Filament, mais il garde encore plusieurs traces de l’ancien site et il n’est pas aligné avec les dernières décisions du starter.
+
+### Dossiers racine
+
+À conserver:
+
+- `app/`, `bootstrap/`, `config/`, `database/`, `resources/`, `routes/`, `storage/`, `tests/`;
+- `public/incidit-vox`, car l’outil admin `InciditVox` charge encore `/incidit-vox/libs/fft.min.js`, `/incidit-vox/js/signal.js` et `/incidit-vox/js/main.js`;
+- `public/assets/images/archets/{code}`, car le module `Arcus` détecte encore les photos par convention de dossier;
+- `public/assets/images/*.jpeg` utilisés par le front et le thème.
+
+À considérer comme scories ou archives à sortir du repo actif:
+
+- `archive/`: ancien site PHP complet, environ 77 Mo, avec ancien admin, anciens templates, assets, fichiers SQL et fichiers privés. Le Laravel actif ne le référence pas directement. Il doit être déplacé hors repo ou transformé en archive externe documentée avant suppression.
+- `migration/`: environ 324 Ko, contient `README.md` et deux backups SQL. Utile comme trace de migration, mais pas nécessaire au runtime Laravel.
+- `.DS_Store` dans plusieurs dossiers: bruit macOS à supprimer du repo.
+- `.phpunit.result.cache`: cache local, pas utile au suivi.
+
+Attention: le `git status` Atelier montre déjà des changements dans `archive/public/assets/images/archets/a015`:
+
+- anciennes images `IMG_4696.jpeg`, `IMG_4697.jpeg`, `IMG_4698.jpeg`, `IMG_4700.jpeg` supprimées;
+- nouvelles images `IMG_5599.jpeg`, `IMG_5601.jpeg`, `IMG_5603.jpeg` non suivies.
+
+Ces changements sont dans `archive/`, donc ils ne concernent normalement pas le Laravel actif, mais ils confirment que l’archive n’est pas une zone stable.
+
+### Alignement contenu/admin avec le starter
+
+Atelier n’est pas encore aligné avec les décisions prises dans le starter:
+
+- `Pages` utilise encore `body_blocks` dans le modèle, la migration initiale, les tests et les seeders.
+- Les migrations `add_type_and_content_to_pages_table` et `drop_body_blocks_from_pages_table` ne sont pas présentes dans Atelier.
+- La page `methode` existe encore dans les tests et les seeders, alors que le starter l’a remplacée par une page texte `mentions-legales`.
+- `ContentSlots` est encore masqué (`shouldRegisterNavigation(): false`) et groupé dans `Réglages`, alors que le starter l’expose dans `Contenus` avec groupement par page/module.
+- `config/maracuja.php` contient encore du texte éditorial visible: `gallery.title`, `gallery.intro`, `articles.public_label`.
+- `ArticleController` utilise encore `config('maracuja.articles.public_label')` au lieu de `ContentSlots`.
+- L’ancienne ressource admin plate `GalleryImages` existe encore alors que le starter utilise désormais `Galleries > Photos`.
+
+### Modules admin Atelier
+
+Modules spécifiques Atelier à conserver:
+
+- `Arcus`: module métier central, avec `ArcusBow`, `Bow`, `Wood`, `ArcusCatalog`, ressources admin `Arcus/Bows` et `Arcus/Woods`;
+- `InciditVox`: outil admin spécifique, dépendant de `public/incidit-vox`;
+- éventuellement les ressources `Events` et `Venues` si elles correspondent à un besoin réel du site Atelier. Elles n’existent pas dans le starter standard et doivent être documentées comme modules projet.
+
+Modules du starter à réaligner:
+
+- `Pages`;
+- `ContentSlots`;
+- `Gallery/Galleries`;
+- `Articles`;
+- `SiteSettings`;
+- `Contact`.
+
+Le module `Contact` Atelier utilise encore `ContactSubmission`, tandis que le starter actuel sépare `ContactForm` et `Inquiries`. Il faudra décider si Atelier garde son vocabulaire local ou s’aligne sur le duo starter `ContactForm` + `Inquiries`.
 
 Pages publiques principales:
 
@@ -218,6 +277,19 @@ Admin Filament:
 8. Vérifier les URLs et redirections.
 9. Comparer visuellement l’actuel et la version Laravel.
 10. Taguer le starter en `v0.2.0-lab` après migration réussie.
+
+## Plan de nettoyage recommandé au 2026-06-22
+
+1. Ne rien supprimer tant que `archive/` et `migration/` n’ont pas été exportés ou déplacés hors repo.
+2. Ajouter une note de conservation externe pour `archive/`, car elle contient un ancien site complet et des fichiers privés/SQL.
+3. Supprimer les `.DS_Store` et caches locaux du repo.
+4. Aligner Atelier sur le starter pour `Pages`, `ContentSlots`, `Gallery`, `Articles` et `config/maracuja.php`.
+5. Supprimer l’ancienne ressource `GalleryImages` après validation que toutes les photos passent par `Galleries > Photos`.
+6. Remplacer `methode` par `mentions-legales` si la page n’a plus de justification projet.
+7. Retirer `body_blocks` des pages Atelier et le laisser uniquement aux articles.
+8. Revoir `ContactSubmission`: soit conserver comme choix projet documenté, soit migrer vers `Inquiries`.
+9. Documenter `Events`, `Venues` et `InciditVox` comme modules Atelier spécifiques ou les retirer s’ils ne sont pas utilisés.
+10. Lancer les tests Atelier après chaque étape d’alignement.
 
 ## Estimation
 

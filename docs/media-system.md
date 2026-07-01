@@ -12,7 +12,7 @@ Le Media System encadre les images du starter : upload, métadonnées, accessibi
 ## Stockage V1
 
 ```txt
-storage/app/public/gallery
+storage/app/public/galleries/{gallery-slug}
 storage/app/public/news
 storage/app/public/pages
 storage/app/public/settings
@@ -23,6 +23,19 @@ Une installation doit exécuter :
 ```bash
 php artisan storage:link
 ```
+
+Tous les uploads visibles sur le site doivent utiliser le disque Laravel `public`. Le chemin stocké en base reste relatif au disque, par exemple:
+
+```txt
+galleries/home/photo.webp
+news/actualite.webp
+pages/hero.webp
+site/logo.webp
+```
+
+Le front les sert ensuite via `/storage/...`.
+
+Ne pas stocker les médias publics dans `storage/app/private`: ces fichiers peuvent apparaître dans l’admin, mais ils ne sont pas accessibles par le site public.
 
 ## Champs recommandés
 
@@ -52,10 +65,58 @@ Le module Galerie utilise déjà cette structure.
 Règles V1 :
 
 ```txt
+disk: public
+visibility: public
 types: jpg, jpeg, png, webp
 max: 5 MB
 dossier: par module
 ```
+
+Filament peut renommer les fichiers uploadés. C’est normal: la source de vérité est le chemin enregistré en base, pas le nom original du fichier.
+
+Chaque champ image public suit une logique contextualisée:
+
+- Pages: `pages`
+- Galerie: `galleries/{gallery-slug}`
+- Actualités: `news`
+- Articles: `articles`
+- Blocs image d’articles: `articles/blocks`
+- Paramètres du site: `site`
+
+L’admin propose deux gestes:
+
+- choisir une image déjà présente dans le dossier du contexte;
+- uploader une nouvelle image dans ce même dossier.
+
+Il n’y a pas de médiathèque globale en V1. Le client choisit seulement parmi les images utiles au contexte en cours.
+
+## Galeries
+
+Le module Galerie utilise deux niveaux:
+
+- `Gallery`: collection publiée, par exemple `home`;
+- `GalleryImage`: photos rattachées à une collection.
+
+Le template choisit la galerie à afficher par slug:
+
+```env
+MARACUJA_GALLERY_SLUG=home
+```
+
+Les galeries système comme `home` ne sont pas supprimables depuis l’admin, afin de protéger les templates qui les utilisent. Les photos se gèrent dans la galerie, via l’onglet `Photos`.
+
+## Dimensions et moules d’affichage
+
+La galerie renseigne automatiquement `width` et `height` quand l’image est enregistrée et accessible sur le disque public. Ces dimensions alimentent la lightbox PhotoSwipe.
+
+Le rendu front reste cadré par les composants:
+
+- hero: image de fond en `cover`;
+- galerie: ratios définis par le preset `grid`, `featured` ou `carousel`;
+- article: image contrainte par la largeur du contenu;
+- cartes média: image en `cover`.
+
+La V1 ne génère pas encore de thumbnails, WebP/AVIF ou recadrages. Ces optimisations viendront seulement si le besoin projet le justifie.
 
 ## Composants Blade
 
@@ -70,7 +131,7 @@ Image :
 
 ```blade
 <x-site.image
-    src="gallery/photo.webp"
+    src="galleries/home/photo.webp"
     alt="Détail d'un archet"
     width="1200"
     height="800"
@@ -81,7 +142,7 @@ Figure :
 
 ```blade
 <x-site.figure
-    src="gallery/photo.webp"
+    src="galleries/home/photo.webp"
     alt="Détail d'un archet"
     caption="Détail de finition"
     credit="Atelier Ivo Incidit"
@@ -129,11 +190,12 @@ Le client ne choisit pas `grid`, `featured` ou `carousel` dans l’admin. Il adm
 ## Configuration
 
 ```env
+MARACUJA_GALLERY_SLUG=home
 MARACUJA_GALLERY_LAYOUT=featured
 MARACUJA_GALLERY_LIGHTBOX=true
-MARACUJA_GALLERY_TITLE="Galerie"
-MARACUJA_GALLERY_INTRO="Quelques images du projet."
 ```
+
+Les textes visibles de la section galerie ne sont pas en config. Ils viennent de la galerie elle-même (`title`, `intro`) ou des `Content Slots` de secours `gallery.title` et `gallery.intro`.
 
 ## PhotoSwipe
 

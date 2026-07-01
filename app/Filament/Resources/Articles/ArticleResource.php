@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Articles;
 
 use App\Filament\Resources\Articles\Pages\ManageArticles;
 use App\Modules\Articles\Models\Article;
+use App\Support\MediaFiles;
 use App\Support\Modules;
 use BackedEnum;
 use UnitEnum;
@@ -20,6 +21,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -67,9 +69,21 @@ class ArticleResource extends Resource
                     ->label('Résumé')
                     ->columnSpanFull()
                     ->helperText('Utilisé pour la liste et le SEO si aucune description SEO n’est renseignée.'),
+                Select::make('existing_image_path')
+                    ->label('Choisir une image principale existante')
+                    ->options(fn (): array => MediaFiles::options('articles'))
+                    ->searchable()
+                    ->live()
+                    ->dehydrated(false)
+                    ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
+                    ->helperText('Liste les fichiers déjà présents dans storage/app/public/articles.'),
                 FileUpload::make('image_path')
                     ->label('Image principale')
+                    ->disk('public')
                     ->directory('articles')
+                    ->visibility('public')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, 'articles'))
                     ->image(),
                 Repeater::make('body_blocks')
                     ->label('Blocs de contenu')
@@ -105,9 +119,22 @@ class ArticleResource extends Resource
                             ->label('Texte')
                             ->visible(fn ($get): bool => $get('type') === 'rich_text')
                             ->columnSpanFull(),
+                        Select::make('existing_image_path')
+                            ->label('Choisir une image existante')
+                            ->options(fn (): array => MediaFiles::options('articles/blocks'))
+                            ->searchable()
+                            ->live()
+                            ->dehydrated(false)
+                            ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
+                            ->visible(fn ($get): bool => $get('type') === 'image')
+                            ->helperText('Liste les fichiers déjà présents dans storage/app/public/articles/blocks.'),
                         FileUpload::make('image_path')
                             ->label('Image')
+                            ->disk('public')
                             ->directory('articles/blocks')
+                            ->visibility('public')
+                            ->fetchFileInformation(false)
+                            ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, 'articles/blocks'))
                             ->image()
                             ->visible(fn ($get): bool => $get('type') === 'image'),
                         TextInput::make('alt')
@@ -155,6 +182,7 @@ class ArticleResource extends Resource
                 TextColumn::make('slug')
                     ->searchable(),
                 ImageColumn::make('image_path')
+                    ->disk('public')
                     ->label('Image'),
                 IconColumn::make('is_published')
                     ->label('Publié')

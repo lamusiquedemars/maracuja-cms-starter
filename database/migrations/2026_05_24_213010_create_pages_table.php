@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('hero_title')->nullable();
             $table->text('hero_subtitle')->nullable();
             $table->string('hero_image_path')->nullable();
-            $table->json('body_blocks')->nullable();
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->boolean('is_published')->default(false);

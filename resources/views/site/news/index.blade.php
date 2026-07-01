@@ -1,13 +1,18 @@
 @extends('layouts.site', [
-    'seoTitle' => 'Actualités - ' . $settings->site_name,
-    'seoDescription' => 'Dernières actualités publiées.',
+    'seoTitle' => $page?->seo_title ?? ('Actualités - ' . $settings->site_name),
+    'seoDescription' => $page?->seo_description ?? 'Dernières actualités publiées.',
+    'seoImage' => $page?->hero_image_path,
 ])
 
 @section('content')
-    <x-site.hero title="Actualités" subtitle="Les contenus récurrents publiés depuis l’admin." />
+    <x-site.hero
+        :title="$page?->hero_title ?? $page?->title ?? 'Actualités'"
+        :subtitle="$page?->hero_subtitle ?? $page?->excerpt ?? 'Les contenus récurrents publiés depuis l’admin.'"
+        :image="\App\Support\MediaFiles::url($page?->hero_image_path)"
+    />
 
     <x-site.breadcrumb :items="[
-        ['label' => 'Actualités'],
+        ['label' => $page?->title ?? 'Actualités'],
     ]" />
 
     <x-site.section>

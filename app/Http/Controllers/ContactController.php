@@ -6,6 +6,7 @@ use App\Modules\ContactForm\Data\ContactMessage;
 use App\Modules\ContactForm\Mail\ContactMessageConfirmation;
 use App\Modules\ContactForm\Mail\ContactMessageReceived;
 use App\Modules\Inquiries\Actions\StoreInquiry;
+use App\Modules\Pages\Models\Page;
 use App\Modules\SiteSettings\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Http\RedirectResponse;
@@ -21,6 +22,9 @@ class ContactController extends Controller
 
         return view('site.contact', [
             'settings' => SiteSetting::current(),
+            'page' => Modules::enabled('pages')
+                ? Page::query()->where('slug', 'contact')->where('is_published', true)->first()
+                : null,
         ]);
     }
 

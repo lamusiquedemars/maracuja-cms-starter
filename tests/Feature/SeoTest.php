@@ -29,21 +29,23 @@ class SeoTest extends TestCase
         ]);
 
         Page::query()->create([
-            'title' => 'Méthode',
-            'slug' => 'methode',
-            'seo_title' => 'Méthode SEO',
+            'title' => 'Mentions légales',
+            'slug' => 'mentions-legales',
+            'type' => Page::TYPE_TEXT,
+            'content' => '<p>Informations légales.</p>',
+            'seo_title' => 'Mentions SEO',
             'seo_description' => 'Une description SEO claire.',
             'is_published' => true,
             'published_at' => now(),
         ]);
 
-        $this->get('/methode')
+        $this->get('/mentions-legales')
             ->assertOk()
-            ->assertSee('<title>Méthode SEO</title>', false)
+            ->assertSee('<title>Mentions SEO</title>', false)
             ->assertSee('<meta name="description" content="Une description SEO claire.">', false)
-            ->assertSee('<link rel="canonical" href="http://localhost/methode">', false)
-            ->assertSee('<meta property="og:title" content="Méthode SEO">', false)
-            ->assertSee('<meta property="og:image" content="http://localhost/demo/theme-system.svg">', false)
+            ->assertSee('<link rel="canonical" href="'.url('/mentions-legales').'">', false)
+            ->assertSee('<meta property="og:title" content="Mentions SEO">', false)
+            ->assertSee('<meta property="og:image" content="'.url('/demo/theme-system.svg').'">', false)
             ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
     }
 
@@ -76,8 +78,8 @@ class SeoTest extends TestCase
         $this->get('/sitemap.xml')
             ->assertOk()
             ->assertHeader('content-type', 'application/xml')
-            ->assertSee('<loc>http://localhost</loc>', false)
-            ->assertSee('<loc>http://localhost/services</loc>', false)
-            ->assertSee('<loc>http://localhost/actualites/demo</loc>', false);
+            ->assertSee('<loc>'.url('/').'</loc>', false)
+            ->assertSee('<loc>'.url('/services').'</loc>', false)
+            ->assertSee('<loc>'.url('/actualites/demo').'</loc>', false);
     }
 }

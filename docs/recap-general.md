@@ -76,6 +76,16 @@ Une passe récente sur le module `Archets` d’Atelier a ajouté:
 - l’affichage des chemins publics des images dans le détail admin;
 - des attributs modèle pour rendre explicites le dossier attendu et les photos détectées.
 
+Audit du 2026-06-22:
+
+- le Laravel Atelier contient encore des scories ou archives historiques: `archive/`, `migration/`, `.DS_Store`, `.phpunit.result.cache`;
+- `archive/` pèse environ 77 Mo et contient l’ancien site PHP complet, y compris anciens assets, SQL et fichiers privés;
+- `migration/` contient des backups SQL et doit être traité comme trace de migration, pas comme runtime;
+- le code actif ne référence pas directement `archive/`, mais la documentation Atelier s’en sert encore comme source historique;
+- `public/incidit-vox` est actif car l’outil admin InciditVox charge ses scripts depuis ce dossier;
+- `public/assets/images/archets/{code}` reste actif pour les photos d’archets détectées par le module Arcus;
+- Atelier n’est pas encore aligné avec les dernières décisions du starter sur `Pages`, `ContentSlots`, `GalleryImages`, `body_blocks` et les textes éditoriaux sortis de `config/maracuja.php`.
+
 ### Catalogue métier
 
 Le module `Archets` sert de référence pour un pattern de catalogue métier: liste, filtres, fiche détail, statut, prix optionnel, photo principale, galerie ou convention photo, SEO et admin dense.
@@ -112,6 +122,16 @@ Ce pattern ne doit pas devenir un module `Products` générique. Chaque catalogu
 
 ### Atelier Ivo Incidit
 
+- Aligner Atelier sur le starter pour:
+  - `Pages` typées `system/text/module`;
+  - `ContentSlots` visibles, groupés par page/module;
+  - suppression de `body_blocks` côté pages;
+  - suppression des textes éditoriaux visibles dans `config/maracuja.php`;
+  - suppression de l’ancienne ressource plate `GalleryImages`.
+- Décider le sort de `archive/`: déplacer hors repo, exporter, ou documenter comme archive non-runtime avant suppression.
+- Décider le sort de `migration/`: conserver hors repo comme backup historique ou supprimer après archivage.
+- Supprimer les `.DS_Store` et caches locaux suivis.
+- Documenter les modules projet Atelier `InciditVox`, `Events`, `Venues` ou les retirer s’ils ne sont plus utilisés.
 - Formaliser la convention des photos d’archets:
   - dossier `public/assets/images/archets/{code}`;
   - image principale `main.jpg`, `main.webp` ou première image par ordre alphabétique;

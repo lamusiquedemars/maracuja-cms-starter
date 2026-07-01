@@ -13,8 +13,8 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -22,6 +22,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema as SchemaFacade;
 
 class SegmentMessageResource extends Resource
@@ -62,9 +63,8 @@ class SegmentMessageResource extends Resource
                 TextInput::make('subject')
                     ->label('Sujet')
                     ->required(),
-                Textarea::make('body')
+                RichEditor::make('body')
                     ->label('Message')
-                    ->rows(8)
                     ->required()
                     ->columnSpanFull(),
                 Select::make('status')
@@ -94,7 +94,7 @@ class SegmentMessageResource extends Resource
                     ->formatStateUsing(fn (string $state) => $state === 'sent' ? 'Envoyé' : 'Brouillon')
                     ->color(fn (string $state) => $state === 'sent' ? 'success' : 'gray'),
                 TextColumn::make('recipients_count')
-                    ->label('Destinataires'),
+                    ->label('Envoyés'),
                 TextColumn::make('eligible_recipients')
                     ->label('Éligibles')
                     ->state(fn (SegmentMessage $record): int => self::eligibleRecipientsCount($record)),
@@ -110,6 +110,38 @@ class SegmentMessageResource extends Resource
                     ->sortable(),
             ])
             ->recordActions([
+                Action::make('preview')
+                    ->label('Aperçu')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->modalHeading(fn (SegmentMessage $record): string => $record->subject)
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Fermer')
+                    ->modalContent(fn (SegmentMessage $record) => view('filament.audience.segment-message-preview', [
+                        'segmentMessage' => $record,
+                    ])),
+                Action::make('sendTest')
+                    ->label('Test')
+                    ->icon(Heroicon::OutlinedEnvelope)
+                    ->form([
+                        TextInput::make('email')
+                            ->label('Adresse de test')
+                            ->email()
+                            ->required(),
+                    ])
+                    ->action(function (SegmentMessage $record, array $data): void {
+                        $contact = new \App\Modules\Audience\Models\AudienceContact([
+                            'email' => $data['email'],
+                            'accepts_email' => true,
+                        ]);
+
+                        Mail::to($data['email'])->send(new \App\Modules\Audience\Mail\SegmentMessageMail($record, $contact));
+
+                        Notification::make()
+                            ->title('Email de test envoyé')
+                            ->body("Un aperçu a été envoyé à {$data['email']}.")
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('send')
                     ->label('Envoyer')
                     ->icon(Heroicon::OutlinedPaperAirplane)

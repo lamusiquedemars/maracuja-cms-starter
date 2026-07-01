@@ -28,8 +28,22 @@ class SitemapController extends Controller
                         return;
                     }
 
+                    if ($page->slug === 'actualites') {
+                        return;
+                    }
+
+                    if ($page->slug === 'contact' && ! Modules::enabled('contact_form')) {
+                        return;
+                    }
+
+                    $url = $page->publicUrl();
+
+                    if (! $url) {
+                        return;
+                    }
+
                     $urls[] = [
-                        'loc' => route('pages.show', $page->slug),
+                        'loc' => $url,
                         'lastmod' => $page->updated_at,
                         'priority' => '0.8',
                     ];

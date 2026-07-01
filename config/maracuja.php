@@ -12,10 +12,9 @@ return [
     ],
 
     'gallery' => [
+        'slug' => env('MARACUJA_GALLERY_SLUG', 'home'),
         'layout' => env('MARACUJA_GALLERY_LAYOUT', 'grid'),
         'lightbox' => env('MARACUJA_GALLERY_LIGHTBOX', true),
-        'title' => env('MARACUJA_GALLERY_TITLE', 'Galerie demo'),
-        'intro' => env('MARACUJA_GALLERY_INTRO', 'Le Media System gere alt, legende, credit, dimensions et lightbox.'),
     ],
 
     'news' => [
@@ -23,8 +22,11 @@ return [
     ],
 
     'articles' => [
-        'public_label' => env('MARACUJA_ARTICLES_PUBLIC_LABEL', 'Articles'),
         'public_path' => env('MARACUJA_ARTICLES_PUBLIC_PATH', 'articles'),
+    ],
+
+    'events' => [
+        'public_path' => env('MARACUJA_EVENTS_PUBLIC_PATH', 'evenements'),
     ],
 
     'modules' => [
@@ -34,6 +36,8 @@ return [
         'pages' => env('MARACUJA_MODULE_PAGES', true),
         'news' => env('MARACUJA_MODULE_NEWS', true),
         'articles' => env('MARACUJA_MODULE_ARTICLES', true),
+        'venues' => env('MARACUJA_MODULE_VENUES', true),
+        'events' => env('MARACUJA_MODULE_EVENTS', true),
         'gallery' => env('MARACUJA_MODULE_GALLERY', true),
         'contact_form' => env('MARACUJA_MODULE_CONTACT_FORM', true),
         'inquiries' => env('MARACUJA_MODULE_INQUIRIES', true),
@@ -54,6 +58,8 @@ return [
             'pages' => true,
             'news' => false,
             'articles' => false,
+            'venues' => false,
+            'events' => false,
             'gallery' => false,
             'contact_form' => true,
             'inquiries' => false,
@@ -67,6 +73,8 @@ return [
             'pages' => true,
             'news' => true,
             'articles' => true,
+            'venues' => true,
+            'events' => true,
             'gallery' => true,
             'contact_form' => true,
             'inquiries' => true,
@@ -80,6 +88,8 @@ return [
             'pages' => true,
             'news' => true,
             'articles' => true,
+            'venues' => true,
+            'events' => true,
             'gallery' => true,
             'contact_form' => true,
             'inquiries' => true,

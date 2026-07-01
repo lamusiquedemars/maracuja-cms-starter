@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Modules\News\Models\NewsPost;
+use App\Modules\Pages\Models\Page;
 use App\Modules\SiteSettings\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Contracts\View\View;
@@ -15,6 +16,9 @@ class NewsController extends Controller
 
         return view('site.news.index', [
             'settings' => SiteSetting::current(),
+            'page' => Modules::enabled('pages')
+                ? Page::query()->where('slug', 'actualites')->where('is_published', true)->first()
+                : null,
             'posts' => NewsPost::query()
                 ->forListing()
                 ->paginate(9),

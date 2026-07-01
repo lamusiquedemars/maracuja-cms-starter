@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NewsPosts;
 
 use App\Filament\Resources\NewsPosts\Pages\ManageNewsPosts;
 use App\Modules\News\Models\NewsPost;
+use App\Support\MediaFiles;
 use App\Support\Modules;
 use BackedEnum;
 use UnitEnum;
@@ -14,10 +15,12 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -66,9 +69,21 @@ class NewsPostResource extends Resource
                 RichEditor::make('content')
                     ->label('Contenu')
                     ->columnSpanFull(),
+                Select::make('existing_image_path')
+                    ->label('Choisir une image existante')
+                    ->options(fn (): array => MediaFiles::options('news'))
+                    ->searchable()
+                    ->live()
+                    ->dehydrated(false)
+                    ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
+                    ->helperText('Liste les fichiers déjà présents dans storage/app/public/news.'),
                 FileUpload::make('image_path')
                     ->label('Image')
+                    ->disk('public')
                     ->directory('news')
+                    ->visibility('public')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, 'news'))
                     ->image(),
                 Toggle::make('is_published')
                     ->label('Publié')
@@ -105,7 +120,8 @@ class NewsPostResource extends Resource
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
-                ImageColumn::make('image_path'),
+                ImageColumn::make('image_path')
+                    ->disk('public'),
                 IconColumn::make('is_published')
                     ->label('Publié')
                     ->boolean(),

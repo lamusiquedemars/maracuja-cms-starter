@@ -27,6 +27,8 @@ class Modules
             'pages' => app_path('Modules/Pages'),
             'news' => app_path('Modules/News'),
             'articles' => app_path('Modules/Articles'),
+            'venues' => app_path('Modules/Venues'),
+            'events' => app_path('Modules/Events'),
             'gallery' => app_path('Modules/Gallery'),
             'contact_form' => app_path('Modules/ContactForm'),
             'inquiries' => app_path('Modules/Inquiries'),

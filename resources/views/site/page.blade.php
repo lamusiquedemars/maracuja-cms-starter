@@ -8,6 +8,7 @@
     <x-site.hero
         :title="$page->hero_title ?? $page->title"
         :subtitle="$page->hero_subtitle ?? $page->excerpt"
+        :image="\App\Support\MediaFiles::url($page->hero_image_path)"
     />
 
     <x-site.breadcrumb :items="[
@@ -19,13 +20,10 @@
         @if ($page->excerpt)
             <p class="lead">{{ $page->excerpt }}</p>
         @endif
-        @foreach (($page->body_blocks ?? []) as $title => $content)
-            <article class="content-block">
-                <h3>{{ str_replace('_', ' ', ucfirst($title)) }}</h3>
-                <p>{{ $content }}</p>
-            </article>
-        @endforeach
+        @if ($page->content)
+            {!! strip_tags($page->content, '<p><br><strong><b><em><i><u><ul><ol><li><a><sup><sub>') !!}
+        @endif
 
-        <x-site.back-link :href="route('home')" label="Retour a l accueil" />
+        <x-site.back-link :href="route('home')" label="Retour à l'accueil" />
     </x-site.section>
 @endsection

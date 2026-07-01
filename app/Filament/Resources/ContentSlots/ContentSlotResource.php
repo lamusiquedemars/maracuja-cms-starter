@@ -7,9 +7,7 @@ use App\Modules\ContentSlots\Models\ContentSlot;
 use App\Support\Modules;
 use BackedEnum;
 use UnitEnum;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -20,6 +18,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 
 class ContentSlotResource extends Resource
@@ -30,7 +30,7 @@ class ContentSlotResource extends Resource
 
     protected static ?string $navigationLabel = 'Contenus courts';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Réglages';
+    protected static UnitEnum|string|null $navigationGroup = 'Contenus';
 
     protected static ?string $modelLabel = 'contenu court';
 
@@ -40,12 +40,12 @@ class ContentSlotResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return Modules::enabled('content_slots');
     }
 
     public static function canAccess(): bool
     {
-        return false;
+        return Modules::enabled('content_slots') && parent::canAccess();
     }
 
     public static function form(Schema $schema): Schema
@@ -55,19 +55,25 @@ class ContentSlotResource extends Resource
                 TextInput::make('label')
                     ->label('Nom visible')
                     ->required()
-                    ->maxLength(120),
+                    ->maxLength(120)
+                    ->disabled(fn (?ContentSlot $record): bool => (bool) $record?->is_locked)
+                    ->dehydrated()
+                    ->helperText('Libellé affiché dans l’admin. Les slots fournis par le starter sont verrouillés.'),
                 TextInput::make('key')
                     ->label('Clé technique')
                     ->required()
                     ->maxLength(120)
                     ->unique(ignoreRecord: true)
                     ->disabled(fn (?ContentSlot $record): bool => (bool) $record?->is_locked)
-                    ->dehydrated(),
+                    ->dehydrated()
+                    ->helperText('Nom utilisé dans les templates Blade. Ne doit pas être modifié après usage.'),
                 TextInput::make('group')
                     ->label('Groupe')
                     ->required()
                     ->maxLength(80)
-                    ->default('General'),
+                    ->default('General')
+                    ->disabled(fn (?ContentSlot $record): bool => (bool) $record?->is_locked)
+                    ->dehydrated(),
                 Select::make('type')
                     ->label('Type')
                     ->options([
@@ -77,19 +83,25 @@ class ContentSlotResource extends Resource
                         'date' => 'Date',
                     ])
                     ->required()
-                    ->default('text'),
+                    ->default('text')
+                    ->disabled(fn (?ContentSlot $record): bool => (bool) $record?->is_locked)
+                    ->dehydrated(),
                 Textarea::make('value')
                     ->label('Contenu')
                     ->rows(3)
-                    ->maxLength(600)
+                    ->maxLength(1200)
                     ->columnSpanFull()
-                    ->helperText('Zone courte et contrôlée. Le template décide ou et comment ce contenu s’affiche.'),
+                    ->helperText('Zone courte et contrôlée. Le template décide où et comment ce contenu s’affiche.'),
                 Textarea::make('help_text')
                     ->label('Aide admin')
                     ->rows(2)
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->disabled(fn (?ContentSlot $record): bool => (bool) $record?->is_locked)
+                    ->dehydrated(),
                 Toggle::make('is_locked')
                     ->label('Clé verrouillée')
+                    ->disabled()
+                    ->dehydrated(false)
                     ->helperText('Verrouiller les slots fournis par le starter pour éviter de casser les templates.'),
             ]);
     }
@@ -99,7 +111,7 @@ class ContentSlotResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('group')
-                    ->label('Groupe')
+                    ->label('Page / module')
                     ->sortable(),
                 TextColumn::make('label')
                     ->label('Nom')
@@ -118,15 +130,28 @@ class ContentSlotResource extends Resource
                     ->label('Verrou')
                     ->boolean(),
             ])
+            ->defaultSort('group')
+            ->groups([
+                Group::make('group')
+                    ->label('Page / module')
+                    ->titlePrefixedWithLabel(false)
+                    ->collapsible(),
+            ])
+            ->defaultGroup('group')
+            ->filters([
+                SelectFilter::make('group')
+                    ->label('Page / module')
+                    ->options(fn (): array => ContentSlot::query()
+                        ->orderBy('group')
+                        ->pluck('group', 'group')
+                        ->all()),
+            ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->visible(fn (ContentSlot $record): bool => ! $record->is_locked),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->toolbarActions([]);
     }
 
     public static function getPages(): array

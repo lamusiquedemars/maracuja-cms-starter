@@ -8,6 +8,7 @@ Il peut devenir vendable dans un profil `univers`, mais il n’est pas encore un
 
 - gérer des contacts;
 - regrouper des contacts en segments;
+- importer un CSV de contacts depuis un CRM externe;
 - importer des contacts depuis les demandes entrantes;
 - envoyer un message à un segment;
 - suivre les livraisons envoyées ou échouées;
@@ -61,6 +62,28 @@ Il doit conserver:
 - état des livraisons;
 - erreurs éventuelles.
 
+## Import CSV
+
+L’import CSV se fait depuis `Relation client > Contacts`.
+
+Colonnes recommandées:
+
+```csv
+email,first_name,last_name,accepts_email,segments,notes
+alice@example.com,Alice,Durand,1,"Tous les clients;Clients en location","Location violon"
+bernard@example.com,Bernard,Martin,1,"Tous les clients","Client atelier"
+claire@example.com,Claire,Petit,0,"Tous les clients","Refus email"
+```
+
+Règles:
+
+- `email` est obligatoire et sert de clé de mise à jour;
+- `segments` accepte plusieurs segments séparés par `;`, `,` ou `|`;
+- l’import peut aussi ajouter un segment commun à tout le fichier, par exemple `Tous les clients`;
+- un contact existant est mis à jour au lieu d’être doublonné;
+- les segments absents sont créés automatiquement;
+- les emails invalides sont ignorés et remontés dans le résumé d’import.
+
 ## UX Recommandée
 
 - page `Contacts` comme base de pilotage;
@@ -92,4 +115,3 @@ La bonne logique aujourd’hui est:
 `Audience` sert quand le client a besoin d’un pilotage simple des contacts et d’envois ciblés intégrés au CMS.
 
 Si le besoin devient newsletter marketing sérieuse, automatisation ou délivrabilité avancée, il faut plutôt brancher un outil dédié.
-
