@@ -85,6 +85,7 @@ class ImportAudienceContactsFromCsv
                 $attributes = ['email' => $email];
                 $firstName = self::firstPresent($data, ['first_name', 'prenom']);
                 $lastName = self::firstPresent($data, ['last_name', 'nom']);
+                $organizationName = self::firstPresent($data, ['organization_name', 'organisation', 'structure']);
                 $acceptsEmail = self::firstPresent($data, ['accepts_email', 'consentement', 'email_ok']);
 
                 if ($firstName !== null) {
@@ -93,6 +94,10 @@ class ImportAudienceContactsFromCsv
 
                 if ($lastName !== null) {
                     $attributes['last_name'] = self::nullableString($lastName);
+                }
+
+                if ($organizationName !== null) {
+                    $attributes['organization_name'] = self::nullableString($organizationName);
                 }
 
                 if (array_key_exists('notes', $data)) {
@@ -160,6 +165,7 @@ class ImportAudienceContactsFromCsv
             'e_mail', 'courriel', 'mail' => 'email',
             'firstname', 'first', 'prenom', 'prénom' => 'first_name',
             'lastname', 'last', 'surname', 'nom_de_famille' => 'last_name',
+            'organization', 'organisation', 'organisme', 'structure', 'company', 'societe', 'société' => 'organization_name',
             'segment', 'segments', 'groupes', 'group' => 'segments',
             'accepte_email', 'accepte_les_emails', 'optin', 'opt_in', 'consentement_email' => 'accepts_email',
             default => $header,

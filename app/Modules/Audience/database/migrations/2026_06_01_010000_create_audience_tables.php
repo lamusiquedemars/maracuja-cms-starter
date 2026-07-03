@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
+            $table->string('organization_name')->nullable();
             $table->string('email')->unique();
             $table->text('notes')->nullable();
             $table->boolean('accepts_email')->default(true);

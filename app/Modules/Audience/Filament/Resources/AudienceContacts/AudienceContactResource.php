@@ -64,6 +64,8 @@ class AudienceContactResource extends Resource
                     ->label('Prénom'),
                 TextInput::make('last_name')
                     ->label('Nom'),
+                TextInput::make('organization_name')
+                    ->label('Organisation'),
                 TextInput::make('email')
                     ->label('Email')
                     ->email()
@@ -92,6 +94,10 @@ class AudienceContactResource extends Resource
                 TextColumn::make('last_name')
                     ->label('Nom')
                     ->searchable(),
+                TextColumn::make('organization_name')
+                    ->label('Organisation')
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('email')
                     ->label('Email')
                     ->searchable(),

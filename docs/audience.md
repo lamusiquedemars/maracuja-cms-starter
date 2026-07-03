@@ -69,15 +69,16 @@ L’import CSV se fait depuis `Relation client > Contacts`.
 Colonnes recommandées:
 
 ```csv
-email,first_name,last_name,accepts_email,segments,notes
-alice@example.com,Alice,Durand,1,"Tous les clients;Clients en location","Location violon"
-bernard@example.com,Bernard,Martin,1,"Tous les clients","Client atelier"
-claire@example.com,Claire,Petit,0,"Tous les clients","Refus email"
+email,first_name,last_name,organization_name,accepts_email,segments,notes
+alice@example.com,Alice,Durand,Conservatoire de Lyon,1,"Tous les clients;Clients en location","Location violon"
+bernard@example.com,Bernard,Martin,École de musique,1,"Tous les clients","Client atelier"
+claire@example.com,Claire,Petit,Association,0,"Tous les clients","Refus email"
 ```
 
 Règles:
 
 - `email` est obligatoire et sert de clé de mise à jour;
+- `organization_name` est optionnel et peut aussi être importé avec les colonnes `organisation`, `structure`, `company`, `organisme`, `societe` ou `société`;
 - `segments` accepte plusieurs segments séparés par `;`, `,` ou `|`;
 - l’import peut aussi ajouter un segment commun à tout le fichier, par exemple `Tous les clients`;
 - un contact existant est mis à jour au lieu d’être doublonné;

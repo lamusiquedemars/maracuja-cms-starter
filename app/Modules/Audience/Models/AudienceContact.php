@@ -11,6 +11,7 @@ class AudienceContact extends Model
     protected $fillable = [
         'first_name',
         'last_name',
+        'organization_name',
         'email',
         'notes',
         'accepts_email',

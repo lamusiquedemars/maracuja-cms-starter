@@ -15,10 +15,10 @@ class ImportAudienceContactsFromCsvTest extends TestCase
     public function test_it_imports_contacts_and_segments_from_csv(): void
     {
         $path = $this->csvPath(<<<'CSV'
-email,first_name,last_name,accepts_email,segments,notes
-alice@example.test,Alice,Durand,1,"Tous les clients;Clients en location","Location violon"
-bernard@example.test,Bernard,Martin,oui,"Tous les clients","Client atelier"
-invalid-email,Claire,Petit,1,"Tous les clients","Email invalide"
+email,first_name,last_name,organization_name,accepts_email,segments,notes
+alice@example.test,Alice,Durand,Conservatoire de Lyon,1,"Tous les clients;Clients en location","Location violon"
+bernard@example.test,Bernard,Martin,École de musique,oui,"Tous les clients","Client atelier"
+invalid-email,Claire,Petit,Association,1,"Tous les clients","Email invalide"
 CSV);
 
         $result = ImportAudienceContactsFromCsv::run($path);
@@ -31,6 +31,7 @@ CSV);
 
         $alice = AudienceContact::query()->where('email', 'alice@example.test')->firstOrFail();
 
+        $this->assertSame('Conservatoire de Lyon', $alice->organization_name);
         $this->assertNotNull($alice->unsubscribe_token);
         $this->assertTrue($alice->segments()->where('name', 'Tous les clients')->exists());
         $this->assertTrue($alice->segments()->where('name', 'Clients en location')->exists());
@@ -45,8 +46,8 @@ CSV);
         ]);
 
         $path = $this->csvPath(<<<'CSV'
-email;prenom;nom;consentement
-alice@example.test;Alice;Durand;oui
+email;prenom;nom;organisation;consentement
+alice@example.test;Alice;Durand;Conservatoire;oui
 CSV);
 
         $result = ImportAudienceContactsFromCsv::run($path, 'Tous les clients');
@@ -54,6 +55,7 @@ CSV);
         $this->assertSame(0, $result['created']);
         $this->assertSame(1, $result['updated']);
         $this->assertSame('Alice', $contact->refresh()->first_name);
+        $this->assertSame('Conservatoire', $contact->organization_name);
         $this->assertTrue($contact->accepts_email);
         $this->assertTrue($contact->segments()->where('name', 'Tous les clients')->exists());
     }
@@ -63,6 +65,7 @@ CSV);
         $contact = AudienceContact::query()->create([
             'first_name' => 'Alice',
             'last_name' => 'Durand',
+            'organization_name' => 'Conservatoire',
             'email' => 'alice@example.test',
             'accepts_email' => false,
         ]);
@@ -78,6 +81,7 @@ CSV);
 
         $this->assertSame('Alice', $contact->first_name);
         $this->assertSame('Durand', $contact->last_name);
+        $this->assertSame('Conservatoire', $contact->organization_name);
         $this->assertFalse($contact->accepts_email);
         $this->assertTrue($contact->segments()->where('name', 'Clients en location')->exists());
     }
