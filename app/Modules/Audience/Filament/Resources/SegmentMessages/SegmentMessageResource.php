@@ -2,7 +2,8 @@
 
 namespace App\Modules\Audience\Filament\Resources\SegmentMessages;
 
-use App\Modules\Audience\Actions\SendSegmentMessage;
+use App\Modules\Audience\Actions\QueueSegmentMessage;
+use App\Modules\Audience\Actions\SendPendingSegmentMessages;
 use App\Modules\Audience\Filament\Resources\SegmentMessages\Pages\ManageSegmentMessages;
 use App\Modules\Audience\Models\SegmentMessage;
 use App\Support\Modules;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -70,10 +72,13 @@ class SegmentMessageResource extends Resource
                 Select::make('status')
                     ->label('Statut')
                     ->options([
-                        'draft' => 'Brouillon',
-                        'sent' => 'Envoyé',
+                        SegmentMessage::STATUS_DRAFT => 'Brouillon',
+                        SegmentMessage::STATUS_QUEUED => 'En file',
+                        SegmentMessage::STATUS_SENDING => 'En cours',
+                        SegmentMessage::STATUS_SENT => 'Terminé',
+                        SegmentMessage::STATUS_CANCELLED => 'Annulé',
                     ])
-                    ->default('draft')
+                    ->default(SegmentMessage::STATUS_DRAFT)
                     ->disabled()
                     ->dehydrated(),
             ]);
@@ -85,34 +90,41 @@ class SegmentMessageResource extends Resource
             ->columns([
                 TextColumn::make('subject')
                     ->label('Sujet')
-                    ->searchable(),
+                    ->searchable()
+                    ->description('Cliquer pour ouvrir le rapport de campagne'),
                 TextColumn::make('segment.name')
                     ->label('Segment'),
                 TextColumn::make('status')
                     ->label('Statut')
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => $state === 'sent' ? 'Envoyé' : 'Brouillon')
-                    ->color(fn (string $state) => $state === 'sent' ? 'success' : 'gray'),
-                TextColumn::make('recipients_count')
-                    ->label('Envoyés'),
-                TextColumn::make('eligible_recipients')
-                    ->label('Éligibles')
-                    ->state(fn (SegmentMessage $record): int => self::eligibleRecipientsCount($record)),
-                TextColumn::make('delivered_count')
-                    ->label('Livrés')
-                    ->state(fn (SegmentMessage $record): int => $record->deliveries()->where('status', 'sent')->count()),
+                    ->formatStateUsing(fn (string $state) => self::statusLabel($state))
+                    ->color(fn (string $state) => self::statusColor($state)),
+                TextColumn::make('targeted_count')
+                    ->label('Ciblés')
+                    ->state(fn (SegmentMessage $record): int => $record->deliveryReport()['targeted']),
+                TextColumn::make('pending_count')
+                    ->label('À envoyer')
+                    ->state(fn (SegmentMessage $record): int => $record->deliveryReport()['pending']),
+                TextColumn::make('accepted_count')
+                    ->label('Remis au serveur mail')
+                    ->state(fn (SegmentMessage $record): int => $record->deliveryReport()['accepted']),
                 TextColumn::make('failed_count')
-                    ->label('Échecs')
-                    ->state(fn (SegmentMessage $record): int => $record->deliveries()->where('status', 'failed')->count()),
+                    ->label('Refus immédiats')
+                    ->state(fn (SegmentMessage $record): int => $record->deliveryReport()['failed']),
+                TextColumn::make('excluded_count')
+                    ->label('Exclus')
+                    ->state(fn (SegmentMessage $record): int => $record->deliveryReport()['excluded']),
                 TextColumn::make('sent_at')
-                    ->label('Envoyé le')
+                    ->label('Terminé le')
                     ->dateTime()
                     ->sortable(),
             ])
+            ->recordAction('deliveries')
             ->recordActions([
                 Action::make('preview')
                     ->label('Aperçu')
                     ->icon(Heroicon::OutlinedEye)
+                    ->modalWidth(Width::FourExtraLarge)
                     ->modalHeading(fn (SegmentMessage $record): string => $record->subject)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Fermer')
@@ -143,15 +155,15 @@ class SegmentMessageResource extends Resource
                             ->send();
                     }),
                 Action::make('send')
-                    ->label('Envoyer')
+                    ->label('Planifier')
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->requiresConfirmation()
                     ->modalDescription(fn (SegmentMessage $record): string => self::sendModalDescription($record))
-                    ->visible(fn (SegmentMessage $record): bool => ! $record->isSent())
+                    ->visible(fn (SegmentMessage $record): bool => $record->isDraft())
                     ->action(function (SegmentMessage $record): void {
-                        $sentCount = SendSegmentMessage::run($record);
+                        $queuedCount = QueueSegmentMessage::run($record);
 
-                        if ($sentCount === 0) {
+                        if ($queuedCount === 0) {
                             Notification::make()
                                 ->title('Aucun destinataire éligible')
                                 ->body('Vérifiez le segment et les préférences email des contacts.')
@@ -162,19 +174,39 @@ class SegmentMessageResource extends Resource
                         }
 
                         Notification::make()
-                            ->title('Message envoyé')
-                            ->body("{$sentCount} destinataire(s) contacté(s).")
+                            ->title('Message planifié')
+                            ->body("{$queuedCount} destinataire(s) en file. Tâche planifiée conseillée: 25 envois toutes les 15 minutes (100/h).")
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('processBatch')
+                    ->label('Traiter un lot')
+                    ->icon(Heroicon::OutlinedPlay)
+                    ->requiresConfirmation()
+                    ->modalDescription('Envoie les prochains messages à envoyer ou retente les refus immédiats de cette campagne uniquement.')
+                    ->visible(fn (SegmentMessage $record): bool => $record->isQueuedOrSending() && $record->hasProcessableDeliveries())
+                    ->action(function (SegmentMessage $record): void {
+                        $stats = SendPendingSegmentMessages::runForMessage($record, limit: 25);
+
+                        Notification::make()
+                            ->title('Lot traité')
+                            ->body("{$stats['sent']} remis au serveur mail, {$stats['failed']} refus immédiat(s), {$stats['skipped']} exclu(s).")
                             ->success()
                             ->send();
                     }),
                 Action::make('deliveries')
-                    ->label('Livraisons')
+                    ->label('Rapport')
                     ->icon(Heroicon::OutlinedListBullet)
-                    ->modalHeading('Détail des livraisons')
+                    ->modalWidth(Width::SevenExtraLarge)
+                    ->modalHeading(fn (SegmentMessage $record): string => 'Rapport - ' . $record->subject)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Fermer')
                     ->modalContent(fn (SegmentMessage $record) => view('filament.audience.segment-message-deliveries', [
-                        'deliveries' => $record->deliveries()->latest()->get(),
+                        'segmentMessage' => $record,
+                        'deliveries' => $record->deliveries()
+                            ->with('contact')
+                            ->orderBy('email')
+                            ->get(),
                     ])),
                 EditAction::make(),
                 DeleteAction::make(),
@@ -213,6 +245,27 @@ class SegmentMessageResource extends Resource
 
         return $eligible === 0
             ? 'Aucun destinataire éligible pour ce segment.'
-            : "Cet envoi partira vers {$eligible} destinataire(s) éligible(s).";
+            : "Cet envoi sera mis en file pour {$eligible} destinataire(s) éligible(s). La tâche planifiée enverra ensuite par lots.";
+    }
+
+    private static function statusLabel(string $state): string
+    {
+        return match ($state) {
+            SegmentMessage::STATUS_SENT => 'Terminé',
+            SegmentMessage::STATUS_QUEUED => 'En file',
+            SegmentMessage::STATUS_SENDING => 'En cours',
+            SegmentMessage::STATUS_CANCELLED => 'Annulé',
+            default => 'Brouillon',
+        };
+    }
+
+    private static function statusColor(string $state): string
+    {
+        return match ($state) {
+            SegmentMessage::STATUS_SENT => 'success',
+            SegmentMessage::STATUS_QUEUED, SegmentMessage::STATUS_SENDING => 'warning',
+            SegmentMessage::STATUS_CANCELLED => 'danger',
+            default => 'gray',
+        };
     }
 }

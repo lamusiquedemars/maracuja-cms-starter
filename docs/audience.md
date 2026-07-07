@@ -62,6 +62,40 @@ Il doit conserver:
 - état des livraisons;
 - erreurs éventuelles.
 
+### Envoi Progressif Sur Mutualisé
+
+Les messages ciblés ne doivent pas partir en rafale sur un hébergement mutualisé.
+
+Le bouton d’envoi prépare les livraisons en attente, puis une tâche planifiée traite les destinataires par petits lots.
+
+Réglage recommandé pour un SMTP limité à environ 120 emails par heure:
+
+```bash
+php /htdocs/artisan audience:send-pending --limit=25 --max-seconds=180
+```
+
+Fréquence conseillée: toutes les 15 minutes.
+
+Ce réglage envoie 100 emails par heure, ce qui laisse une marge sous un plafond de 120 emails par heure.
+
+Statuts utilisés:
+
+- `pending`: livraison en attente;
+- `sending`: livraison en cours;
+- `sent`: email accepté par le transport;
+- `failed`: erreur enregistrée, relançable tant que le nombre de tentatives le permet;
+- `skipped`: contact ignoré, par exemple désinscrit ou non éligible.
+
+Libellés affichés au client:
+
+- `Ciblés`: contacts appartenant au périmètre du segment;
+- `À envoyer`: livraisons créées mais pas encore tentées;
+- `Remis au serveur mail`: le SMTP a accepté le message, sans garantie de réception finale;
+- `Refus immédiats`: erreur retournée pendant l’appel SMTP;
+- `Exclus`: contacts hors envoi, par exemple désinscrits, refus email ou non éligibles.
+
+Les bounces reçus après coup ne sont pas équivalents aux refus immédiats. Ils doivent être importés ou récupérés via une intégration dédiée avant d’être affichés comme retours réels de délivrabilité.
+
 ## Import CSV
 
 L’import CSV se fait depuis `Relation client > Contacts`.

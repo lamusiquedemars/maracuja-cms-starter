@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         App\Console\Commands\MaracujaDoctorCommand::class,
+        App\Console\Commands\SendPendingAudienceMessagesCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         //
