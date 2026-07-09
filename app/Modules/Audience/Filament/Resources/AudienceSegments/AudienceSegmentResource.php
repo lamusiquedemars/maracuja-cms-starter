@@ -5,6 +5,7 @@ namespace App\Modules\Audience\Filament\Resources\AudienceSegments;
 use App\Modules\Audience\Filament\Resources\AudienceSegments\Pages\ManageAudienceSegments;
 use App\Modules\Audience\Filament\Resources\AudienceContacts\AudienceContactResource;
 use App\Modules\Audience\Models\AudienceSegment;
+use App\Modules\Audience\Services\BrevoAudienceService;
 use App\Support\Modules;
 use BackedEnum;
 use UnitEnum;
@@ -15,6 +16,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -86,6 +88,28 @@ class AudienceSegmentResource extends Resource
                     ->label('Messages')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('brevo_sync_status')
+                    ->label('Brevo')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'synced' => 'Synchronisé',
+                        'syncing' => 'Synchronisation',
+                        'partial' => 'Partiel',
+                        'failed' => 'Erreur',
+                        default => 'Non synchronisé',
+                    })
+                    ->color(fn (?string $state): string => match ($state) {
+                        'synced' => 'success',
+                        'syncing', 'partial' => 'warning',
+                        'failed' => 'danger',
+                        default => 'gray',
+                    })
+                    ->toggleable(),
+                TextColumn::make('brevo_synced_at')
+                    ->label('Synchro Brevo')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->recordActions([
                 Action::make('viewContacts')
@@ -99,6 +123,30 @@ class AudienceSegmentResource extends Resource
                                 ],
                             ],
                         ])),
+                Action::make('syncBrevo')
+                    ->label('Synchroniser Brevo')
+                    ->icon(Heroicon::OutlinedArrowPath)
+                    ->requiresConfirmation()
+                    ->modalDescription('Synchronise les contacts éligibles de ce segment vers la liste Brevo correspondante. Aucun email n’est envoyé.')
+                    ->action(function (AudienceSegment $record): void {
+                        try {
+                            $stats = app(BrevoAudienceService::class)->syncSegment($record);
+                        } catch (\Throwable $exception) {
+                            Notification::make()
+                                ->title('Synchronisation Brevo impossible')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title('Segment synchronisé avec Brevo')
+                            ->body("{$stats['synced']} contact(s) synchronisé(s), {$stats['excluded']} exclu(s), {$stats['failed']} erreur(s). Liste Brevo #{$stats['list_id']}.")
+                            ->success()
+                            ->send();
+                    }),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -126,6 +174,8 @@ class AudienceSegmentResource extends Resource
         return $segment->contacts()
             ->where('accepts_email', true)
             ->whereNull('unsubscribed_at')
+            ->whereNull('hard_bounced_at')
+            ->whereNull('email_blacklisted_at')
             ->count();
     }
 }
