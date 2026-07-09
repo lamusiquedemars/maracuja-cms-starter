@@ -27,4 +27,15 @@ class AudienceContactSubscriptionTest extends TestCase
         $this->assertTrue($contact->refresh()->accepts_email);
         $this->assertNull($contact->unsubscribed_at);
     }
+
+    public function test_contact_with_hard_bounce_cannot_receive_segment_email(): void
+    {
+        $contact = AudienceContact::query()->create([
+            'email' => 'alice@example.test',
+            'accepts_email' => true,
+            'hard_bounced_at' => now(),
+        ]);
+
+        $this->assertFalse($contact->canReceiveSegmentEmail());
+    }
 }

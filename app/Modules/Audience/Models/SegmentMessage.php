@@ -11,24 +11,49 @@ use Illuminate\Support\Str;
 class SegmentMessage extends Model
 {
     public const STATUS_DRAFT = 'draft';
+    public const STATUS_READY = 'ready';
     public const STATUS_QUEUED = 'queued';
+    public const STATUS_SYNCING_TO_BREVO = 'syncing_to_brevo';
+    public const STATUS_SYNC_FAILED = 'sync_failed';
+    public const STATUS_CREATED_IN_BREVO = 'created_in_brevo';
     public const STATUS_SENDING = 'sending';
+    public const STATUS_SENT_TO_PROVIDER = 'sent_to_provider';
     public const STATUS_SENT = 'sent';
+    public const STATUS_COMPLETED = 'completed';
     public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_ARCHIVED = 'archived';
+
+    public const PROVIDER_SMTP_LWS = 'smtp_lws';
+    public const PROVIDER_BREVO = 'brevo';
 
     protected $fillable = [
         'audience_segment_id',
         'subject',
         'body',
         'status',
+        'provider',
         'recipients_count',
         'sent_at',
+        'brevo_campaign_id',
+        'brevo_status',
+        'brevo_created_at',
+        'brevo_sent_at',
+        'brevo_last_sync_at',
+        'brevo_error',
+        'content_snapshot_html',
+        'subject_snapshot',
+        'sender_snapshot',
     ];
 
     protected function casts(): array
     {
         return [
             'sent_at' => 'datetime',
+            'brevo_campaign_id' => 'integer',
+            'brevo_created_at' => 'datetime',
+            'brevo_sent_at' => 'datetime',
+            'brevo_last_sync_at' => 'datetime',
+            'sender_snapshot' => 'array',
         ];
     }
 
@@ -45,6 +70,11 @@ class SegmentMessage extends Model
     public function isDraft(): bool
     {
         return $this->status === null || $this->status === self::STATUS_DRAFT;
+    }
+
+    public function usesBrevo(): bool
+    {
+        return $this->provider === self::PROVIDER_BREVO;
     }
 
     public function isQueuedOrSending(): bool

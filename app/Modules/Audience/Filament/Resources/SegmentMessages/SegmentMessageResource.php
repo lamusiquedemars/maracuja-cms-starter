@@ -65,6 +65,14 @@ class SegmentMessageResource extends Resource
                 TextInput::make('subject')
                     ->label('Sujet')
                     ->required(),
+                Select::make('provider')
+                    ->label('Canal d’envoi')
+                    ->options([
+                        SegmentMessage::PROVIDER_SMTP_LWS => 'SMTP/LWS',
+                        SegmentMessage::PROVIDER_BREVO => 'Brevo',
+                    ])
+                    ->default(SegmentMessage::PROVIDER_SMTP_LWS)
+                    ->required(),
                 RichEditor::make('body')
                     ->label('Message')
                     ->required()
@@ -73,10 +81,17 @@ class SegmentMessageResource extends Resource
                     ->label('Statut')
                     ->options([
                         SegmentMessage::STATUS_DRAFT => 'Brouillon',
+                        SegmentMessage::STATUS_READY => 'Prêt',
                         SegmentMessage::STATUS_QUEUED => 'En file',
+                        SegmentMessage::STATUS_SYNCING_TO_BREVO => 'Synchronisation Brevo',
+                        SegmentMessage::STATUS_SYNC_FAILED => 'Erreur synchronisation',
+                        SegmentMessage::STATUS_CREATED_IN_BREVO => 'Créé dans Brevo',
                         SegmentMessage::STATUS_SENDING => 'En cours',
+                        SegmentMessage::STATUS_SENT_TO_PROVIDER => 'Envoyé au prestataire',
                         SegmentMessage::STATUS_SENT => 'Terminé',
+                        SegmentMessage::STATUS_COMPLETED => 'Campagne terminée',
                         SegmentMessage::STATUS_CANCELLED => 'Annulé',
+                        SegmentMessage::STATUS_ARCHIVED => 'Archivé',
                     ])
                     ->default(SegmentMessage::STATUS_DRAFT)
                     ->disabled()
@@ -93,6 +108,14 @@ class SegmentMessageResource extends Resource
                     ->searchable(),
                 TextColumn::make('segment.name')
                     ->label('Segment'),
+                TextColumn::make('provider')
+                    ->label('Canal')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        SegmentMessage::PROVIDER_BREVO => 'Brevo',
+                        default => 'SMTP/LWS',
+                    })
+                    ->color(fn (?string $state): string => $state === SegmentMessage::PROVIDER_BREVO ? 'info' : 'gray'),
                 TextColumn::make('status')
                     ->label('Statut')
                     ->badge()
@@ -158,7 +181,7 @@ class SegmentMessageResource extends Resource
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->requiresConfirmation()
                     ->modalDescription(fn (SegmentMessage $record): string => self::sendModalDescription($record))
-                    ->visible(fn (SegmentMessage $record): bool => $record->isDraft())
+                    ->visible(fn (SegmentMessage $record): bool => $record->isDraft() && ! $record->usesBrevo())
                     ->action(function (SegmentMessage $record): void {
                         $queuedCount = QueueSegmentMessage::run($record);
 
@@ -251,9 +274,16 @@ class SegmentMessageResource extends Resource
     {
         return match ($state) {
             SegmentMessage::STATUS_SENT => 'Terminé',
+            SegmentMessage::STATUS_READY => 'Prêt',
             SegmentMessage::STATUS_QUEUED => 'En file',
+            SegmentMessage::STATUS_SYNCING_TO_BREVO => 'Synchronisation Brevo',
+            SegmentMessage::STATUS_SYNC_FAILED => 'Erreur synchronisation',
+            SegmentMessage::STATUS_CREATED_IN_BREVO => 'Créé dans Brevo',
             SegmentMessage::STATUS_SENDING => 'En cours',
+            SegmentMessage::STATUS_SENT_TO_PROVIDER => 'Envoyé au prestataire',
             SegmentMessage::STATUS_CANCELLED => 'Annulé',
+            SegmentMessage::STATUS_COMPLETED => 'Campagne terminée',
+            SegmentMessage::STATUS_ARCHIVED => 'Archivé',
             default => 'Brouillon',
         };
     }
@@ -262,8 +292,13 @@ class SegmentMessageResource extends Resource
     {
         return match ($state) {
             SegmentMessage::STATUS_SENT => 'success',
-            SegmentMessage::STATUS_QUEUED, SegmentMessage::STATUS_SENDING => 'warning',
-            SegmentMessage::STATUS_CANCELLED => 'danger',
+            SegmentMessage::STATUS_COMPLETED, SegmentMessage::STATUS_CREATED_IN_BREVO => 'success',
+            SegmentMessage::STATUS_QUEUED,
+            SegmentMessage::STATUS_SENDING,
+            SegmentMessage::STATUS_SYNCING_TO_BREVO,
+            SegmentMessage::STATUS_SENT_TO_PROVIDER => 'warning',
+            SegmentMessage::STATUS_CANCELLED, SegmentMessage::STATUS_SYNC_FAILED => 'danger',
+            SegmentMessage::STATUS_ARCHIVED => 'gray',
             default => 'gray',
         };
     }

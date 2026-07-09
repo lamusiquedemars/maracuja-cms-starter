@@ -19,6 +19,8 @@ class QueueSegmentMessage
             ->contacts()
             ->where('accepts_email', true)
             ->whereNull('unsubscribed_at')
+            ->whereNull('hard_bounced_at')
+            ->whereNull('email_blacklisted_at')
             ->orderBy('audience_contacts.id')
             ->get();
 

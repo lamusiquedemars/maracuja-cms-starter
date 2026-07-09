@@ -18,6 +18,12 @@ class AudienceContact extends Model
         'unsubscribe_token',
         'unsubscribed_at',
         'last_contacted_at',
+        'brevo_synced_at',
+        'brevo_sync_status',
+        'brevo_sync_error',
+        'email_blacklisted_at',
+        'hard_bounced_at',
+        'last_bounce_reason',
     ];
 
     protected static function booted(): void
@@ -47,6 +53,9 @@ class AudienceContact extends Model
             'accepts_email' => 'boolean',
             'unsubscribed_at' => 'datetime',
             'last_contacted_at' => 'datetime',
+            'brevo_synced_at' => 'datetime',
+            'email_blacklisted_at' => 'datetime',
+            'hard_bounced_at' => 'datetime',
         ];
     }
 
@@ -57,7 +66,10 @@ class AudienceContact extends Model
 
     public function canReceiveSegmentEmail(): bool
     {
-        return $this->accepts_email && $this->unsubscribed_at === null;
+        return $this->accepts_email
+            && $this->unsubscribed_at === null
+            && $this->hard_bounced_at === null
+            && $this->email_blacklisted_at === null;
     }
 
     public function unsubscribe(): void
