@@ -35,32 +35,27 @@
     <x-filament::section>
         <x-slot name="heading">Vue d'ensemble</x-slot>
 
-        <div class="grid gap-3 md:grid-cols-5">
-            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                <div class="text-xs font-medium uppercase tracking-wide text-gray-500">Ciblés</div>
-                <div class="mt-2 text-2xl font-semibold text-gray-950">{{ $report['targeted'] }}</div>
-                <div class="mt-1 text-xs text-gray-500">Périmètre du segment</div>
-            </div>
-            <div class="rounded-lg border border-info-200 bg-info-50 p-4 shadow-sm">
-                <div class="text-xs font-medium uppercase tracking-wide text-info-700">À envoyer</div>
-                <div class="mt-2 text-2xl font-semibold text-info-950">{{ $report['pending'] }}</div>
-                <div class="mt-1 text-xs text-info-700">Reste à traiter</div>
-            </div>
-            <div class="rounded-lg border border-success-200 bg-success-50 p-4 shadow-sm">
-                <div class="text-xs font-medium uppercase tracking-wide text-success-700">Remis au serveur</div>
-                <div class="mt-2 text-2xl font-semibold text-success-950">{{ $report['accepted'] }}</div>
-                <div class="mt-1 text-xs text-success-700">Acceptés à l'envoi</div>
-            </div>
-            <div class="rounded-lg border border-danger-200 bg-danger-50 p-4 shadow-sm">
-                <div class="text-xs font-medium uppercase tracking-wide text-danger-700">Refus immédiats</div>
-                <div class="mt-2 text-2xl font-semibold text-danger-950">{{ $report['failed'] }}</div>
-                <div class="mt-1 text-xs text-danger-700">À vérifier ou relancer</div>
-            </div>
-            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
-                <div class="text-xs font-medium uppercase tracking-wide text-gray-600">Exclus</div>
-                <div class="mt-2 text-2xl font-semibold text-gray-950">{{ $report['excluded'] }}</div>
-                <div class="mt-1 text-xs text-gray-500">Hors envoi</div>
-            </div>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="min-w-full table-fixed border-collapse text-center text-sm">
+                <thead>
+                    <tr class="bg-gray-50 text-xs uppercase tracking-wide text-gray-600">
+                        <th class="border border-gray-200 px-2 py-2 font-medium">Ciblés</th>
+                        <th class="border border-gray-200 px-2 py-2 font-medium">À envoyer</th>
+                        <th class="border border-gray-200 px-2 py-2 font-medium">Remis au serveur</th>
+                        <th class="border border-gray-200 px-2 py-2 font-medium">Refus immédiats</th>
+                        <th class="border border-gray-200 px-2 py-2 font-medium">Exclus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-white">
+                        <td class="border border-gray-200 px-2 py-3 text-2xl font-semibold text-gray-950">{{ $report['targeted'] }}</td>
+                        <td class="border border-gray-200 px-2 py-3 text-2xl font-semibold text-info-700">{{ $report['pending'] }}</td>
+                        <td class="border border-gray-200 px-2 py-3 text-2xl font-semibold text-success-700">{{ $report['accepted'] }}</td>
+                        <td class="border border-gray-200 px-2 py-3 text-2xl font-semibold text-danger-700">{{ $report['failed'] }}</td>
+                        <td class="border border-gray-200 px-2 py-3 text-2xl font-semibold text-gray-700">{{ $report['excluded'] }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </x-filament::section>
 
@@ -72,48 +67,48 @@
         </x-filament::section>
     @else
         <div class="overflow-x-auto rounded-md border border-gray-200">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <table class="min-w-full border-collapse text-xs">
                 <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-600">
                     <tr>
-                        <th class="whitespace-nowrap px-4 py-3 font-medium">
+                        <th class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium">
                             <button type="button" x-on:click="sortBy('email')" class="inline-flex items-center gap-1">
                                 Email
                             </button>
                         </th>
-                        <th class="whitespace-nowrap px-4 py-3 font-medium">
+                        <th class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium">
                             <button type="button" x-on:click="sortBy('contact')" class="inline-flex items-center gap-1">
                                 Contact
                             </button>
                         </th>
-                        <th class="whitespace-nowrap px-4 py-3 font-medium">
+                        <th class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium">
                             <button type="button" x-on:click="sortBy('status')" class="inline-flex items-center gap-1">
                                 Statut
                             </button>
                         </th>
-                        <th class="whitespace-nowrap px-4 py-3 font-medium">
+                        <th class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium">
                             <button type="button" x-on:click="sortBy('domain')" class="inline-flex items-center gap-1">
                                 Domaine
                             </button>
                         </th>
-                        <th class="whitespace-nowrap px-4 py-3 font-medium">
+                        <th class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium">
                             <button type="button" x-on:click="sortBy('attempts')" class="inline-flex items-center gap-1">
                                 Tentatives
                             </button>
                         </th>
-                        <th class="whitespace-nowrap px-4 py-3 font-medium">
+                        <th class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium">
                             <button type="button" x-on:click="sortBy('attempted')" class="inline-flex items-center gap-1">
                                 Dernière tentative
                             </button>
                         </th>
-                        <th class="whitespace-nowrap px-4 py-3 font-medium">
+                        <th class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium">
                             <button type="button" x-on:click="sortBy('sent')" class="inline-flex items-center gap-1">
                                 Remis le
                             </button>
                         </th>
-                        <th class="min-w-72 px-4 py-3 font-medium">Raison</th>
+                        <th class="min-w-72 border border-gray-200 px-2 py-2 font-medium">Raison</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 bg-white" x-ref="rows">
+                <tbody class="bg-white" x-ref="rows">
                     @foreach ($deliveries as $delivery)
                         @php
                             $contactName = trim(collect([
@@ -132,22 +127,22 @@
                             data-attempted="{{ $delivery->attempted_at?->format('Y-m-d H:i:s') ?? '' }}"
                             data-sent="{{ $delivery->sent_at?->format('Y-m-d H:i:s') ?? '' }}"
                         >
-                            <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ $delivery->email }}</td>
-                            <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $contactName ?: '-' }}</td>
-                            <td class="whitespace-nowrap px-4 py-3">
+                            <td class="whitespace-nowrap border border-gray-200 px-2 py-2 font-medium text-gray-900">{{ $delivery->email }}</td>
+                            <td class="whitespace-nowrap border border-gray-200 px-2 py-2 text-gray-700">{{ $contactName ?: '-' }}</td>
+                            <td class="whitespace-nowrap border border-gray-200 px-2 py-2">
                                 <x-filament::badge :color="$delivery->statusColor()">
                                     {{ $delivery->statusLabel() }}
                                 </x-filament::badge>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $delivery->domain() ?: '-' }}</td>
-                            <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ $delivery->attempts }}</td>
-                            <td class="whitespace-nowrap px-4 py-3 text-gray-700">
+                            <td class="whitespace-nowrap border border-gray-200 px-2 py-2 text-gray-700">{{ $delivery->domain() ?: '-' }}</td>
+                            <td class="whitespace-nowrap border border-gray-200 px-2 py-2 text-gray-700">{{ $delivery->attempts }}</td>
+                            <td class="whitespace-nowrap border border-gray-200 px-2 py-2 text-gray-700">
                                 {{ $delivery->attempted_at?->format('d/m/Y H:i') ?? '-' }}
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 text-gray-700">
+                            <td class="whitespace-nowrap border border-gray-200 px-2 py-2 text-gray-700">
                                 {{ $delivery->sent_at?->format('d/m/Y H:i') ?? '-' }}
                             </td>
-                            <td class="px-4 py-3 text-gray-700">
+                            <td class="border border-gray-200 px-2 py-2 text-gray-700">
                                 {{ $delivery->error_message ?: '-' }}
                             </td>
                         </tr>
