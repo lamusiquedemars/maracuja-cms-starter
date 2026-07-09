@@ -32,35 +32,44 @@
     }"
     x-effect="sortedRows()"
 >
-    <div class="grid gap-3 md:grid-cols-5">
-        <div class="rounded-md border border-gray-200 p-3">
-            <div class="text-xs text-gray-500">Ciblés</div>
-            <div class="text-lg font-semibold">{{ $report['targeted'] }}</div>
-        </div>
-        <div class="rounded-md border border-gray-200 p-3">
-            <div class="text-xs text-gray-500">À envoyer</div>
-            <div class="text-lg font-semibold">{{ $report['pending'] }}</div>
-        </div>
-        <div class="rounded-md border border-gray-200 p-3">
-            <div class="text-xs text-gray-500">Remis au serveur mail</div>
-            <div class="text-lg font-semibold">{{ $report['accepted'] }}</div>
-        </div>
-        <div class="rounded-md border border-gray-200 p-3">
-            <div class="text-xs text-gray-500">Refus immédiats</div>
-            <div class="text-lg font-semibold">{{ $report['failed'] }}</div>
-        </div>
-        <div class="rounded-md border border-gray-200 p-3">
-            <div class="text-xs text-gray-500">Exclus</div>
-            <div class="text-lg font-semibold">{{ $report['excluded'] }}</div>
-        </div>
-    </div>
+    <x-filament::section>
+        <x-slot name="heading">Vue d'ensemble</x-slot>
 
-    <p class="text-sm text-gray-600">
-        “Remis au serveur mail” signifie que le SMTP a accepté le message. Les bounces reçus après coup doivent être importés ou traités séparément.
-    </p>
+        <div class="grid gap-3 md:grid-cols-5">
+            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="text-xs font-medium uppercase tracking-wide text-gray-500">Ciblés</div>
+                <div class="mt-2 text-2xl font-semibold text-gray-950">{{ $report['targeted'] }}</div>
+                <div class="mt-1 text-xs text-gray-500">Périmètre du segment</div>
+            </div>
+            <div class="rounded-lg border border-info-200 bg-info-50 p-4 shadow-sm">
+                <div class="text-xs font-medium uppercase tracking-wide text-info-700">À envoyer</div>
+                <div class="mt-2 text-2xl font-semibold text-info-950">{{ $report['pending'] }}</div>
+                <div class="mt-1 text-xs text-info-700">Reste à traiter</div>
+            </div>
+            <div class="rounded-lg border border-success-200 bg-success-50 p-4 shadow-sm">
+                <div class="text-xs font-medium uppercase tracking-wide text-success-700">Remis au serveur</div>
+                <div class="mt-2 text-2xl font-semibold text-success-950">{{ $report['accepted'] }}</div>
+                <div class="mt-1 text-xs text-success-700">Acceptés à l'envoi</div>
+            </div>
+            <div class="rounded-lg border border-danger-200 bg-danger-50 p-4 shadow-sm">
+                <div class="text-xs font-medium uppercase tracking-wide text-danger-700">Refus immédiats</div>
+                <div class="mt-2 text-2xl font-semibold text-danger-950">{{ $report['failed'] }}</div>
+                <div class="mt-1 text-xs text-danger-700">À vérifier ou relancer</div>
+            </div>
+            <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
+                <div class="text-xs font-medium uppercase tracking-wide text-gray-600">Exclus</div>
+                <div class="mt-2 text-2xl font-semibold text-gray-950">{{ $report['excluded'] }}</div>
+                <div class="mt-1 text-xs text-gray-500">Hors envoi</div>
+            </div>
+        </div>
+    </x-filament::section>
 
     @if ($deliveries->isEmpty())
-        <p class="text-sm text-gray-600">Aucune livraison enregistrée pour ce message.</p>
+        <x-filament::section>
+            <p class="text-sm text-gray-600">
+                Aucune adresse n'a encore été préparée pour cette campagne. Utilisez l'action Planifier pour créer la file d'envoi.
+            </p>
+        </x-filament::section>
     @else
         <div class="overflow-x-auto rounded-md border border-gray-200">
             <table class="min-w-full divide-y divide-gray-200 text-sm">

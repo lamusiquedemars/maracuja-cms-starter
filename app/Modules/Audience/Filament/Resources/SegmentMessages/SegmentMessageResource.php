@@ -90,8 +90,7 @@ class SegmentMessageResource extends Resource
             ->columns([
                 TextColumn::make('subject')
                     ->label('Sujet')
-                    ->searchable()
-                    ->description('Cliquer pour ouvrir le rapport de campagne'),
+                    ->searchable(),
                 TextColumn::make('segment.name')
                     ->label('Segment'),
                 TextColumn::make('status')
