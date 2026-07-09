@@ -26,6 +26,14 @@ class SegmentMessage extends Model
     public const PROVIDER_SMTP_LWS = 'smtp_lws';
     public const PROVIDER_BREVO = 'brevo';
 
+    public const BREVO_STATUSES = [
+        self::STATUS_SYNCING_TO_BREVO,
+        self::STATUS_SYNC_FAILED,
+        self::STATUS_CREATED_IN_BREVO,
+        self::STATUS_SENT_TO_PROVIDER,
+        self::STATUS_COMPLETED,
+    ];
+
     protected $fillable = [
         'audience_segment_id',
         'subject',
@@ -55,6 +63,32 @@ class SegmentMessage extends Model
             'brevo_last_sync_at' => 'datetime',
             'sender_snapshot' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (SegmentMessage $message): void {
+            if (! $message->isDirty('provider') || $message->provider !== self::PROVIDER_SMTP_LWS) {
+                return;
+            }
+
+            if (! in_array($message->status, self::BREVO_STATUSES, true)) {
+                return;
+            }
+
+            $message->status = self::STATUS_DRAFT;
+            $message->brevo_status = null;
+            $message->brevo_error = null;
+
+            if (! $message->brevo_campaign_id) {
+                $message->brevo_created_at = null;
+                $message->brevo_sent_at = null;
+                $message->brevo_last_sync_at = null;
+                $message->content_snapshot_html = null;
+                $message->subject_snapshot = null;
+                $message->sender_snapshot = null;
+            }
+        });
     }
 
     public function segment(): BelongsTo

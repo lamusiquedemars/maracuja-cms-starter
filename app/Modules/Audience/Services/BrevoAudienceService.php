@@ -2,9 +2,12 @@
 
 namespace App\Modules\Audience\Services;
 
+use App\Modules\Audience\Exceptions\BrevoAudienceException;
 use App\Modules\Audience\Models\AudienceContact;
 use App\Modules\Audience\Models\AudienceBrevoSetting;
 use App\Modules\Audience\Models\AudienceSegment;
+use App\Modules\Audience\Models\SegmentMessage;
+use App\Modules\Audience\Models\SegmentMessageDelivery;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
@@ -168,6 +171,177 @@ class BrevoAudienceService
         return 'Maracuja - ' . $segment->name;
     }
 
+    public function createCampaign(SegmentMessage $message, ?AudienceBrevoSetting $setting = null): int
+    {
+        $setting ??= AudienceBrevoSetting::current();
+
+        if (! $message->usesBrevo()) {
+            throw new RuntimeException('Cette campagne n’utilise pas le canal Brevo.');
+        }
+
+        if ($message->brevo_campaign_id) {
+            return (int) $message->brevo_campaign_id;
+        }
+
+        if (! $setting->is_enabled || ! $setting->hasApiKey()) {
+            throw new RuntimeException('Brevo doit être activé et configuré avant la création de campagne.');
+        }
+
+        if (blank($setting->sender_email)) {
+            throw new RuntimeException('L’email expéditeur Brevo doit être renseigné.');
+        }
+
+        $message->forceFill([
+            'status' => SegmentMessage::STATUS_SYNCING_TO_BREVO,
+            'brevo_error' => null,
+        ])->save();
+
+        try {
+            $syncStats = $this->syncSegment($message->segment, $setting);
+            $listId = $syncStats['list_id'];
+
+            if ($syncStats['synced'] <= 0) {
+                throw new RuntimeException('Aucun contact éligible n’a pu être synchronisé vers Brevo.');
+            }
+
+            $snapshotHtml = $message->bodyForEmail();
+            $sender = [
+                'name' => $setting->sender_name ?: config('maracuja.product_name', 'Maracuja CMS'),
+                'email' => $setting->sender_email,
+            ];
+
+            $payload = [
+                'name' => $this->campaignName($message),
+                'sender' => $sender,
+                'subject' => $message->subject,
+                'htmlContent' => $snapshotHtml,
+                'recipients' => [
+                    'listIds' => [$listId],
+                ],
+            ];
+
+            if (filled($setting->reply_to_email)) {
+                $payload['replyTo'] = $setting->reply_to_email;
+            }
+
+            $response = $this->client($setting)
+                ->post(self::BASE_URL . '/emailCampaigns', $payload)
+                ->throw();
+
+            $campaignId = (int) $response->json('id');
+
+            if ($campaignId <= 0) {
+                throw new RuntimeException('Brevo n’a pas renvoyé d’identifiant de campagne.');
+            }
+
+            $message->forceFill([
+                'status' => SegmentMessage::STATUS_CREATED_IN_BREVO,
+                'brevo_campaign_id' => $campaignId,
+                'brevo_status' => 'draft',
+                'brevo_created_at' => now(),
+                'brevo_last_sync_at' => now(),
+                'brevo_error' => null,
+                'content_snapshot_html' => $snapshotHtml,
+                'subject_snapshot' => $message->subject,
+                'sender_snapshot' => $sender + [
+                    'reply_to_email' => $setting->reply_to_email,
+                ],
+            ])->save();
+
+            return $campaignId;
+        } catch (RequestException|ConnectionException|RuntimeException $exception) {
+            $userException = $this->friendlyException($exception);
+
+            $message->forceFill([
+                'status' => SegmentMessage::STATUS_SYNC_FAILED,
+                'brevo_error' => Str::limit($userException->technicalMessage(), 1000),
+                'brevo_last_sync_at' => now(),
+            ])->save();
+
+            throw $userException;
+        }
+    }
+
+    public function campaignName(SegmentMessage $message): string
+    {
+        return 'Maracuja #' . $message->id . ' - ' . $message->subject;
+    }
+
+    public function sendCampaign(SegmentMessage $message, ?AudienceBrevoSetting $setting = null): void
+    {
+        $setting ??= AudienceBrevoSetting::current();
+
+        if (! $message->usesBrevo()) {
+            throw new RuntimeException('Cette campagne n’utilise pas le canal Brevo.');
+        }
+
+        if (! $message->brevo_campaign_id) {
+            throw new RuntimeException('La campagne doit d’abord être créée dans Brevo.');
+        }
+
+        if ($message->status === SegmentMessage::STATUS_SENT_TO_PROVIDER) {
+            return;
+        }
+
+        $message->forceFill([
+            'status' => SegmentMessage::STATUS_SENDING,
+            'brevo_error' => null,
+        ])->save();
+
+        try {
+            $this->client($setting)
+                ->post(self::BASE_URL . '/emailCampaigns/' . $message->brevo_campaign_id . '/sendNow')
+                ->throw();
+
+            $this->markCampaignSentToProvider($message);
+        } catch (RequestException|ConnectionException|RuntimeException $exception) {
+            $userException = $this->friendlyException($exception);
+
+            $message->forceFill([
+                'status' => SegmentMessage::STATUS_SYNC_FAILED,
+                'brevo_error' => Str::limit($userException->technicalMessage(), 1000),
+                'brevo_last_sync_at' => now(),
+            ])->save();
+
+            throw $userException;
+        }
+    }
+
+    private function markCampaignSentToProvider(SegmentMessage $message): void
+    {
+        $contacts = $this->eligibleContacts($message->segment);
+
+        foreach ($contacts as $contact) {
+            SegmentMessageDelivery::query()->updateOrCreate(
+                [
+                    'segment_message_id' => $message->id,
+                    'audience_contact_id' => $contact->id,
+                ],
+                [
+                    'email' => $contact->email,
+                    'status' => SegmentMessageDelivery::STATUS_SENT_TO_PROVIDER,
+                    'provider_status' => 'sent_to_provider',
+                    'latest_event' => 'sent_to_provider',
+                    'latest_event_at' => now(),
+                    'sent_at' => now(),
+                    'error_message' => null,
+                ],
+            );
+
+            $contact->forceFill(['last_contacted_at' => now()])->save();
+        }
+
+        $message->forceFill([
+            'status' => SegmentMessage::STATUS_SENT_TO_PROVIDER,
+            'brevo_status' => 'sent_to_provider',
+            'brevo_sent_at' => now(),
+            'brevo_last_sync_at' => now(),
+            'brevo_error' => null,
+            'recipients_count' => $contacts->count(),
+            'sent_at' => now(),
+        ])->save();
+    }
+
     private function ensureFolder(AudienceBrevoSetting $setting): int
     {
         if ($setting->default_folder_id) {
@@ -288,6 +462,48 @@ class BrevoAudienceService
         ])
             ->filter(fn (?string $value): bool => filled($value))
             ->all();
+    }
+
+    private function friendlyException(\Throwable $exception): BrevoAudienceException
+    {
+        if ($exception instanceof BrevoAudienceException) {
+            return $exception;
+        }
+
+        if ($exception instanceof RuntimeException && ! $exception instanceof RequestException) {
+            return new BrevoAudienceException($exception->getMessage(), $exception->getMessage());
+        }
+
+        $message = $exception->getMessage();
+        $technicalMessage = $message;
+
+        if ($exception instanceof RequestException && $exception->response !== null) {
+            $technicalMessage = trim($message . "\n" . $exception->response->body());
+            $brevoMessage = (string) $exception->response->json('message', '');
+
+            if ($brevoMessage !== '') {
+                $technicalMessage .= "\n" . $brevoMessage;
+            }
+        }
+
+        if (str_contains($technicalMessage, 'Sender is invalid / inactive')) {
+            return new BrevoAudienceException(
+                'L’expéditeur configuré n’est pas encore validé dans Brevo. Vérifiez dans Brevo que l’adresse expéditrice est activée, puis relancez la création.',
+                $technicalMessage,
+            );
+        }
+
+        if (str_contains($technicalMessage, 'method_not_allowed') && str_contains($technicalMessage, 'tag option')) {
+            return new BrevoAudienceException(
+                'Brevo a refusé une option de campagne non disponible sur ce compte. Le réglage a été ajusté, vous pouvez relancer la création.',
+                $technicalMessage,
+            );
+        }
+
+        return new BrevoAudienceException(
+            'Brevo a refusé la création de la campagne. Vérifiez la configuration Brevo, puis relancez la création.',
+            $technicalMessage,
+        );
     }
 
     private function client(AudienceBrevoSetting $setting): PendingRequest

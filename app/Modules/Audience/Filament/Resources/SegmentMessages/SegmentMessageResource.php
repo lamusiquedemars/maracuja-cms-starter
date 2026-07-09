@@ -6,6 +6,7 @@ use App\Modules\Audience\Actions\QueueSegmentMessage;
 use App\Modules\Audience\Actions\SendPendingSegmentMessages;
 use App\Modules\Audience\Filament\Resources\SegmentMessages\Pages\ManageSegmentMessages;
 use App\Modules\Audience\Models\SegmentMessage;
+use App\Modules\Audience\Services\BrevoAudienceService;
 use App\Support\Modules;
 use BackedEnum;
 use UnitEnum;
@@ -66,10 +67,10 @@ class SegmentMessageResource extends Resource
                     ->label('Sujet')
                     ->required(),
                 Select::make('provider')
-                    ->label('Canal d’envoi')
+                    ->label('Mode d’envoi')
                     ->options([
-                        SegmentMessage::PROVIDER_SMTP_LWS => 'SMTP/LWS',
-                        SegmentMessage::PROVIDER_BREVO => 'Brevo',
+                        SegmentMessage::PROVIDER_SMTP_LWS => 'Envoi standard du site',
+                        SegmentMessage::PROVIDER_BREVO => 'Campagne Brevo',
                     ])
                     ->default(SegmentMessage::PROVIDER_SMTP_LWS)
                     ->required(),
@@ -109,11 +110,11 @@ class SegmentMessageResource extends Resource
                 TextColumn::make('segment.name')
                     ->label('Segment'),
                 TextColumn::make('provider')
-                    ->label('Canal')
+                    ->label('Mode')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        SegmentMessage::PROVIDER_BREVO => 'Brevo',
-                        default => 'SMTP/LWS',
+                        SegmentMessage::PROVIDER_BREVO => 'Campagne Brevo',
+                        default => 'Envoi standard',
                     })
                     ->color(fn (?string $state): string => $state === SegmentMessage::PROVIDER_BREVO ? 'info' : 'gray'),
                 TextColumn::make('status')
@@ -121,6 +122,10 @@ class SegmentMessageResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (string $state) => self::statusLabel($state))
                     ->color(fn (string $state) => self::statusColor($state)),
+                TextColumn::make('brevo_campaign_id')
+                    ->label('Campagne Brevo')
+                    ->formatStateUsing(fn (?int $state): string => $state ? "#{$state}" : '—')
+                    ->toggleable(),
                 TextColumn::make('targeted_count')
                     ->label('Ciblés')
                     ->state(fn (SegmentMessage $record): int => $record->deliveryReport()['targeted']),
@@ -201,6 +206,65 @@ class SegmentMessageResource extends Resource
                             ->success()
                             ->send();
                     }),
+                Action::make('createBrevoCampaign')
+                    ->label('Créer dans Brevo')
+                    ->icon(Heroicon::OutlinedCloudArrowUp)
+                    ->requiresConfirmation()
+                    ->modalDescription('Synchronise le segment, fige le contenu, puis crée une campagne brouillon dans Brevo. Aucun email n’est envoyé.')
+                    ->visible(fn (SegmentMessage $record): bool => $record->usesBrevo() && ! $record->brevo_campaign_id)
+                    ->action(function (SegmentMessage $record): void {
+                        try {
+                            $campaignId = app(BrevoAudienceService::class)->createCampaign($record);
+                        } catch (\Throwable $exception) {
+                            Notification::make()
+                                ->title('Création Brevo impossible')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title('Campagne créée dans Brevo')
+                            ->body("La campagne brouillon #{$campaignId} a été créée. Aucun email n’a été envoyé.")
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('sendBrevoCampaign')
+                    ->label('Envoyer via Brevo')
+                    ->icon(Heroicon::OutlinedPaperAirplane)
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Envoyer réellement cette campagne ?')
+                    ->modalDescription('Cette action déclenche l’envoi réel de la campagne par Brevo aux contacts de la liste synchronisée. Elle ne pourra pas être annulée depuis Maracuja.')
+                    ->modalSubmitActionLabel('Envoyer maintenant')
+                    ->visible(fn (SegmentMessage $record): bool => $record->usesBrevo()
+                        && filled($record->brevo_campaign_id)
+                        && ! in_array($record->status, [
+                            SegmentMessage::STATUS_SENT_TO_PROVIDER,
+                            SegmentMessage::STATUS_COMPLETED,
+                            SegmentMessage::STATUS_SENT,
+                        ], true))
+                    ->action(function (SegmentMessage $record): void {
+                        try {
+                            app(BrevoAudienceService::class)->sendCampaign($record);
+                        } catch (\Throwable $exception) {
+                            Notification::make()
+                                ->title('Envoi Brevo impossible')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title('Campagne envoyée à Brevo')
+                            ->body('Brevo a accepté la campagne. La délivrance sera suivie dans le rapport et les webhooks.')
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('processBatch')
                     ->label('Traiter un lot')
                     ->icon(Heroicon::OutlinedPlay)
@@ -258,6 +322,8 @@ class SegmentMessageResource extends Resource
             ->contacts()
             ->where('accepts_email', true)
             ->whereNull('unsubscribed_at')
+            ->whereNull('hard_bounced_at')
+            ->whereNull('email_blacklisted_at')
             ->count();
     }
 
