@@ -261,6 +261,13 @@ class CreateBrevoCampaignTest extends TestCase
         $this->assertSame('ivo@example.test', $delivery->email);
         $this->assertNotNull($contact->refresh()->last_contacted_at);
 
+        $report = $message->deliveryReport();
+
+        $this->assertSame(1, $report['sent_to_provider']);
+        $this->assertSame(0, $report['delivered']);
+        $this->assertSame(0, $report['opened']);
+        $this->assertSame(0, $report['clicked']);
+
         Http::assertSent(fn ($request): bool => $request->method() === 'POST'
             && $request->url() === 'https://api.brevo.com/v3/emailCampaigns/99/sendNow');
     }
@@ -282,6 +289,50 @@ class CreateBrevoCampaignTest extends TestCase
 
         app(BrevoAudienceService::class)->sendCampaign($message);
 
+        Http::assertNothingSent();
+    }
+
+    public function test_it_blocks_brevo_campaign_creation_when_message_contains_local_images(): void
+    {
+        Http::fake();
+
+        config(['app.url' => 'http://maracuja-cms.local']);
+
+        AudienceBrevoSetting::query()->create([
+            'is_enabled' => true,
+            'api_key_encrypted' => 'xkeysib-secret',
+            'sender_name' => 'Maracuja Digital',
+            'sender_email' => 'contact@maracujadigital.fr',
+            'default_folder_id' => 12,
+        ]);
+
+        $segment = AudienceSegment::query()->create([
+            'name' => 'Tous les clients',
+            'brevo_list_id' => 34,
+        ]);
+
+        $contact = AudienceContact::query()->create([
+            'email' => 'ivo@example.test',
+            'accepts_email' => true,
+        ]);
+
+        $segment->contacts()->attach($contact);
+
+        $message = SegmentMessage::query()->create([
+            'audience_segment_id' => $segment->id,
+            'provider' => SegmentMessage::PROVIDER_BREVO,
+            'subject' => 'Fermeture estivale',
+            'body' => '<p><img src="/storage/logo.jpg"></p>',
+        ]);
+
+        try {
+            app(BrevoAudienceService::class)->createCampaign($message);
+            $this->fail('La campagne Brevo ne devrait pas être créée avec une image locale.');
+        } catch (\RuntimeException $exception) {
+            $this->assertStringContainsString('images du message ne sont pas accessibles publiquement', $exception->getMessage());
+        }
+
+        $this->assertTrue($message->hasPublicImageWarnings());
         Http::assertNothingSent();
     }
 }

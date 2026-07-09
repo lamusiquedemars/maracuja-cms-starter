@@ -1,5 +1,25 @@
 @php
     $report = $segmentMessage->deliveryReport();
+    $summaryColumns = $segmentMessage->usesBrevo()
+        ? [
+            'targeted' => ['label' => 'Ciblés', 'color' => 'text-gray-950'],
+            'sent_to_provider' => ['label' => 'Envoyés à Brevo', 'color' => 'text-info-700'],
+            'delivered' => ['label' => 'Délivrés', 'color' => 'text-success-700'],
+            'opened' => ['label' => 'Ouverts', 'color' => 'text-success-700'],
+            'clicked' => ['label' => 'Cliqués', 'color' => 'text-success-700'],
+            'soft_bounced' => ['label' => 'Soft bounces', 'color' => 'text-warning-700'],
+            'hard_bounced' => ['label' => 'Hard bounces', 'color' => 'text-danger-700'],
+            'unsubscribed' => ['label' => 'Désinscrits', 'color' => 'text-gray-700'],
+            'complained' => ['label' => 'Plaintes spam', 'color' => 'text-danger-700'],
+            'error' => ['label' => 'Erreurs', 'color' => 'text-danger-700'],
+        ]
+        : [
+            'targeted' => ['label' => 'Ciblés', 'color' => 'text-gray-950'],
+            'pending' => ['label' => 'À envoyer', 'color' => 'text-info-700'],
+            'accepted' => ['label' => 'Remis au serveur', 'color' => 'text-success-700'],
+            'failed' => ['label' => 'Refus immédiats', 'color' => 'text-danger-700'],
+            'excluded' => ['label' => 'Exclus', 'color' => 'text-gray-700'],
+        ];
 @endphp
 
 <div
@@ -39,30 +59,31 @@
             <table class="min-w-full table-fixed text-center text-sm" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr class="bg-gray-50 text-xs uppercase tracking-wide text-gray-600">
-                        <th class="font-medium" style="border: 1px solid #d1d5db; padding: 8px;">Ciblés</th>
-                        <th class="font-medium" style="border: 1px solid #d1d5db; padding: 8px;">À envoyer</th>
-                        <th class="font-medium" style="border: 1px solid #d1d5db; padding: 8px;">Remis au serveur</th>
-                        <th class="font-medium" style="border: 1px solid #d1d5db; padding: 8px;">Refus immédiats</th>
-                        <th class="font-medium" style="border: 1px solid #d1d5db; padding: 8px;">Exclus</th>
+                        @foreach ($summaryColumns as $column)
+                            <th class="font-medium" style="border: 1px solid #d1d5db; padding: 8px;">{{ $column['label'] }}</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="bg-white">
-                        <td class="text-2xl font-semibold text-gray-950" style="border: 1px solid #d1d5db; padding: 10px;">{{ $report['targeted'] }}</td>
-                        <td class="text-2xl font-semibold text-info-700" style="border: 1px solid #d1d5db; padding: 10px;">{{ $report['pending'] }}</td>
-                        <td class="text-2xl font-semibold text-success-700" style="border: 1px solid #d1d5db; padding: 10px;">{{ $report['accepted'] }}</td>
-                        <td class="text-2xl font-semibold text-danger-700" style="border: 1px solid #d1d5db; padding: 10px;">{{ $report['failed'] }}</td>
-                        <td class="text-2xl font-semibold text-gray-700" style="border: 1px solid #d1d5db; padding: 10px;">{{ $report['excluded'] }}</td>
+                        @foreach ($summaryColumns as $key => $column)
+                            <td class="text-2xl font-semibold {{ $column['color'] }}" style="border: 1px solid #d1d5db; padding: 10px;">{{ $report[$key] ?? 0 }}</td>
+                        @endforeach
                     </tr>
                 </tbody>
             </table>
         </div>
+        @if ($segmentMessage->usesBrevo())
+            <p class="mt-3 text-xs text-gray-600">
+                “Envoyés à Brevo” signifie que Brevo a accepté la campagne. Les compteurs de délivrance, ouvertures et clics seront alimentés par les événements Brevo.
+            </p>
+        @endif
     </x-filament::section>
 
     @if ($deliveries->isEmpty())
         <x-filament::section>
             <p class="text-sm text-gray-600">
-                Aucune adresse n'a encore été préparée pour cette campagne. Utilisez l'action Planifier pour créer la file d'envoi.
+                Aucune adresse n'a encore été préparée pour cette campagne.
             </p>
         </x-filament::section>
     @else
@@ -91,20 +112,23 @@
                             </button>
                         </th>
                         <th class="whitespace-nowrap font-medium" style="border: 1px solid #d1d5db; padding: 6px 8px;">
-                            <button type="button" x-on:click="sortBy('attempts')" class="inline-flex items-center gap-1">
-                                Tentatives
+                            <button type="button" x-on:click="sortBy('event')" class="inline-flex items-center gap-1">
+                                Dernier événement
                             </button>
                         </th>
                         <th class="whitespace-nowrap font-medium" style="border: 1px solid #d1d5db; padding: 6px 8px;">
-                            <button type="button" x-on:click="sortBy('attempted')" class="inline-flex items-center gap-1">
-                                Dernière tentative
+                            <button type="button" x-on:click="sortBy('eventat')" class="inline-flex items-center gap-1">
+                                Date dernier événement
                             </button>
                         </th>
                         <th class="whitespace-nowrap font-medium" style="border: 1px solid #d1d5db; padding: 6px 8px;">
                             <button type="button" x-on:click="sortBy('sent')" class="inline-flex items-center gap-1">
-                                Remis le
+                                Envoyé le
                             </button>
                         </th>
+                        <th class="whitespace-nowrap font-medium" style="border: 1px solid #d1d5db; padding: 6px 8px;">Délivré le</th>
+                        <th class="whitespace-nowrap font-medium" style="border: 1px solid #d1d5db; padding: 6px 8px;">Ouvert le</th>
+                        <th class="whitespace-nowrap font-medium" style="border: 1px solid #d1d5db; padding: 6px 8px;">Cliqué le</th>
                         <th class="min-w-72 font-medium" style="border: 1px solid #d1d5db; padding: 6px 8px;">Raison</th>
                     </tr>
                 </thead>
@@ -123,8 +147,8 @@
                             data-contact="{{ $contactName }}"
                             data-status="{{ $delivery->statusLabel() }}"
                             data-domain="{{ $delivery->domain() }}"
-                            data-attempts="{{ str_pad((string) $delivery->attempts, 4, '0', STR_PAD_LEFT) }}"
-                            data-attempted="{{ $delivery->attempted_at?->format('Y-m-d H:i:s') ?? '' }}"
+                            data-event="{{ $delivery->latest_event ?? '' }}"
+                            data-eventat="{{ $delivery->latest_event_at?->format('Y-m-d H:i:s') ?? '' }}"
                             data-sent="{{ $delivery->sent_at?->format('Y-m-d H:i:s') ?? '' }}"
                         >
                             <td class="whitespace-nowrap font-medium text-gray-900" style="border: 1px solid #d1d5db; padding: 6px 8px;">{{ $delivery->email }}</td>
@@ -135,15 +159,20 @@
                                 </x-filament::badge>
                             </td>
                             <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">{{ $delivery->domain() ?: '-' }}</td>
-                            <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">{{ $delivery->attempts }}</td>
                             <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">
-                                {{ $delivery->attempted_at?->format('d/m/Y H:i') ?? '-' }}
+                                {{ $delivery->latest_event ?: '-' }}
+                            </td>
+                            <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">
+                                {{ $delivery->latest_event_at?->format('d/m/Y H:i') ?? '-' }}
                             </td>
                             <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">
                                 {{ $delivery->sent_at?->format('d/m/Y H:i') ?? '-' }}
                             </td>
+                            <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">{{ $delivery->delivered_at?->format('d/m/Y H:i') ?? '-' }}</td>
+                            <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">{{ $delivery->opened_at?->format('d/m/Y H:i') ?? '-' }}</td>
+                            <td class="whitespace-nowrap text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">{{ $delivery->clicked_at?->format('d/m/Y H:i') ?? '-' }}</td>
                             <td class="text-gray-700" style="border: 1px solid #d1d5db; padding: 6px 8px;">
-                                {{ $delivery->error_message ?: '-' }}
+                                {{ $delivery->bounce_reason ?: ($delivery->error_message ?: '-') }}
                             </td>
                         </tr>
                     @endforeach

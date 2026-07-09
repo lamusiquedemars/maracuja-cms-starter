@@ -145,10 +145,6 @@ class SegmentMessage extends Model
         ) ?? $body;
     }
 
-    /**
-     * The campaign report distinguishes app/SMPP handoff from true delivery:
-     * "sent" means the configured mail server accepted the message.
-     */
     public function deliveryReport(): array
     {
         $counts = $this->deliveries()
@@ -164,8 +160,18 @@ class SegmentMessage extends Model
         return [
             'targeted' => $targeted,
             'pending' => (int) ($counts[SegmentMessageDelivery::STATUS_PENDING] ?? 0),
+            'sent_to_provider' => (int) ($counts[SegmentMessageDelivery::STATUS_SENT_TO_PROVIDER] ?? 0),
             'accepted' => (int) ($counts[SegmentMessageDelivery::STATUS_SENT] ?? 0),
+            'delivered' => (int) ($counts[SegmentMessageDelivery::STATUS_DELIVERED] ?? 0),
+            'opened' => (int) ($counts[SegmentMessageDelivery::STATUS_OPENED] ?? 0),
+            'clicked' => (int) ($counts[SegmentMessageDelivery::STATUS_CLICKED] ?? 0),
+            'soft_bounced' => (int) ($counts[SegmentMessageDelivery::STATUS_SOFT_BOUNCED] ?? 0),
+            'hard_bounced' => (int) ($counts[SegmentMessageDelivery::STATUS_HARD_BOUNCED] ?? 0),
+            'unsubscribed' => (int) ($counts[SegmentMessageDelivery::STATUS_UNSUBSCRIBED] ?? 0),
+            'complained' => (int) ($counts[SegmentMessageDelivery::STATUS_COMPLAINED] ?? 0),
+            'blocked' => (int) ($counts[SegmentMessageDelivery::STATUS_BLOCKED] ?? 0),
             'failed' => (int) ($counts[SegmentMessageDelivery::STATUS_FAILED] ?? 0),
+            'error' => (int) ($counts[SegmentMessageDelivery::STATUS_ERROR] ?? 0),
             'sending' => (int) ($counts[SegmentMessageDelivery::STATUS_SENDING] ?? 0),
             'excluded' => $excluded,
         ];
@@ -184,6 +190,22 @@ class SegmentMessage extends Model
                 SegmentMessageDelivery::STATUS_FAILED,
             ])
             ->exists();
+    }
+
+    public function publicImageWarnings(): array
+    {
+        preg_match_all('/<img\b[^>]*?\bsrc=(["\'])(.*?)\1/i', (string) $this->body, $matches);
+
+        return collect($matches[2] ?? [])
+            ->filter(fn (string $src): bool => $this->imageNeedsPublicWarning($src))
+            ->map(fn (string $src): string => "Image non publique: {$src}")
+            ->values()
+            ->all();
+    }
+
+    public function hasPublicImageWarnings(): bool
+    {
+        return $this->publicImageWarnings() !== [];
     }
 
     private function localPublicImagePath(string $src): ?string
@@ -212,5 +234,27 @@ class SegmentMessage extends Model
         }
 
         return url($path);
+    }
+
+    private function imageNeedsPublicWarning(string $src): bool
+    {
+        $host = parse_url($src, PHP_URL_HOST);
+
+        if (is_string($host)) {
+            return in_array($host, ['localhost', '127.0.0.1', '::1'], true)
+                || Str::endsWith($host, ['.local', '.test']);
+        }
+
+        $path = parse_url($src, PHP_URL_PATH);
+
+        if (! is_string($path) || ! Str::startsWith($path, '/storage/')) {
+            return false;
+        }
+
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+        return ! is_string($appHost)
+            || in_array($appHost, ['localhost', '127.0.0.1', '::1'], true)
+            || Str::endsWith($appHost, ['.local', '.test']);
     }
 }

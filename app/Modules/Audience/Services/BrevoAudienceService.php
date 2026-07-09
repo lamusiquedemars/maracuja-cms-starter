@@ -191,6 +191,10 @@ class BrevoAudienceService
             throw new RuntimeException('L’email expéditeur Brevo doit être renseigné.');
         }
 
+        if ($message->hasPublicImageWarnings()) {
+            throw new RuntimeException('Une ou plusieurs images du message ne sont pas accessibles publiquement. Publiez le site ou remplacez les images avant de créer la campagne Brevo.');
+        }
+
         $message->forceFill([
             'status' => SegmentMessage::STATUS_SYNCING_TO_BREVO,
             'brevo_error' => null,
