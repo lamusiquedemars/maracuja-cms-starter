@@ -69,7 +69,7 @@ class SiteSetting extends Model
             'baseline' => 'Site vitrine administrable, sobre et sur mesure.',
             'default_seo_title' => 'Maracuja CMS',
             'default_seo_description' => 'Un starter Laravel + Filament pour sites vitrines administrables.',
-            'default_og_image_path' => '/demo/theme-system.svg',
+            'default_og_image_path' => null,
             'contact_email' => 'contact@example.test',
             'contact_form_show_name' => true,
             'contact_form_show_phone' => true,

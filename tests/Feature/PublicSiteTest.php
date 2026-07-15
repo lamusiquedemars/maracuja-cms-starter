@@ -154,10 +154,10 @@ class PublicSiteTest extends TestCase
         ]);
 
         GalleryImage::query()->create([
-            'title' => 'Image démo',
+            'title' => 'Image galerie',
             'gallery_id' => $gallery->id,
-            'caption' => 'Légende démo',
-            'image_path' => '/demo/admin-simple.svg',
+            'caption' => 'Légende galerie',
+            'image_path' => '/storage/galleries/home/image-principale.jpg',
             'width' => 1200,
             'height' => 800,
             'position' => 1,
@@ -167,7 +167,7 @@ class PublicSiteTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('showcase--featured')
-            ->assertSee('/demo/admin-simple.svg');
+            ->assertSee('/storage/galleries/home/image-principale.jpg');
     }
 
     public function test_home_uses_only_the_configured_gallery(): void
@@ -195,7 +195,7 @@ class PublicSiteTest extends TestCase
         GalleryImage::query()->create([
             'title' => 'Image home',
             'gallery_id' => $homeGallery->id,
-            'image_path' => '/demo/admin-simple.svg',
+            'image_path' => '/storage/galleries/home/image-principale.jpg',
             'position' => 1,
             'is_published' => true,
         ]);
@@ -203,14 +203,14 @@ class PublicSiteTest extends TestCase
         GalleryImage::query()->create([
             'title' => 'Image autre',
             'gallery_id' => $otherGallery->id,
-            'image_path' => '/demo/theme-system.svg',
+            'image_path' => '/storage/galleries/autre/image-secondaire.jpg',
             'position' => 1,
             'is_published' => true,
         ]);
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('/demo/admin-simple.svg')
+            ->assertSee('/storage/galleries/home/image-principale.jpg')
             ->assertDontSee('Image autre');
     }
 
@@ -471,7 +471,7 @@ class PublicSiteTest extends TestCase
             ->assertOk()
             ->assertDontSee('href="http://localhost/actualites"', false)
             ->assertDontSee('href="http://localhost/articles"', false)
-            ->assertDontSee('Galerie démo');
+            ->assertDontSee('showcase', false);
 
         $this->get('/actualites')->assertNotFound();
         $this->get('/articles')->assertNotFound();

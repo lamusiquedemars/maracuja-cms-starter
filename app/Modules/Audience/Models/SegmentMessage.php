@@ -41,6 +41,7 @@ class SegmentMessage extends Model
         'status',
         'provider',
         'recipients_count',
+        'scheduled_at',
         'sent_at',
         'brevo_campaign_id',
         'brevo_status',
@@ -57,6 +58,7 @@ class SegmentMessage extends Model
     {
         return [
             'sent_at' => 'datetime',
+            'scheduled_at' => 'datetime',
             'brevo_campaign_id' => 'integer',
             'brevo_created_at' => 'datetime',
             'brevo_sent_at' => 'datetime',

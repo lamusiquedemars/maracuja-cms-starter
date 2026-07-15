@@ -61,6 +61,11 @@ class SendPendingSegmentMessages
                 SegmentMessageDelivery::STATUS_PENDING,
                 SegmentMessageDelivery::STATUS_FAILED,
             ])
+            ->whereHas('segmentMessage', function ($query): void {
+                $query
+                    ->whereNull('scheduled_at')
+                    ->orWhere('scheduled_at', '<=', now());
+            })
             ->where('attempts', '<', $maxAttempts);
 
         if ($message) {
@@ -79,6 +84,11 @@ class SendPendingSegmentMessages
                 SegmentMessageDelivery::STATUS_PENDING,
                 SegmentMessageDelivery::STATUS_FAILED,
             ])
+            ->whereHas('segmentMessage', function ($query): void {
+                $query
+                    ->whereNull('scheduled_at')
+                    ->orWhere('scheduled_at', '<=', now());
+            })
             ->where('attempts', '<', $maxAttempts);
 
         if ($message) {
@@ -168,7 +178,9 @@ class SendPendingSegmentMessages
 
                 if ($remaining) {
                     $message->forceFill([
-                        'status' => SegmentMessage::STATUS_SENDING,
+                        'status' => $message->scheduled_at?->isFuture()
+                            ? SegmentMessage::STATUS_QUEUED
+                            : SegmentMessage::STATUS_SENDING,
                         'recipients_count' => $sentCount,
                     ])->save();
 

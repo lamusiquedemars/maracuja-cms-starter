@@ -207,6 +207,64 @@ class SendSegmentMessageTest extends TestCase
         $this->assertSame('sent', $secondMessage->deliveries()->first()->status);
     }
 
+    public function test_it_does_not_send_a_campaign_before_its_scheduled_date(): void
+    {
+        Mail::fake();
+        $now = now();
+        $this->travelTo($now);
+
+        $segment = AudienceSegment::query()->create(['name' => 'Clients planifiés']);
+        $contact = AudienceContact::query()->create([
+            'email' => 'future@example.test',
+            'accepts_email' => true,
+        ]);
+        $segment->contacts()->attach($contact);
+
+        $message = SegmentMessage::query()->create([
+            'audience_segment_id' => $segment->id,
+            'subject' => 'Message futur',
+            'body' => 'À envoyer plus tard.',
+            'scheduled_at' => $now->copy()->addDay(),
+        ]);
+
+        QueueSegmentMessage::run($message);
+        $stats = SendPendingSegmentMessages::run(limit: 16);
+
+        $this->assertSame(0, $stats['processed']);
+        $this->assertSame(SegmentMessage::STATUS_QUEUED, $message->refresh()->status);
+        $this->assertSame(SegmentMessageDelivery::STATUS_PENDING, $message->deliveries()->first()->status);
+        Mail::assertNothingSent();
+    }
+
+    public function test_it_sends_a_scheduled_campaign_once_the_date_has_arrived(): void
+    {
+        Mail::fake();
+        $now = now();
+        $this->travelTo($now);
+
+        $segment = AudienceSegment::query()->create(['name' => 'Clients planifiés']);
+        $contact = AudienceContact::query()->create([
+            'email' => 'ready@example.test',
+            'accepts_email' => true,
+        ]);
+        $segment->contacts()->attach($contact);
+
+        $message = SegmentMessage::query()->create([
+            'audience_segment_id' => $segment->id,
+            'subject' => 'Message à échéance',
+            'body' => 'À envoyer maintenant.',
+            'scheduled_at' => $now->copy()->subMinute(),
+        ]);
+
+        QueueSegmentMessage::run($message);
+        $stats = SendPendingSegmentMessages::run(limit: 16);
+
+        $this->assertSame(1, $stats['sent']);
+        $this->assertSame(SegmentMessage::STATUS_SENT, $message->refresh()->status);
+        $this->assertSame(SegmentMessageDelivery::STATUS_SENT, $message->deliveries()->first()->status);
+        Mail::assertSent(SegmentMessageMail::class, 1);
+    }
+
     public function test_campaign_report_uses_client_facing_delivery_labels(): void
     {
         $segment = AudienceSegment::query()->create(['name' => 'Clients']);

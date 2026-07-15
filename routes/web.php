@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AudienceUnsubscribeController;
+use App\Http\Controllers\BrevoAudienceWebhookController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\EventController;
@@ -17,6 +18,7 @@ Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/', HomeController::class)->name('home');
 
 Route::get('/audience/desinscription/{token}', AudienceUnsubscribeController::class)->name('audience.unsubscribe');
+Route::post('/webhooks/brevo/audience/{secret}', BrevoAudienceWebhookController::class)->name('webhooks.brevo.audience');
 
 Route::get('/actualites', [NewsController::class, 'index'])->name('news.index');
 Route::get('/actualites/{slug}', [NewsController::class, 'show'])->name('news.show');

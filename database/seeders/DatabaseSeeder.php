@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Modules\ContentSlots\Models\ContentSlot;
 use App\Modules\Gallery\Models\Gallery;
-use App\Modules\Gallery\Models\GalleryImage;
 use App\Modules\News\Models\NewsPost;
 use App\Modules\Notices\Models\SiteNotice;
 use App\Modules\Pages\Models\Page;
@@ -31,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'baseline' => 'Sites vitrines administrables, sobres et sur mesure.',
             'default_seo_title' => 'Maracuja CMS',
             'default_seo_description' => 'Un starter Laravel + Filament pour créer des sites vitrines administrables sans surcharge.',
-            'default_og_image_path' => '/demo/theme-system.svg',
+            'default_og_image_path' => null,
             'contact_email' => 'contact@maracuja.test',
             'social_links' => [
                 'Instagram' => 'https://instagram.com',
@@ -181,7 +180,7 @@ class DatabaseSeeder extends Seeder
                 'label' => 'Titre galerie',
                 'group' => 'Galerie',
                 'type' => 'text',
-                'value' => 'Galerie demo',
+                'value' => 'Galerie',
                 'help_text' => 'Titre de secours de la section galerie si la galerie n’a pas de titre.',
             ],
             [
@@ -451,44 +450,8 @@ class DatabaseSeeder extends Seeder
 
         $homeGallery = Gallery::query()->updateOrCreate(['slug' => 'home'], [
             'title' => 'Galerie principale',
-            'intro' => 'Quelques images du projet.',
+            'intro' => null,
             'position' => 1,
-            'is_published' => true,
-        ]);
-
-        GalleryImage::query()->updateOrCreate(['title' => 'Admin simple'], [
-            'gallery_id' => $homeGallery->id,
-            'caption' => 'Une administration limitée aux modules activés.',
-            'alt_text' => 'Interface d’administration simple limitée aux modules utiles.',
-            'credit' => 'Maracuja CMS',
-            'image_path' => '/demo/admin-simple.svg',
-            'width' => 1200,
-            'height' => 800,
-            'position' => 1,
-            'is_published' => true,
-        ]);
-
-        GalleryImage::query()->updateOrCreate(['title' => 'Composants front'], [
-            'gallery_id' => $homeGallery->id,
-            'caption' => 'Des sections, cartes, CTA, galeries et variantes réutilisables.',
-            'alt_text' => 'Exemple abstrait de composants front organisés.',
-            'credit' => 'Maracuja CMS',
-            'image_path' => '/demo/front-system.svg',
-            'width' => 1200,
-            'height' => 800,
-            'position' => 2,
-            'is_published' => true,
-        ]);
-
-        GalleryImage::query()->updateOrCreate(['title' => 'Thèmes clients'], [
-            'gallery_id' => $homeGallery->id,
-            'caption' => 'Une structure commune peut prendre plusieurs ambiances.',
-            'alt_text' => 'Variantes de thèmes pour sites clients.',
-            'credit' => 'Maracuja CMS',
-            'image_path' => '/demo/theme-system.svg',
-            'width' => 1200,
-            'height' => 800,
-            'position' => 3,
             'is_published' => true,
         ]);
 

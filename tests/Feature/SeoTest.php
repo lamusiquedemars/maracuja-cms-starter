@@ -25,7 +25,7 @@ class SeoTest extends TestCase
             'site_name' => 'Maracuja CMS',
             'default_seo_title' => 'Maracuja default',
             'default_seo_description' => 'Description par défaut du starter.',
-            'default_og_image_path' => '/demo/theme-system.svg',
+            'default_og_image_path' => '/storage/social/default-og.jpg',
         ]);
 
         Page::query()->create([
@@ -45,7 +45,7 @@ class SeoTest extends TestCase
             ->assertSee('<meta name="description" content="Une description SEO claire.">', false)
             ->assertSee('<link rel="canonical" href="'.url('/mentions-legales').'">', false)
             ->assertSee('<meta property="og:title" content="Mentions SEO">', false)
-            ->assertSee('<meta property="og:image" content="'.url('/demo/theme-system.svg').'">', false)
+            ->assertSee('<meta property="og:image" content="'.url('/storage/social/default-og.jpg').'">', false)
             ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
     }
 

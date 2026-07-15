@@ -60,7 +60,7 @@
 
 @if ($galleryImages->isNotEmpty())
 <x-site.section
-    :title="$gallery?->title ?? \App\Support\ContentSlots::value('gallery.title', 'Galerie demo')"
+    :title="$gallery?->title ?? \App\Support\ContentSlots::value('gallery.title', 'Galerie')"
     :intro="$gallery?->intro ?? \App\Support\ContentSlots::value('gallery.intro', 'Le Media System gere alt, legende, credit, dimensions et lightbox.')"
     heading-variant="decorated">
     <x-site.gallery

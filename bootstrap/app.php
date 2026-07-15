@@ -15,7 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Console\Commands\SendPendingAudienceMessagesCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/brevo/audience/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -8,6 +8,8 @@ class SendSegmentMessage
 {
     public static function run(SegmentMessage $message): int
     {
-        return QueueSegmentMessage::run($message);
+        $stats = DispatchSegmentMessage::run($message);
+
+        return max($stats['queued'], $stats['sent']);
     }
 }

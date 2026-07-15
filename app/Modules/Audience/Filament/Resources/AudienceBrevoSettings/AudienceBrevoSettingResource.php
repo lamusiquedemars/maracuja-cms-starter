@@ -79,6 +79,13 @@ class AudienceBrevoSettingResource extends Resource
                     ->label('Secret webhook')
                     ->disabled()
                     ->dehydrated(),
+                TextInput::make('webhook_url')
+                    ->label('URL webhook Brevo')
+                    ->formatStateUsing(fn (?AudienceBrevoSetting $record): string => $record?->webhookUrl() ?? '')
+                    ->helperText('À copier dans Brevo après déploiement du site, côté webhooks des campagnes email.')
+                    ->disabled()
+                    ->columnSpanFull()
+                    ->dehydrated(false),
                 TextInput::make('last_connection_test_status')
                     ->label('Statut du dernier test')
                     ->disabled()

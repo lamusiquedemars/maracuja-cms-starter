@@ -2,19 +2,20 @@
 
 namespace App\Modules\Audience\Filament\Resources\SegmentMessages;
 
-use App\Modules\Audience\Actions\QueueSegmentMessage;
+use App\Modules\Audience\Actions\DispatchSegmentMessage;
 use App\Modules\Audience\Actions\SendPendingSegmentMessages;
 use App\Modules\Audience\Filament\Resources\SegmentMessages\Pages\ManageSegmentMessages;
 use App\Modules\Audience\Models\SegmentMessage;
-use App\Modules\Audience\Services\BrevoAudienceService;
 use App\Support\Modules;
 use BackedEnum;
+use Carbon\CarbonImmutable;
 use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -74,6 +75,10 @@ class SegmentMessageResource extends Resource
                     ])
                     ->default(SegmentMessage::PROVIDER_SMTP_LWS)
                     ->required(),
+                DateTimePicker::make('scheduled_at')
+                    ->label('Date d’envoi souhaitée')
+                    ->seconds(false)
+                    ->helperText('Optionnel. Si renseigné, Maracuja attendra cette date avant d’envoyer.'),
                 RichEditor::make('body')
                     ->label('Message')
                     ->required()
@@ -145,6 +150,11 @@ class SegmentMessageResource extends Resource
                     ->label('Terminé le')
                     ->dateTime()
                     ->sortable(),
+                TextColumn::make('scheduled_at')
+                    ->label('Prévu le')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->recordAction('deliveries')
             ->recordActions([
@@ -182,15 +192,43 @@ class SegmentMessageResource extends Resource
                             ->send();
                     }),
                 Action::make('send')
-                    ->label('Planifier')
+                    ->label('Envoyer')
                     ->icon(Heroicon::OutlinedPaperAirplane)
-                    ->requiresConfirmation()
+                    ->form([
+                        DateTimePicker::make('scheduled_at')
+                            ->label('Date d’envoi')
+                            ->seconds(false)
+                            ->helperText('Laissez vide pour envoyer maintenant.')
+                            ->default(fn (SegmentMessage $record) => $record->scheduled_at),
+                    ])
+                    ->modalHeading('Envoyer ce message')
                     ->modalDescription(fn (SegmentMessage $record): string => self::sendModalDescription($record))
-                    ->visible(fn (SegmentMessage $record): bool => $record->isDraft() && ! $record->usesBrevo())
-                    ->action(function (SegmentMessage $record): void {
-                        $queuedCount = QueueSegmentMessage::run($record);
+                    ->modalSubmitActionLabel('Valider')
+                    ->visible(fn (SegmentMessage $record): bool => ! in_array($record->status, [
+                        SegmentMessage::STATUS_SENT_TO_PROVIDER,
+                        SegmentMessage::STATUS_SENT,
+                        SegmentMessage::STATUS_COMPLETED,
+                        SegmentMessage::STATUS_CANCELLED,
+                        SegmentMessage::STATUS_ARCHIVED,
+                    ], true))
+                    ->action(function (SegmentMessage $record, array $data): void {
+                        $scheduledAt = filled($data['scheduled_at'] ?? null)
+                            ? CarbonImmutable::parse($data['scheduled_at'])
+                            : null;
 
-                        if ($queuedCount === 0) {
+                        try {
+                            $stats = DispatchSegmentMessage::run($record, $scheduledAt);
+                        } catch (\Throwable $exception) {
+                            Notification::make()
+                                ->title('Envoi impossible')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        if ($stats['queued'] === 0 && $stats['sent'] === 0) {
                             Notification::make()
                                 ->title('Aucun destinataire éligible')
                                 ->body('Vérifiez le segment et les préférences email des contacts.')
@@ -201,67 +239,8 @@ class SegmentMessageResource extends Resource
                         }
 
                         Notification::make()
-                            ->title('Message planifié')
-                            ->body("{$queuedCount} destinataire(s) en file. Tâche planifiée conseillée: 25 envois toutes les 15 minutes (100/h).")
-                            ->success()
-                            ->send();
-                    }),
-                Action::make('createBrevoCampaign')
-                    ->label('Créer dans Brevo')
-                    ->icon(Heroicon::OutlinedCloudArrowUp)
-                    ->requiresConfirmation()
-                    ->modalDescription('Synchronise le segment, fige le contenu, puis crée une campagne brouillon dans Brevo. Aucun email n’est envoyé.')
-                    ->visible(fn (SegmentMessage $record): bool => $record->usesBrevo() && ! $record->brevo_campaign_id)
-                    ->action(function (SegmentMessage $record): void {
-                        try {
-                            $campaignId = app(BrevoAudienceService::class)->createCampaign($record);
-                        } catch (\Throwable $exception) {
-                            Notification::make()
-                                ->title('Création Brevo impossible')
-                                ->body($exception->getMessage())
-                                ->danger()
-                                ->send();
-
-                            return;
-                        }
-
-                        Notification::make()
-                            ->title('Campagne créée dans Brevo')
-                            ->body("La campagne brouillon #{$campaignId} a été créée. Aucun email n’a été envoyé.")
-                            ->success()
-                            ->send();
-                    }),
-                Action::make('sendBrevoCampaign')
-                    ->label('Envoyer via Brevo')
-                    ->icon(Heroicon::OutlinedPaperAirplane)
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->modalHeading('Envoyer réellement cette campagne ?')
-                    ->modalDescription('Cette action déclenche l’envoi réel de la campagne par Brevo aux contacts de la liste synchronisée. Elle ne pourra pas être annulée depuis Maracuja.')
-                    ->modalSubmitActionLabel('Envoyer maintenant')
-                    ->visible(fn (SegmentMessage $record): bool => $record->usesBrevo()
-                        && filled($record->brevo_campaign_id)
-                        && ! in_array($record->status, [
-                            SegmentMessage::STATUS_SENT_TO_PROVIDER,
-                            SegmentMessage::STATUS_COMPLETED,
-                            SegmentMessage::STATUS_SENT,
-                        ], true))
-                    ->action(function (SegmentMessage $record): void {
-                        try {
-                            app(BrevoAudienceService::class)->sendCampaign($record);
-                        } catch (\Throwable $exception) {
-                            Notification::make()
-                                ->title('Envoi Brevo impossible')
-                                ->body($exception->getMessage())
-                                ->danger()
-                                ->send();
-
-                            return;
-                        }
-
-                        Notification::make()
-                            ->title('Campagne envoyée à Brevo')
-                            ->body('Brevo a accepté la campagne. La délivrance sera suivie dans le rapport et les webhooks.')
+                            ->title($stats['scheduled'] ? 'Message planifié' : 'Envoi lancé')
+                            ->body(self::sendNotificationBody($stats))
                             ->success()
                             ->send();
                     }),
@@ -333,7 +312,20 @@ class SegmentMessageResource extends Resource
 
         return $eligible === 0
             ? 'Aucun destinataire éligible pour ce segment.'
-            : "Cet envoi sera mis en file pour {$eligible} destinataire(s) éligible(s). La tâche planifiée enverra ensuite par lots.";
+            : "Cet envoi concerne {$eligible} destinataire(s) éligible(s).";
+    }
+
+    private static function sendNotificationBody(array $stats): string
+    {
+        if ($stats['scheduled']) {
+            return "{$stats['queued']} destinataire(s) éligible(s). Maracuja enverra à la date choisie.";
+        }
+
+        if ($stats['processed'] === 1 && $stats['sent'] > 0) {
+            return "{$stats['sent']} destinataire(s) confié(s) au canal d’envoi.";
+        }
+
+        return "{$stats['sent']} envoyé(s), {$stats['failed']} échec(s), {$stats['skipped']} ignoré(s).";
     }
 
     private static function statusLabel(string $state): string
