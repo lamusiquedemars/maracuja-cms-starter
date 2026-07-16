@@ -35,7 +35,10 @@ return new class extends Migration
             $table->foreignId('audience_segment_id')->constrained('audience_segments')->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['audience_contact_id', 'audience_segment_id']);
+            $table->unique(
+                ['audience_contact_id', 'audience_segment_id'],
+                'audience_contact_segment_unique',
+            );
         });
 
         Schema::create('segment_messages', function (Blueprint $table) {

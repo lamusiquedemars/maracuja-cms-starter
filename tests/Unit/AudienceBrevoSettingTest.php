@@ -20,7 +20,7 @@ class AudienceBrevoSettingTest extends TestCase
         ]);
 
         $rawValue = DB::table('audience_brevo_settings')
-            ->whereKey($setting->id)
+            ->where('id', $setting->id)
             ->value('api_key_encrypted');
 
         $this->assertNotSame('xkeysib-secret', $rawValue);

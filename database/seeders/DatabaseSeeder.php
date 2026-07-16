@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Modules\ContentSlots\Models\ContentSlot;
 use App\Modules\Gallery\Models\Gallery;
+use App\Modules\Gallery\Models\GalleryImage;
 use App\Modules\News\Models\NewsPost;
 use App\Modules\Notices\Models\SiteNotice;
 use App\Modules\Pages\Models\Page;
@@ -454,6 +455,39 @@ class DatabaseSeeder extends Seeder
             'position' => 1,
             'is_published' => true,
         ]);
+
+        collect([
+            [
+                'title' => 'Admin simple',
+                'caption' => 'Une administration limitée aux modules activés.',
+                'alt_text' => 'Interface d’administration simple limitée aux modules utiles.',
+                'image_path' => '/demo/admin-simple.svg',
+                'position' => 1,
+            ],
+            [
+                'title' => 'Composants front',
+                'caption' => 'Des sections, cartes, CTA, galeries et variantes réutilisables.',
+                'alt_text' => 'Exemple abstrait de composants front organisés.',
+                'image_path' => '/demo/front-system.svg',
+                'position' => 2,
+            ],
+            [
+                'title' => 'Thèmes clients',
+                'caption' => 'Une structure commune peut prendre plusieurs ambiances.',
+                'alt_text' => 'Variantes de thèmes pour sites clients.',
+                'image_path' => '/demo/theme-system.svg',
+                'position' => 3,
+            ],
+        ])->each(fn (array $image) => GalleryImage::query()->updateOrCreate(
+            ['title' => $image['title']],
+            $image + [
+                'gallery_id' => $homeGallery->id,
+                'credit' => 'Maracuja CMS',
+                'width' => 1200,
+                'height' => 800,
+                'is_published' => true,
+            ],
+        ));
 
     }
 }

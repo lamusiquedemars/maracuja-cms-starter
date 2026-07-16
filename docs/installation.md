@@ -4,6 +4,9 @@ Maracuja CMS V1 est un starter Laravel + Filament. Chaque client a sa propre ins
 
 ## Nouvelle installation locale
 
+Creer d'abord une base MySQL vide en `utf8mb4`, puis renseigner ses acces dans
+`.env`. Le nom local recommande est `maracuja_cms_starter`.
+
 ```bash
 composer install
 cp .env.example .env
@@ -66,7 +69,8 @@ Le passer à `true` seulement pour un usage développeur.
 
 ## Base de données
 
-Le starter utilise SQLite en local par défaut. Pour un projet client livré, préférer MySQL/MariaDB si l’hébergement est mutualisé classique.
+Le starter utilise MySQL en local, dans les tests et en production. SQLite ne
+fait pas partie du parcours d'installation supporte.
 
 Exemple:
 
@@ -74,10 +78,14 @@ Exemple:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=client_site
-DB_USERNAME=client_user
-DB_PASSWORD=secret
+DB_DATABASE=maracuja_cms_starter
+DB_USERNAME=root
+DB_PASSWORD=
 ```
+
+Les tests utilisent une base distincte nommee
+`maracuja_cms_starter_testing`. Elle doit rester strictement locale et ne doit
+contenir aucune donnee a conserver.
 
 ## Livraison
 
