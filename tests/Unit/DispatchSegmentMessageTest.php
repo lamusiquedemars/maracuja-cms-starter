@@ -3,11 +3,11 @@
 namespace Tests\Unit;
 
 use App\Modules\Audience\Actions\DispatchSegmentMessage;
-use App\Modules\Audience\Actions\SendDueAudienceMessages;
 use App\Modules\Audience\Models\AudienceBrevoSetting;
 use App\Modules\Audience\Models\AudienceContact;
 use App\Modules\Audience\Models\AudienceSegment;
 use App\Modules\Audience\Models\SegmentMessage;
+use App\Modules\Audience\Models\SegmentMessageDelivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -39,12 +39,12 @@ class DispatchSegmentMessageTest extends TestCase
             && $request->url() === 'https://api.brevo.com/v3/emailCampaigns/99/sendNow');
     }
 
-    public function test_scheduled_brevo_message_is_sent_by_the_maracuja_pending_command_when_due(): void
+    public function test_scheduled_brevo_message_is_delegated_to_brevo_immediately(): void
     {
         Http::fake([
             'https://api.brevo.com/v3/contacts' => Http::response(['id' => 1], 201),
             'https://api.brevo.com/v3/emailCampaigns' => Http::response(['id' => 99], 201),
-            'https://api.brevo.com/v3/emailCampaigns/99/sendNow' => Http::response(null, 204),
+            'https://api.brevo.com/v3/emailCampaigns/99/status' => Http::response(null, 204),
         ]);
 
         $now = now();
@@ -56,20 +56,18 @@ class DispatchSegmentMessageTest extends TestCase
 
         $this->assertTrue($stats['scheduled']);
         $this->assertSame(1, $stats['queued']);
+        $this->assertSame(1, $stats['processed']);
         $this->assertSame(SegmentMessage::STATUS_QUEUED, $message->refresh()->status);
-        Http::assertNothingSent();
-
-        $this->travelTo($now->copy()->addHour()->addMinute());
-
-        $runStats = SendDueAudienceMessages::run(limit: 25);
-
-        $this->assertSame(1, $runStats['brevo_sent']);
-        $this->assertSame(SegmentMessage::STATUS_SENT_TO_PROVIDER, $message->refresh()->status);
+        $this->assertSame('queued', $message->brevo_status);
+        $this->assertSame(SegmentMessageDelivery::STATUS_SYNCED_TO_BREVO, $message->deliveries()->first()->status);
 
         Http::assertSent(fn ($request): bool => $request->method() === 'POST'
-            && $request->url() === 'https://api.brevo.com/v3/emailCampaigns');
-        Http::assertSent(fn ($request): bool => $request->method() === 'POST'
-            && $request->url() === 'https://api.brevo.com/v3/emailCampaigns/99/sendNow');
+            && $request->url() === 'https://api.brevo.com/v3/emailCampaigns'
+            && $request['scheduledAt'] === $now->copy()->addHour()->toIso8601String());
+        Http::assertSent(fn ($request): bool => $request->method() === 'PUT'
+            && $request->url() === 'https://api.brevo.com/v3/emailCampaigns/99/status'
+            && $request['status'] === 'queued');
+        Http::assertNotSent(fn ($request): bool => $request->url() === 'https://api.brevo.com/v3/emailCampaigns/99/sendNow');
     }
 
     private function brevoMessageFixture(): SegmentMessage

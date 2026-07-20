@@ -31,9 +31,20 @@ class DispatchSegmentMessage
      */
     private static function scheduleForLater(SegmentMessage $message): array
     {
-        $queued = $message->usesBrevo()
-            ? self::queueBrevoMessage($message)
-            : QueueSegmentMessage::run($message);
+        if ($message->usesBrevo()) {
+            app(BrevoAudienceService::class)->scheduleCampaign($message, $message->scheduled_at);
+
+            return [
+                'scheduled' => true,
+                'queued' => $message->refresh()->recipients_count,
+                'sent' => 0,
+                'failed' => 0,
+                'skipped' => 0,
+                'processed' => 1,
+            ];
+        }
+
+        $queued = QueueSegmentMessage::run($message);
 
         return [
             'scheduled' => true,
@@ -85,29 +96,5 @@ class DispatchSegmentMessage
             'skipped' => 0,
             'processed' => 1,
         ];
-    }
-
-    private static function queueBrevoMessage(SegmentMessage $message): int
-    {
-        $eligibleCount = $message->segment
-            ->contacts()
-            ->where('accepts_email', true)
-            ->whereNull('unsubscribed_at')
-            ->whereNull('hard_bounced_at')
-            ->whereNull('email_blacklisted_at')
-            ->count();
-
-        if ($eligibleCount === 0) {
-            return 0;
-        }
-
-        $message->forceFill([
-            'status' => SegmentMessage::STATUS_QUEUED,
-            'recipients_count' => $eligibleCount,
-            'sent_at' => null,
-            'brevo_error' => null,
-        ])->save();
-
-        return $eligibleCount;
     }
 }

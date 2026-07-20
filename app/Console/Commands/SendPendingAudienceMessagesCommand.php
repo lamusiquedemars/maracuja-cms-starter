@@ -29,7 +29,7 @@ class SendPendingAudienceMessagesCommand extends Command
             maxAttempts: (int) $this->option('max-attempts'),
         );
 
-        $this->info("Envoyés: {$stats['sent']} | Brevo: {$stats['brevo_sent']} | Échecs: {$stats['failed']} | Échecs Brevo: {$stats['brevo_failed']} | Ignorés: {$stats['skipped']} | Traités: {$stats['processed']}");
+        $this->info("Envoyés: {$stats['sent']} | Échecs: {$stats['failed']} | Ignorés: {$stats['skipped']} | Traités: {$stats['processed']}");
 
         return self::SUCCESS;
     }
