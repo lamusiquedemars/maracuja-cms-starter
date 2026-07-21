@@ -138,7 +138,7 @@ class EventResource extends Resource
                             ->live()
                             ->dehydrated(false)
                             ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
-                            ->helperText('Liste les fichiers déjà présents dans storage/app/public/events.'),
+                            ->helperText('Liste les fichiers déjà présents dans public/storage/events.'),
                         FileUpload::make('image_path')
                             ->label('Image')
                             ->disk('public')

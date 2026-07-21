@@ -146,7 +146,7 @@ class MaracujaDoctorCommand extends Command
             'Stockage public',
             is_link(public_path('storage')) || file_exists(public_path('storage'))
                 ? 'public/storage existe.'
-                : 'Lancez php artisan storage:link si les médias téléversés doivent être publics.'
+                : 'Créez le dossier public/storage et rendez-le accessible en écriture.'
         );
     }
 

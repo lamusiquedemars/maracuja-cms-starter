@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteBase /
+
+# Bloquer l'acces web aux fichiers et dossiers internes de Laravel.
+RewriteRule ^(?:app|bootstrap|config|database|docs|resources|routes|scripts|tests|vendor)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:\.env|artisan|composer\.(?:json|lock)|package(?:-lock)?\.json|phpunit\.xml|vite\.config\.js)$ - [F,L,NC]
+
+# Routage Laravel deja utilise par LWS.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+)$ index.php/$1 [L,QSA]

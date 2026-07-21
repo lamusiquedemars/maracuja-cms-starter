@@ -76,7 +76,7 @@ class NewsPostResource extends Resource
                     ->live()
                     ->dehydrated(false)
                     ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
-                    ->helperText('Liste les fichiers déjà présents dans storage/app/public/news.'),
+                    ->helperText('Liste les fichiers déjà présents dans public/storage/news.'),
                 FileUpload::make('image_path')
                     ->label('Image')
                     ->disk('public')

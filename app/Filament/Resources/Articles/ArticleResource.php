@@ -76,7 +76,7 @@ class ArticleResource extends Resource
                     ->live()
                     ->dehydrated(false)
                     ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
-                    ->helperText('Liste les fichiers déjà présents dans storage/app/public/articles.'),
+                    ->helperText('Liste les fichiers déjà présents dans public/storage/articles.'),
                 FileUpload::make('image_path')
                     ->label('Image principale')
                     ->disk('public')
@@ -127,7 +127,7 @@ class ArticleResource extends Resource
                             ->dehydrated(false)
                             ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
                             ->visible(fn ($get): bool => $get('type') === 'image')
-                            ->helperText('Liste les fichiers déjà présents dans storage/app/public/articles/blocks.'),
+                            ->helperText('Liste les fichiers déjà présents dans public/storage/articles/blocks.'),
                         FileUpload::make('image_path')
                             ->label('Image')
                             ->disk('public')

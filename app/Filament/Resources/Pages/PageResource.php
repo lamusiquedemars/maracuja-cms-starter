@@ -111,7 +111,7 @@ class PageResource extends Resource
                     ->live()
                     ->dehydrated(false)
                     ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('hero_image_path', $state) : null)
-                    ->helperText('Liste les fichiers déjà présents dans storage/app/public/pages.'),
+                    ->helperText('Liste les fichiers déjà présents dans public/storage/pages.'),
                 FileUpload::make('hero_image_path')
                     ->label('Image hero')
                     ->disk('public')
@@ -120,7 +120,7 @@ class PageResource extends Resource
                     ->fetchFileInformation(false)
                     ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, 'pages'))
                     ->image()
-                    ->helperText('Image stockée publiquement dans storage/app/public/pages. Nécessite le lien public/storage.'),
+                    ->helperText('Image stockée publiquement dans public/storage/pages.'),
                 RichEditor::make('content')
                     ->label('Texte principal')
                     ->visible(fn (?Page $record): bool => (bool) $record?->isText())

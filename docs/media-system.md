@@ -12,17 +12,22 @@ Le Media System encadre les images du starter : upload, métadonnées, accessibi
 ## Stockage V1
 
 ```txt
-storage/app/public/galleries/{gallery-slug}
-storage/app/public/news
-storage/app/public/pages
-storage/app/public/settings
+public/storage/galleries/{gallery-slug}
+public/storage/news
+public/storage/pages
+public/storage/settings
 ```
 
-Une installation doit exécuter :
+Le dossier `public/storage` fait partie de la structure du projet, mais son
+contenu reste hors Git. Il doit être accessible en écriture par PHP. Aucun
+lien symbolique ni `php artisan storage:link` n'est nécessaire.
 
-```bash
-php artisan storage:link
-```
+Le document root du domaine doit idéalement pointer vers le dossier `public`
+du projet. Sur un hébergement LWS qui impose la racine du dépôt, le fichier
+`.htaccess` et le `index.php` situés à la racine adaptent le routage. Laravel
+sert alors `/storage/...` depuis `public/storage/...` grâce au contrôleur de
+secours, tandis que `.htaccess` bloque les dossiers internes. Ces fichiers font
+partie du code et doivent donc être déployés avec le reste du projet.
 
 Tous les uploads visibles sur le site doivent utiliser le disque Laravel `public`. Le chemin stocké en base reste relatif au disque, par exemple:
 
