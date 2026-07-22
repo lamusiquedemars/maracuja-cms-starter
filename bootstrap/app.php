@@ -1,5 +1,10 @@
 <?php
 
+use App\Console\Commands\MaracujaDoctorCommand;
+use App\Console\Commands\MaracujaDatabaseBackupCommand;
+use App\Console\Commands\MaracujaMediaAuditCommand;
+use App\Console\Commands\MaracujaMediaMigrateCommand;
+use App\Console\Commands\SendPendingAudienceMessagesCommand;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,8 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withCommands([
-        App\Console\Commands\MaracujaDoctorCommand::class,
-        App\Console\Commands\SendPendingAudienceMessagesCommand::class,
+        MaracujaDoctorCommand::class,
+        MaracujaDatabaseBackupCommand::class,
+        MaracujaMediaAuditCommand::class,
+        MaracujaMediaMigrateCommand::class,
+        SendPendingAudienceMessagesCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: [

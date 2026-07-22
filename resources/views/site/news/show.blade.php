@@ -1,7 +1,7 @@
 @extends('layouts.site', [
     'seoTitle' => $post->seo_title ?? $post->title,
     'seoDescription' => $post->seo_description ?? $post->excerpt,
-    'seoImage' => $post->image_path,
+    'seoImage' => $post->imageUrl(),
     'seoType' => 'article',
 ])
 

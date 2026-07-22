@@ -55,6 +55,7 @@ class SiteNoticeResource extends Resource
             ->components([
                 TextInput::make('title')
                     ->label('Titre court')
+                    ->columnSpanFull()
                     ->maxLength(120)
                     ->helperText('Optionnel. Exemple: Horaires d’été.'),
                 Textarea::make('message')

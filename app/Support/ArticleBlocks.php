@@ -2,26 +2,32 @@
 
 namespace App\Support;
 
+use App\Modules\Media\Models\MediaAsset;
 use Illuminate\Support\HtmlString;
 
 class ArticleBlocks
 {
     public static function render(?array $blocks): HtmlString
     {
+        $media = MediaAsset::query()
+            ->whereIn('id', collect($blocks ?? [])->pluck('media_id')->filter()->unique())
+            ->get()
+            ->keyBy('id');
+
         $html = collect($blocks ?? [])
-            ->map(fn (array $block): string => self::renderBlock($block))
+            ->map(fn (array $block): string => self::renderBlock($block, $media->get($block['media_id'] ?? null)))
             ->filter()
             ->implode('');
 
         return new HtmlString($html);
     }
 
-    private static function renderBlock(array $block): string
+    private static function renderBlock(array $block, ?MediaAsset $media): string
     {
         return match ($block['type'] ?? null) {
             'heading' => self::heading($block),
             'rich_text' => self::richText($block),
-            'image' => self::image($block),
+            'image' => self::image($block, $media),
             'quote' => self::quote($block),
             'note' => self::note($block),
             'table' => self::table($block),
@@ -55,18 +61,19 @@ class ArticleBlocks
             . '</div>';
     }
 
-    private static function image(array $block): string
+    private static function image(array $block, ?MediaAsset $media): string
     {
-        $src = trim((string) ($block['image_path'] ?? ''));
+        $src = $media?->url() ?? trim((string) ($block['image_path'] ?? ''));
         if ($src === '') {
             return '';
         }
 
-        $resolvedSrc = str_starts_with($src, '/') ? $src : asset('storage/' . $src);
-        $caption = trim((string) ($block['caption'] ?? ''));
+        $resolvedSrc = str_starts_with($src, '/') || str_starts_with($src, 'http') ? $src : asset('storage/' . $src);
+        $caption = trim((string) ($block['caption'] ?? $media?->caption ?? ''));
+        $alt = trim((string) ($block['alt'] ?? $media?->alt_text ?? ''));
 
         return '<figure class="media-figure article-block article-block--image">'
-            . sprintf('<img src="%s" alt="%s" loading="lazy" decoding="async">', e($resolvedSrc), e($block['alt'] ?? ''))
+            . sprintf('<img src="%s" alt="%s" loading="lazy" decoding="async">', e($resolvedSrc), e($alt))
             . ($caption !== '' ? '<figcaption class="media-figure__caption"><span>' . e($caption) . '</span></figcaption>' : '')
             . '</figure>';
     }

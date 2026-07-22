@@ -2,6 +2,7 @@
 
 namespace App\Modules\Audience\Models;
 
+use App\Modules\Media\Concerns\TracksMediaUsages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,8 @@ use Illuminate\Support\Str;
 
 class SegmentMessage extends Model
 {
+    use TracksMediaUsages;
+
     public const STATUS_DRAFT = 'draft';
     public const STATUS_READY = 'ready';
     public const STATUS_QUEUED = 'queued';
@@ -98,6 +101,11 @@ class SegmentMessage extends Model
         return $this->belongsTo(AudienceSegment::class, 'audience_segment_id');
     }
 
+    protected function mediaUsageReferences(): array
+    {
+        return $this->mediaUsageReferencesFromHtml($this->body, 'body');
+    }
+
     public function isSent(): bool
     {
         return $this->status === self::STATUS_SENT;
@@ -127,11 +135,11 @@ class SegmentMessage extends Model
     {
         $body = (string) $this->body;
 
-        return preg_replace_callback(
+        $body = preg_replace_callback(
             '/<img\b([^>]*?)\bsrc=(["\'])(.*?)\2([^>]*)>/i',
             function (array $matches) use ($mailMessage): string {
                 $path = $this->localPublicImagePath($matches[3]);
-                $publicUrl = $this->publicImageUrl($matches[3]);
+                $publicUrl = $this->publicStorageUrl($matches[3]);
 
                 if ($path && $mailMessage && method_exists($mailMessage, 'embed')) {
                     return '<img' . $matches[1] . 'src="' . e($mailMessage->embed($path)) . '"' . $matches[4] . '>';
@@ -142,6 +150,16 @@ class SegmentMessage extends Model
                 }
 
                 return $matches[0];
+            },
+            $body,
+        ) ?? $body;
+
+        return preg_replace_callback(
+            '/\bhref=(["\'])(.*?)\1/i',
+            function (array $matches): string {
+                $publicUrl = $this->publicStorageUrl($matches[2]);
+
+                return $publicUrl ? 'href="'.e($publicUrl).'"' : $matches[0];
             },
             $body,
         ) ?? $body;
@@ -227,7 +245,7 @@ class SegmentMessage extends Model
         return Storage::disk('public')->path($relativePath);
     }
 
-    private function publicImageUrl(string $src): ?string
+    private function publicStorageUrl(string $src): ?string
     {
         $path = parse_url($src, PHP_URL_PATH);
 

@@ -54,6 +54,7 @@ class GalleryResource extends Resource
             ->components([
                 TextInput::make('title')
                     ->label('Nom')
+                    ->columnSpanFull()
                     ->required(),
                 TextInput::make('slug')
                     ->label('Slug')

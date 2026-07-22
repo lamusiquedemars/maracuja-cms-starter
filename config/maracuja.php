@@ -29,6 +29,20 @@ return [
         'public_path' => env('MARACUJA_EVENTS_PUBLIC_PATH', 'evenements'),
     ],
 
+    'media' => [
+        'disk' => 'public',
+        'images_directory' => 'media/images',
+        'documents_directory' => 'media/documents',
+        'image_max_size_kb' => 5 * 1024,
+        'document_max_size_kb' => 15 * 1024,
+        'mime_types' => [
+            'image/jpeg' => ['type' => 'image', 'extension' => 'jpg'],
+            'image/png' => ['type' => 'image', 'extension' => 'png'],
+            'image/webp' => ['type' => 'image', 'extension' => 'webp'],
+            'application/pdf' => ['type' => 'document', 'extension' => 'pdf'],
+        ],
+    ],
+
     'modules' => [
         'site_settings' => env('MARACUJA_MODULE_SITE_SETTINGS', true),
         'notices' => env('MARACUJA_MODULE_NOTICES', true),

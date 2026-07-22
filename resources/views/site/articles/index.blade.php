@@ -24,7 +24,7 @@
                     <x-site.card
                         :title="$post->title"
                         :url="route('articles.show', $post->slug)"
-                        :image="$post->image_path ? (str_starts_with($post->image_path, '/') ? $post->image_path : asset('storage/' . $post->image_path)) : '/assets/images/merle.png'"
+                        :image="$post->imageUrl() ?: '/assets/images/merle.png'"
                         variant="featured"
                     >
                         {{ $post->publicExcerpt() }}

@@ -58,4 +58,20 @@ class SegmentMessagePreviewTest extends TestCase
         $this->assertStringContainsString(url('/storage/campaigns/summer.jpg'), $html);
         $this->assertSame(['campaigns/summer.jpg'], Storage::disk('public')->allFiles());
     }
+
+    public function test_email_rendering_absolutizes_portable_image_and_document_paths(): void
+    {
+        $segment = AudienceSegment::query()->create(['name' => 'Clients']);
+        $message = SegmentMessage::query()->create([
+            'audience_segment_id' => $segment->id,
+            'subject' => 'Tarifs',
+            'body' => '<img src="/storage/media/images/photo.jpg" alt="Atelier">'
+                .'<a href="/storage/media/documents/tarifs.pdf">Télécharger les tarifs</a>',
+        ]);
+
+        $html = $message->bodyForEmail();
+
+        $this->assertStringContainsString('src="'.url('/storage/media/images/photo.jpg').'"', $html);
+        $this->assertStringContainsString('href="'.url('/storage/media/documents/tarifs.pdf').'"', $html);
+    }
 }

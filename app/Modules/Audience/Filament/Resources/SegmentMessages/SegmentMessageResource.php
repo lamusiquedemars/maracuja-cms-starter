@@ -6,6 +6,7 @@ use App\Modules\Audience\Actions\DispatchSegmentMessage;
 use App\Modules\Audience\Actions\SendPendingSegmentMessages;
 use App\Modules\Audience\Filament\Resources\SegmentMessages\Pages\ManageSegmentMessages;
 use App\Modules\Audience\Models\SegmentMessage;
+use App\Modules\Media\Filament\Forms\Components\MaracujaRichEditor;
 use App\Support\Modules;
 use BackedEnum;
 use Carbon\CarbonImmutable;
@@ -16,7 +17,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -79,7 +79,7 @@ class SegmentMessageResource extends Resource
                     ->label('Date d’envoi souhaitée')
                     ->seconds(false)
                     ->helperText('Optionnel. Si renseigné, Maracuja attendra cette date avant d’envoyer.'),
-                RichEditor::make('body')
+                MaracujaRichEditor::make('body')
                     ->label('Message')
                     ->required()
                     ->columnSpanFull(),

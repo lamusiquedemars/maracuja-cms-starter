@@ -1,14 +1,14 @@
 @extends('layouts.site', [
     'seoTitle' => $page?->seo_title ?? ('Contact - ' . $settings->site_name),
     'seoDescription' => $page?->seo_description ?? ('Contacter ' . $settings->site_name),
-    'seoImage' => $page?->hero_image_path,
+    'seoImage' => $page?->heroImageUrl(),
 ])
 
 @section('content')
     <x-site.hero
         :title="$page?->hero_title ?? $page?->title ?? 'Contact'"
         :subtitle="$page?->hero_subtitle ?? $page?->excerpt ?? 'Un formulaire simple pour envoyer un message.'"
-        :image="\App\Support\MediaFiles::url($page?->hero_image_path)"
+        :image="$page?->heroImageUrl()"
     />
 
     <x-site.section inner-class="contact-layout">

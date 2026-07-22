@@ -15,7 +15,7 @@ class Seo
     {
         $title = $data['title'] ?: $settings->default_seo_title ?: $settings->site_name;
         $description = $data['description'] ?: $settings->default_seo_description ?: $settings->baseline ?: '';
-        $image = $data['image'] ?: $settings->default_og_image_path;
+        $image = $data['image'] ?: $settings->defaultOgImageUrl();
 
         return [
             'title' => Str::limit($title, 70, ''),

@@ -1,7 +1,7 @@
 @extends('layouts.site', [
     'seoTitle' => $post->seo_title ?? $post->title,
     'seoDescription' => $post->seo_description ?? $post->publicExcerpt(),
-    'seoImage' => $post->image_path,
+    'seoImage' => $post->imageUrl(),
     'seoType' => 'article',
 ])
 
@@ -20,9 +20,9 @@
 
     <x-site.section container="readable">
         <article class="article-content prose">
-            @if ($post->image_path)
+            @if ($post->imageUrl())
                 <x-site.figure
-                    :src="str_starts_with($post->image_path, '/') ? $post->image_path : asset('storage/' . $post->image_path)"
+                    :src="$post->imageUrl()"
                     :alt="$post->title"
                 />
             @endif

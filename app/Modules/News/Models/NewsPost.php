@@ -2,17 +2,24 @@
 
 namespace App\Modules\News\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\Media\Concerns\TracksMediaUsages;
+use App\Modules\Media\Models\MediaAsset;
+use App\Support\MediaFiles;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NewsPost extends Model
 {
+    use TracksMediaUsages;
+
     protected $fillable = [
         'title',
         'slug',
         'excerpt',
         'content',
         'image_path',
+        'image_media_id',
         'seo_title',
         'seo_description',
         'is_published',
@@ -30,6 +37,24 @@ class NewsPost extends Model
             'has_detail_page' => 'boolean',
             'published_at' => 'datetime',
             'expires_at' => 'datetime',
+        ];
+    }
+
+    public function imageMedia(): BelongsTo
+    {
+        return $this->belongsTo(MediaAsset::class, 'image_media_id');
+    }
+
+    public function imageUrl(): ?string
+    {
+        return $this->trackedMedia('imageMedia', $this->image_media_id)?->url() ?? MediaFiles::url($this->image_path);
+    }
+
+    protected function mediaUsageReferences(): array
+    {
+        return [
+            ['media_asset_id' => $this->image_media_id, 'field' => 'image_media_id'],
+            ...$this->mediaUsageReferencesFromHtml($this->content, 'content'),
         ];
     }
 
