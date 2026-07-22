@@ -1,7 +1,7 @@
 @extends('layouts.site', [
     'seoTitle' => $page->seo_title,
     'seoDescription' => $page->seo_description,
-    'seoImage' => $page->hero_image_path,
+    'seoImage' => $page->heroImageUrl(),
 ])
 
 @section('content')
@@ -9,7 +9,7 @@
         variant="page"
         :title="$page->hero_title ?? $page->title"
         :subtitle="$page->hero_subtitle ?? $page->excerpt"
-        :image="\App\Support\MediaFiles::url($page->hero_image_path)"
+        :image="$page->heroImageUrl()"
         :cta-url="$contactUrl"
         cta-label="{{ \App\Support\ContentSlots::value('services.hero.cta_label', 'Parler du projet') }}"
     />

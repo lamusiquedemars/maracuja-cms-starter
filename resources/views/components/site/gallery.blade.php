@@ -27,10 +27,8 @@
     >
         @php
             $renderItem = function ($image) use ($lightbox) {
-                $src = str_starts_with($image->image_path, 'http') || str_starts_with($image->image_path, '/')
-                    ? $image->image_path
-                    : asset('storage/' . $image->image_path);
-                $caption = $image->caption ?: $image->title;
+                $src = $image->resolved_image_url;
+                $caption = $image->caption ?: $image->media?->caption ?: $image->title;
 
                 return compact('src', 'caption');
             };
@@ -55,7 +53,7 @@
                                 rel="noreferrer"
                             >
                                 <x-site.image
-                                    :src="$image->image_path"
+                                    :src="$src"
                                     :alt="$image->alt"
                                     :width="$image->width"
                                     :height="$image->height"
@@ -63,7 +61,7 @@
                             </a>
                         @else
                             <x-site.image
-                                :src="$image->image_path"
+                                :src="$src"
                                 :alt="$image->alt"
                                 :width="$image->width"
                                 :height="$image->height"
@@ -71,13 +69,13 @@
                         @endif
                     </div>
 
-                    @if ($caption || $image->credit)
+                    @if ($caption || $image->credit || $image->media?->credit)
                         <div class="showcase__content">
                             @if ($caption)
                                 <h3 class="showcase__item-title">{{ $caption }}</h3>
                             @endif
-                            @if ($image->credit)
-                                <p class="showcase__meta">Crédit : {{ $image->credit }}</p>
+                            @if ($image->credit || $image->media?->credit)
+                                <p class="showcase__meta">Crédit : {{ $image->credit ?: $image->media?->credit }}</p>
                             @endif
                         </div>
                     @endif

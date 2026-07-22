@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Modules\Media\Models\MediaAsset;
+use App\Modules\Media\Policies\MediaAssetPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $moduleMigrationPaths = [
             app_path('Modules/Inquiries/database/migrations'),
             app_path('Modules/Audience/database/migrations'),
+            app_path('Modules/Media/database/migrations'),
         ];
 
         foreach ($moduleMigrationPaths as $path) {
@@ -29,5 +33,7 @@ class AppServiceProvider extends ServiceProvider
                 $this->loadMigrationsFrom($path);
             }
         }
+
+        Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
     }
 }

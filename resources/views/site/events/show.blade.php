@@ -1,7 +1,7 @@
 @extends('layouts.site', [
     'seoTitle' => $event->seo_title ?? $event->title,
     'seoDescription' => $event->seo_description ?? $event->publicExcerpt(),
-    'seoImage' => $event->image_path,
+    'seoImage' => $event->imageUrl(),
 ])
 
 @section('content')
@@ -19,9 +19,9 @@
 
     <x-site.section container="readable">
         <article class="event-detail prose">
-            @if ($event->image_path)
+            @if ($event->imageUrl())
                 <x-site.figure
-                    :src="str_starts_with($event->image_path, '/') ? $event->image_path : asset('storage/' . $event->image_path)"
+                    :src="$event->imageUrl()"
                     :alt="$event->title"
                 />
             @endif

@@ -8,7 +8,7 @@
     variant="home"
     :title="$homePage?->hero_title ?? $settings->site_name"
     :subtitle="$homePage?->hero_subtitle ?? $settings->baseline"
-    :image="\App\Support\MediaFiles::url($homePage?->hero_image_path)"
+    :image="$homePage?->heroImageUrl()"
     :cta-url="$contactUrl"
     cta-label="{{ \App\Support\ContentSlots::value('home.hero.cta_label', 'Présenter un projet') }}"
     :secondary-cta-url="$servicesUrl"

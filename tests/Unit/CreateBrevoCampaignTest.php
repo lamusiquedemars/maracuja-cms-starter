@@ -82,6 +82,48 @@ class CreateBrevoCampaignTest extends TestCase
         });
     }
 
+    public function test_it_keeps_a_portable_snapshot_while_sending_absolute_media_urls_to_brevo(): void
+    {
+        config(['app.url' => 'https://example.com']);
+
+        Http::fake([
+            'https://api.brevo.com/v3/contacts' => Http::response(['id' => 1], 201),
+            'https://api.brevo.com/v3/emailCampaigns' => Http::response(['id' => 100], 201),
+        ]);
+
+        $setting = AudienceBrevoSetting::query()->create([
+            'is_enabled' => true,
+            'api_key_encrypted' => 'xkeysib-secret',
+            'sender_email' => 'contact@maracujadigital.fr',
+            'default_folder_id' => 12,
+        ]);
+        $segment = AudienceSegment::query()->create([
+            'name' => 'Clients',
+            'brevo_list_id' => 34,
+        ]);
+        $contact = AudienceContact::query()->create([
+            'email' => 'ivo@example.test',
+            'accepts_email' => true,
+        ]);
+        $segment->contacts()->attach($contact);
+
+        $portableBody = '<img src="/storage/media/images/photo.jpg" alt="Atelier">'
+            .'<a href="/storage/media/documents/tarifs.pdf">Tarifs</a>';
+        $message = SegmentMessage::query()->create([
+            'audience_segment_id' => $segment->id,
+            'provider' => SegmentMessage::PROVIDER_BREVO,
+            'subject' => 'Tarifs',
+            'body' => $portableBody,
+        ]);
+
+        app(BrevoAudienceService::class)->createCampaign($message, $setting);
+
+        $this->assertSame($portableBody, $message->refresh()->content_snapshot_html);
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://api.brevo.com/v3/emailCampaigns'
+            && str_contains($request['htmlContent'], url('/storage/media/images/photo.jpg'))
+            && str_contains($request['htmlContent'], url('/storage/media/documents/tarifs.pdf')));
+    }
+
     public function test_it_does_not_create_a_brevo_campaign_for_smtp_messages(): void
     {
         Http::fake();

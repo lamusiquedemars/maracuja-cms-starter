@@ -34,8 +34,8 @@
         <meta name="twitter:image" content="{{ $seo['image'] }}">
     @endif
 
-    @if ($settings->favicon_path)
-        <link rel="icon" href="{{ \App\Support\Seo::absoluteUrl($settings->favicon_path) }}">
+    @if ($settings->faviconUrl())
+        <link rel="icon" href="{{ \App\Support\Seo::absoluteUrl($settings->faviconUrl()) }}">
     @endif
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])

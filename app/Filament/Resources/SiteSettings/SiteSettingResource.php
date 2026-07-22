@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\SiteSettings;
 
 use App\Filament\Resources\SiteSettings\Pages\ManageSiteSettings;
+use App\Modules\Media\Filament\Forms\Components\MediaPicker;
 use App\Modules\SiteSettings\Models\SiteSetting;
-use App\Support\MediaFiles;
 use App\Support\Modules;
 use BackedEnum;
 use UnitEnum;
@@ -12,14 +12,11 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -90,52 +87,19 @@ class SiteSettingResource extends Resource
                 Textarea::make('address')
                     ->label('Adresse')
                     ->columnSpanFull(),
-                Select::make('existing_logo_path')
-                    ->label('Choisir un logo existant')
-                    ->options(fn (): array => MediaFiles::options('site'))
-                    ->searchable()
-                    ->live()
-                    ->dehydrated(false)
-                    ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('logo_path', $state) : null),
-                FileUpload::make('logo_path')
+                MediaPicker::make('logo_media_id')
                     ->label('Logo')
-                    ->disk('public')
-                    ->directory('site')
-                    ->visibility('public')
-                    ->fetchFileInformation(false)
-                    ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, 'site'))
-                    ->image(),
-                Select::make('existing_favicon_path')
-                    ->label('Choisir un favicon existant')
-                    ->options(fn (): array => MediaFiles::options('site'))
-                    ->searchable()
-                    ->live()
-                    ->dehydrated(false)
-                    ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('favicon_path', $state) : null),
-                FileUpload::make('favicon_path')
+                    ->relationship('logoMedia', 'display_name')
+                    ->imagesOnly(),
+                MediaPicker::make('favicon_media_id')
                     ->label('Favicon')
-                    ->disk('public')
-                    ->directory('site')
-                    ->visibility('public')
-                    ->fetchFileInformation(false)
-                    ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, 'site'))
-                    ->image(),
-                Select::make('existing_default_og_image_path')
-                    ->label('Choisir une image sociale existante')
-                    ->options(fn (): array => MediaFiles::options('site'))
-                    ->searchable()
-                    ->live()
-                    ->dehydrated(false)
-                    ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('default_og_image_path', $state) : null),
-                FileUpload::make('default_og_image_path')
+                    ->relationship('faviconMedia', 'display_name')
+                    ->imagesOnly(),
+                MediaPicker::make('default_og_media_id')
                     ->label('Image sociale par défaut')
                     ->helperText('Image utilisée par Open Graph si une page ou actualité n’en fournit pas.')
-                    ->disk('public')
-                    ->directory('site')
-                    ->visibility('public')
-                    ->fetchFileInformation(false)
-                    ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, 'site'))
-                    ->image(),
+                    ->relationship('defaultOgMedia', 'display_name')
+                    ->imagesOnly(),
                 KeyValue::make('social_links')
                     ->label('Liens sociaux')
                     ->keyLabel('Libellé')

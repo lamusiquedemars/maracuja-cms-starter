@@ -213,7 +213,8 @@ class BrevoAudienceService
                 throw new RuntimeException('Aucun contact éligible n’a pu être synchronisé vers Brevo.');
             }
 
-            $snapshotHtml = $message->bodyForEmail();
+            $snapshotHtml = (string) $message->body;
+            $deliveryHtml = $message->bodyForEmail();
             $sender = [
                 'name' => $setting->sender_name ?: config('maracuja.product_name', 'Maracuja CMS'),
                 'email' => $setting->sender_email,
@@ -223,7 +224,7 @@ class BrevoAudienceService
                 'name' => $this->campaignName($message),
                 'sender' => $sender,
                 'subject' => $message->subject,
-                'htmlContent' => $snapshotHtml,
+                'htmlContent' => $deliveryHtml,
                 'recipients' => [
                     'listIds' => [$listId],
                 ],

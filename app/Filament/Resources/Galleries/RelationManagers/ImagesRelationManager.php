@@ -2,23 +2,20 @@
 
 namespace App\Filament\Resources\Galleries\RelationManagers;
 
+use App\Modules\Media\Filament\Forms\Components\MediaPicker;
 use App\Modules\Gallery\Models\Gallery;
 use App\Modules\Gallery\Models\GalleryImage;
-use App\Support\MediaFiles;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -38,38 +35,23 @@ class ImagesRelationManager extends RelationManager
                 Section::make('Photo')
                     ->schema([
                         Html::make(fn (?GalleryImage $record): HtmlString => new HtmlString(
-                            $record?->image_path
+                            $record?->resolved_image_url
                                 ? '<div style="display:grid;gap:.5rem"><img src="'.e($record->resolved_image_url).'" alt="" style="max-width:360px;max-height:240px;object-fit:contain;border-radius:8px;background:#f3f4f6"><span style="font-size:.875rem;color:#6b7280">Image actuellement enregistrée</span></div>'
                                 : '<div style="color:#6b7280">Aucune image enregistrée.</div>'
                         ))
                             ->columnSpanFull(),
-                        Select::make('existing_image_path')
-                            ->label('Choisir une image existante')
-                            ->options(fn (): array => MediaFiles::options($this->galleryDirectory()))
-                            ->searchable()
-                            ->live()
-                            ->dehydrated(false)
-                            ->afterStateUpdated(fn (Set $set, ?string $state): mixed => filled($state) ? $set('image_path', $state) : null)
-                            ->helperText('Liste les fichiers déjà présents dans le dossier de cette galerie.'),
-                        FileUpload::make('image_path')
+                        MediaPicker::make('media_asset_id')
                             ->label('Image')
-                            ->disk('public')
-                            ->directory(fn (): string => $this->galleryDirectory())
-                            ->visibility('public')
-                            ->fetchFileInformation(false)
-                            ->preventFilePathTampering(true, fn (string $file): bool => MediaFiles::isAllowed($file, $this->galleryDirectory()))
-                            ->image()
-                            ->imagePreviewHeight('220')
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                            ->maxSize(5120)
-                            ->helperText('Ajouter une image, ou en déposer une nouvelle pour remplacer l’image actuelle.')
-                            ->required(fn (?GalleryImage $record): bool => $record === null),
+                            ->relationship('media', 'display_name')
+                            ->imagesOnly()
+                            ->helperText('Choisir une image de la médiathèque centrale.'),
                     ]),
                 Section::make('Texte')
                     ->columns(2)
                     ->schema([
                         TextInput::make('title')
                             ->label('Titre')
+                            ->columnSpanFull()
                             ->required(),
                         TextInput::make('credit')
                             ->label('Crédit photo'),

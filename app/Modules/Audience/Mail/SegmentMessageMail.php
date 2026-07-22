@@ -36,4 +36,5 @@ class SegmentMessageMail extends Mailable
             ],
         );
     }
+
 }

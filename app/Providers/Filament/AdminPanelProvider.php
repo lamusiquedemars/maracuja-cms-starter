@@ -78,6 +78,13 @@ class AdminPanelProvider extends PanelProvider
             );
         }
 
+        if (is_dir(app_path('Modules/Media/Filament/Resources'))) {
+            $panel->discoverResources(
+                in: app_path('Modules/Media/Filament/Resources'),
+                for: 'App\Modules\Media\Filament\Resources',
+            );
+        }
+
         return $panel;
     }
 }
