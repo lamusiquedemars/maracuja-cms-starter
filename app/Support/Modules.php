@@ -32,6 +32,9 @@ class Modules
             'gallery' => app_path('Modules/Gallery'),
             'contact_form' => app_path('Modules/ContactForm'),
             'inquiries' => app_path('Modules/Inquiries'),
+            'appointments' => app_path('Modules/Appointments'),
+            'contacts' => app_path('Modules/Contacts'),
+            'conversations' => app_path('Modules/Conversations'),
             'audience' => app_path('Modules/Audience'),
             'campaigns' => app_path('Modules/Campaigns'),
         ];

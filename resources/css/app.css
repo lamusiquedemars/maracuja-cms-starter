@@ -39,6 +39,7 @@
 @import './modules/contact.css';
 @import './modules/events.css';
 @import './modules/gallery.css';
+@import './modules/conversations.css';
 
 @import './themes/default.css';
 @import './themes/maracuja.css';

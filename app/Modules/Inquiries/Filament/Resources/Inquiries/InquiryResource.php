@@ -9,7 +9,6 @@ use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\Inquiries\Support\InquiryReplyLink;
 use App\Support\Modules;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -29,6 +28,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema as SchemaFacade;
+use UnitEnum;
 
 class InquiryResource extends Resource
 {
@@ -109,6 +109,11 @@ class InquiryResource extends Resource
                     ->formatStateUsing(fn (InquiryStatus|string|null $state) => self::statusFrom($state)?->label() ?? '-')
                     ->color(fn (InquiryStatus|string|null $state) => self::statusFrom($state)?->color() ?? 'gray')
                     ->sortable(),
+                TextColumn::make('conversation.public_reference')
+                    ->label('Conversation')
+                    ->placeholder('—')
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('name')
                     ->label('Nom')
                     ->searchable(),

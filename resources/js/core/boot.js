@@ -5,6 +5,7 @@ import { initCarousel } from '../components/carousel';
 import { initLightbox } from '../components/lightbox';
 import { initFormStates } from '../components/form';
 import { initBackToTop } from '../components/back-to-top';
+import { initConversation } from '../components/conversation';
 
 const initializers = [
     initNavigation,
@@ -14,6 +15,7 @@ const initializers = [
     initLightbox,
     initFormStates,
     initBackToTop,
+    initConversation,
 ];
 
 export function bootMaracujaUi(root = document) {

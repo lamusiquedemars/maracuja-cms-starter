@@ -43,6 +43,77 @@ return [
         ],
     ],
 
+    'conversations' => [
+        'retention_days' => env('MARACUJA_CONVERSATIONS_RETENTION_DAYS', 90),
+        'public' => [
+            'button_label' => env('MARACUJA_CONVERSATIONS_BUTTON_LABEL', 'Nous écrire'),
+            'title' => env('MARACUJA_CONVERSATIONS_TITLE', 'Comment pouvons-nous vous aider ?'),
+            'notice' => env(
+                'MARACUJA_CONVERSATIONS_NOTICE',
+                'Évitez de transmettre des mots de passe, coordonnées bancaires ou documents sensibles.',
+            ),
+            'handover_message' => env(
+                'MARACUJA_CONVERSATIONS_HANDOVER_MESSAGE',
+                'Votre demande de prise en charge humaine a bien été enregistrée.',
+            ),
+        ],
+        'callback' => [
+            'ask_name' => 'Bien sûr. Comment souhaitez-vous que nous vous appelions ?',
+            'invalid_name' => 'Indiquez simplement le prénom ou le nom que nous pouvons utiliser.',
+            'ask_preference' => 'Préférez-vous être contacté par WhatsApp, téléphone ou email ?',
+            'invalid_preference' => 'Répondez simplement : WhatsApp, téléphone ou email.',
+            'ask_email' => 'À quelle adresse email pouvons-nous vous répondre ?',
+            'ask_phone' => 'Quel numéro pouvons-nous utiliser pour vous contacter ?',
+            'invalid_email' => 'Cette adresse email ne semble pas valide. Pouvez-vous la vérifier ?',
+            'invalid_phone' => 'Ce numéro ne semble pas complet. Pouvez-vous le vérifier avec son indicatif ?',
+            'ask_consent' => 'Autorisez-vous notre équipe à utiliser ces coordonnées uniquement pour répondre à cette demande ? Répondez oui ou non.',
+            'invalid_consent' => 'Merci de répondre clairement par oui ou non.',
+            'consent_refused' => 'Aucune coordonnée n’a été enregistrée. Vous pouvez continuer directement sur WhatsApp.',
+            'completed' => 'Merci. Votre demande a été enregistrée et notre équipe pourra vous recontacter.',
+        ],
+        'notifications' => [
+            'enabled' => env('MARACUJA_CONVERSATIONS_NOTIFICATIONS_ENABLED', true),
+            'recipient' => env('MARACUJA_CONVERSATIONS_NOTIFICATION_EMAIL'),
+            'subject' => 'Nouvelle demande de rappel depuis le site',
+        ],
+        'whatsapp' => [
+            'enabled' => env('MARACUJA_CONVERSATIONS_WHATSAPP_ENABLED', false),
+            'number' => env('MARACUJA_CONVERSATIONS_WHATSAPP_NUMBER'),
+            'direct_message' => env(
+                'MARACUJA_CONVERSATIONS_WHATSAPP_DIRECT_MESSAGE',
+                'Bonjour, je souhaite contacter votre équipe.',
+            ),
+            'message' => env(
+                'MARACUJA_CONVERSATIONS_WHATSAPP_MESSAGE',
+                'Bonjour, je viens du site. Ma référence de conversation est {{reference}}.',
+            ),
+            'contact_message' => env(
+                'MARACUJA_CONVERSATIONS_WHATSAPP_CONTACT_MESSAGE',
+                'Bonjour, je vous contacte au sujet de votre demande {{reference}}.',
+            ),
+        ],
+        'ai' => [
+            'provider' => env('MARACUJA_CONVERSATIONS_AI_PROVIDER', 'fake'),
+            'model' => env('OPENAI_CONVERSATIONS_MODEL', 'gpt-5.6-luna'),
+            'reasoning_effort' => env('OPENAI_CONVERSATIONS_REASONING_EFFORT', 'low'),
+            'max_output_tokens' => env('OPENAI_CONVERSATIONS_MAX_OUTPUT_TOKENS', 600),
+            'history_messages' => env('MARACUJA_CONVERSATIONS_HISTORY_MESSAGES', 12),
+            'timeout_seconds' => env('MARACUJA_CONVERSATIONS_AI_TIMEOUT', 20),
+            'instructions' => env(
+                'MARACUJA_CONVERSATIONS_AI_INSTRUCTIONS',
+                'You are the initial assistant for this organization. Be clear, calm and concise. '
+                .'Ask only for information necessary to understand and route the request. '
+                .'Do not promise outcomes, impersonate a professional, or request passwords, bank details, '
+                .'identity documents, or unnecessarily sensitive information. Escalate urgent, sensitive, '
+                .'uncertain, or explicitly requested cases to a human.',
+            ),
+            'fallback_message' => env(
+                'MARACUJA_CONVERSATIONS_AI_FALLBACK_MESSAGE',
+                'Je ne peux pas répondre pour le moment. Votre demande va être transmise à une personne.',
+            ),
+        ],
+    ],
+
     'modules' => [
         'site_settings' => env('MARACUJA_MODULE_SITE_SETTINGS', true),
         'notices' => env('MARACUJA_MODULE_NOTICES', true),
@@ -55,6 +126,9 @@ return [
         'gallery' => env('MARACUJA_MODULE_GALLERY', true),
         'contact_form' => env('MARACUJA_MODULE_CONTACT_FORM', true),
         'inquiries' => env('MARACUJA_MODULE_INQUIRIES', true),
+        'contacts' => env('MARACUJA_MODULE_CONTACTS', true),
+        'conversations' => env('MARACUJA_MODULE_CONVERSATIONS', false),
+        'appointments' => env('MARACUJA_MODULE_APPOINTMENTS', false),
         'audience' => env('MARACUJA_MODULE_AUDIENCE', false),
         'campaigns' => env('MARACUJA_MODULE_CAMPAIGNS', false),
     ],
@@ -77,6 +151,9 @@ return [
             'gallery' => false,
             'contact_form' => true,
             'inquiries' => false,
+            'contacts' => true,
+            'conversations' => false,
+            'appointments' => false,
             'audience' => false,
             'campaigns' => false,
         ],
@@ -92,6 +169,9 @@ return [
             'gallery' => true,
             'contact_form' => true,
             'inquiries' => true,
+            'contacts' => true,
+            'conversations' => false,
+            'appointments' => false,
             'audience' => false,
             'campaigns' => false,
         ],
@@ -107,6 +187,9 @@ return [
             'gallery' => true,
             'contact_form' => true,
             'inquiries' => true,
+            'contacts' => true,
+            'conversations' => true,
+            'appointments' => true,
             'audience' => true,
             'campaigns' => false,
         ],

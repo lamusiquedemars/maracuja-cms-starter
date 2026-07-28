@@ -2,13 +2,17 @@
 
 namespace App\Modules\Audience\Models;
 
+use App\Modules\Contacts\Actions\ResolveContact;
+use App\Modules\Contacts\Models\Contact;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class AudienceContact extends Model
 {
     protected $fillable = [
+        'contact_id',
         'first_name',
         'last_name',
         'organization_name',
@@ -35,6 +39,14 @@ class AudienceContact extends Model
         });
 
         static::saving(function (AudienceContact $contact): void {
+            $contact->contact_id = ResolveContact::run([
+                'first_name' => $contact->first_name,
+                'last_name' => $contact->last_name,
+                'organization_name' => $contact->organization_name,
+                'email' => $contact->email,
+                'source' => 'audience',
+            ])->getKey();
+
             if ($contact->isDirty('unsubscribed_at') && $contact->unsubscribed_at !== null) {
                 $contact->accepts_email = false;
 
@@ -62,6 +74,11 @@ class AudienceContact extends Model
     public function segments(): BelongsToMany
     {
         return $this->belongsToMany(AudienceSegment::class, 'audience_contact_segment');
+    }
+
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
     }
 
     public function canReceiveSegmentEmail(): bool
