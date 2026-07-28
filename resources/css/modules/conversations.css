@@ -38,6 +38,10 @@
     padding: 0 var(--space-md) var(--space-md);
 }
 
+.conversation-widget__actions [hidden] {
+    display: none;
+}
+
 .conversation-widget__choice {
     margin: 0;
     font-weight: 600;
