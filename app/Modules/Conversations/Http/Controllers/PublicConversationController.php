@@ -67,6 +67,11 @@ class PublicConversationController extends Controller
             409,
             'Cette conversation est terminée.',
         );
+        abort_if(
+            $conversation->inquiry()->exists(),
+            409,
+            'Cette demande est enregistrée et ne reçoit plus de nouveaux messages.',
+        );
 
         $collectingCallback = $this->collectingCallback($conversation);
         AddMessage::run($conversation, $data['content'], MessageAuthorType::Visitor);

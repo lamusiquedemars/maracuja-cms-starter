@@ -40,6 +40,7 @@ export function initConversation(root = document) {
     const reference = widget.querySelector('[data-conversation-reference]');
     const whatsapp = widget.querySelector('[data-conversation-whatsapp]');
     const callback = widget.querySelector('[data-conversation-callback]');
+    const completed = widget.querySelector('[data-conversation-completed]');
     let loaded = false;
 
     const render = (payload) => {
@@ -49,12 +50,15 @@ export function initConversation(root = document) {
             : '';
         const conversation = payload.conversation;
         const whatsappUrl = conversation?.whatsapp_url ?? payload.whatsapp_url;
+        const inquiryCreated = Boolean(conversation?.inquiry_created);
 
         status.textContent = '';
+        form.hidden = inquiryCreated;
+        completed.hidden = !inquiryCreated;
         whatsapp.hidden = !whatsappUrl;
         callback.hidden = !conversation?.callback_enabled
             || conversation?.collecting_contact
-            || conversation?.inquiry_created;
+            || inquiryCreated;
         if (whatsappUrl) {
             const destination = whatsappDestination(whatsappUrl);
             whatsapp.href = destination.url;

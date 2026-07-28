@@ -119,6 +119,22 @@
     border-top: 1px solid var(--color-line);
 }
 
+.conversation-widget__form[hidden],
+.conversation-widget__completed[hidden] {
+    display: none;
+}
+
+.conversation-widget__completed {
+    flex: none;
+    padding: var(--space-md);
+    border-top: 1px solid var(--color-line);
+    background: var(--color-surface-muted);
+}
+
+.conversation-widget__completed p {
+    margin: var(--space-xs) 0 0;
+}
+
 .conversation-widget__form textarea {
     width: 100%;
     resize: vertical;

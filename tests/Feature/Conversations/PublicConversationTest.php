@@ -174,5 +174,12 @@ class PublicConversationTest extends TestCase
         $this->assertSame('+33 6 12 34 56 78', $inquiry->phone);
         $this->assertNull($inquiry->email);
         $this->assertNotNull($inquiry->consent_at);
+
+        $messageCount = $inquiry->conversation->messages()->count();
+
+        $this->postJson('/conversation/messages', ['content' => 'Il y a encore quelqu’un ?'])
+            ->assertConflict();
+
+        $this->assertSame($messageCount, $inquiry->conversation->messages()->count());
     }
 }
