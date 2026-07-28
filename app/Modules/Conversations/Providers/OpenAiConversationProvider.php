@@ -72,7 +72,7 @@ class OpenAiConversationProvider implements ConversationAiProvider
 
         $validated = Validator::make($data, [
             'reply' => ['required', 'string', 'max:5000'],
-            'summary' => ['required', 'string', 'max:5000'],
+            'summary' => ['present', 'string', 'max:5000'],
             'topic' => ['nullable', 'string', 'max:255'],
             'urgency' => ['required', Rule::enum(ConversationUrgency::class)],
             'requires_human' => ['required', 'boolean'],
