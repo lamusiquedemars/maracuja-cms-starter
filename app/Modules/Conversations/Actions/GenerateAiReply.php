@@ -3,6 +3,7 @@
 namespace App\Modules\Conversations\Actions;
 
 use App\Modules\Conversations\Enums\ConversationStatus;
+use App\Modules\Conversations\Enums\HandoverReason;
 use App\Modules\Conversations\Enums\MessageAuthorType;
 use App\Modules\Conversations\Exceptions\AiProviderException;
 use App\Modules\Conversations\Models\Conversation;
@@ -24,10 +25,15 @@ class GenerateAiReply
                 'exception' => $exception::class,
             ]);
 
+            $qualification = $conversation->qualification ?? [];
+            data_set($qualification, '_routing.contact_options_suggested', true);
+
             $conversation->forceFill([
                 'status' => ConversationStatus::NeedsHuman,
                 'ai_enabled' => false,
+                'qualification' => $qualification,
                 'human_handover_at' => now(),
+                'handover_reason' => HandoverReason::TechnicalError,
             ])->save();
 
             if (! $exception instanceof AiProviderException) {

@@ -6,6 +6,7 @@ use App\Modules\Conversations\Contracts\ConversationAiProvider;
 use App\Modules\Conversations\Data\AiConversationRequest;
 use App\Modules\Conversations\Data\AiConversationResult;
 use App\Modules\Conversations\Enums\ConversationUrgency;
+use App\Modules\Conversations\Enums\HandoverReason;
 use App\Modules\Conversations\Exceptions\AiProviderException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -76,6 +77,7 @@ class OpenAiConversationProvider implements ConversationAiProvider
             'topic' => ['nullable', 'string', 'max:255'],
             'urgency' => ['required', Rule::enum(ConversationUrgency::class)],
             'requires_human' => ['required', 'boolean'],
+            'handover_reason' => ['present', 'nullable', Rule::enum(HandoverReason::class)],
             'offer_contact_options' => ['required', 'boolean'],
             'qualification' => ['required', 'array'],
             'qualification.category' => ['nullable', 'string', 'max:120'],
@@ -89,6 +91,9 @@ class OpenAiConversationProvider implements ConversationAiProvider
             topic: $validated['topic'],
             urgency: ConversationUrgency::from($validated['urgency']),
             requiresHuman: $validated['requires_human'],
+            handoverReason: filled($validated['handover_reason'])
+                ? HandoverReason::from($validated['handover_reason'])
+                : null,
             offerContactOptions: $validated['offer_contact_options'],
             qualification: $validated['qualification'],
         );
@@ -110,6 +115,15 @@ class OpenAiConversationProvider implements ConversationAiProvider
                     'enum' => array_column(ConversationUrgency::cases(), 'value'),
                 ],
                 'requires_human' => ['type' => 'boolean'],
+                'handover_reason' => [
+                    'anyOf' => [
+                        [
+                            'type' => 'string',
+                            'enum' => array_column(HandoverReason::cases(), 'value'),
+                        ],
+                        ['type' => 'null'],
+                    ],
+                ],
                 'offer_contact_options' => ['type' => 'boolean'],
                 'qualification' => [
                     'type' => 'object',
@@ -128,6 +142,7 @@ class OpenAiConversationProvider implements ConversationAiProvider
                 'topic',
                 'urgency',
                 'requires_human',
+                'handover_reason',
                 'offer_contact_options',
                 'qualification',
             ],

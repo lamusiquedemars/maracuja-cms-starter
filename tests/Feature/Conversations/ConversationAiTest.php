@@ -37,6 +37,7 @@ class ConversationAiTest extends TestCase
                             'topic' => 'assistance',
                             'urgency' => 'high',
                             'requires_human' => true,
+                            'handover_reason' => 'urgency',
                             'offer_contact_options' => true,
                             'qualification' => [
                                 'category' => 'assistance',
@@ -59,6 +60,7 @@ class ConversationAiTest extends TestCase
         $this->assertSame(ConversationStatus::NeedsHuman, $conversation->status);
         $this->assertSame(ConversationUrgency::High, $conversation->urgency);
         $this->assertFalse($conversation->ai_enabled);
+        $this->assertSame('urgency', $conversation->handover_reason->value);
         $this->assertSame('assistance', $conversation->qualification['category']);
         $this->assertTrue($conversation->qualification['_routing']['contact_options_suggested']);
 
@@ -99,6 +101,7 @@ class ConversationAiTest extends TestCase
 
         $this->assertSame(MessageAuthorType::System, $reply->author_type);
         $this->assertSame(ConversationStatus::NeedsHuman, $conversation->refresh()->status);
+        $this->assertSame('technical_error', $conversation->handover_reason->value);
 
         Log::shouldHaveReceived('warning')->once()->withArgs(
             fn (string $message, array $context): bool => $message === 'Conversation AI provider failed.'

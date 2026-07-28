@@ -77,7 +77,7 @@ return [
             'model' => env('OPENAI_CONVERSATIONS_MODEL', 'gpt-5.6-luna'),
             'reasoning_effort' => env('OPENAI_CONVERSATIONS_REASONING_EFFORT', 'low'),
             'max_output_tokens' => env('OPENAI_CONVERSATIONS_MAX_OUTPUT_TOKENS', 600),
-            'history_messages' => env('MARACUJA_CONVERSATIONS_HISTORY_MESSAGES', 12),
+            'history_messages' => env('MARACUJA_CONVERSATIONS_HISTORY_MESSAGES', 24),
             'timeout_seconds' => env('MARACUJA_CONVERSATIONS_AI_TIMEOUT', 20),
             'fallback_message' => env(
                 'MARACUJA_CONVERSATIONS_AI_FALLBACK_MESSAGE',

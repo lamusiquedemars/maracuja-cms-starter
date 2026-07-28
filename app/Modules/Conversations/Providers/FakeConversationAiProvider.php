@@ -17,6 +17,7 @@ class FakeConversationAiProvider implements ConversationAiProvider
             topic: null,
             urgency: ConversationUrgency::Unknown,
             requiresHuman: false,
+            handoverReason: null,
             offerContactOptions: false,
         );
     }

@@ -34,7 +34,7 @@
         </section>
 
         <aside class="space-y-6">
-            <x-filament::section heading="Conversation">
+            <x-filament::section heading="À traiter">
                 <dl class="space-y-3 text-sm">
                     <div>
                         <dt class="text-gray-500">Référence</dt>
@@ -49,25 +49,17 @@
                         <dd>{{ $conversation->urgency->label() }}</dd>
                     </div>
                     <div>
-                        <dt class="text-gray-500">Canal</dt>
-                        <dd>{{ $conversation->channel->value }}</dd>
-                    </div>
-                    <div>
                         <dt class="text-gray-500">Responsable</dt>
                         <dd>{{ $conversation->assignedUser?->name ?? 'Non attribuée' }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-gray-500">Démarrée le</dt>
-                        <dd>{{ $conversation->created_at?->format('d/m/Y H:i') }}</dd>
                     </div>
                     <div>
                         <dt class="text-gray-500">Dernière interaction</dt>
                         <dd>{{ $conversation->last_message_at?->format('d/m/Y H:i') }}</dd>
                     </div>
-                    @if ($conversation->human_handover_at)
+                    @if ($conversation->handover_reason)
                         <div>
-                            <dt class="text-gray-500">Prise en charge demandée le</dt>
-                            <dd>{{ $conversation->human_handover_at->format('d/m/Y H:i') }}</dd>
+                            <dt class="text-gray-500">Pourquoi cette demande apparaît ici</dt>
+                            <dd>{{ $conversation->handover_reason->label() }}</dd>
                         </div>
                     @endif
                     @if ($conversation->inquiry)
@@ -98,6 +90,30 @@
                     <p class="text-sm text-gray-500">Visiteur non identifié.</p>
                 @endif
             </x-filament::section>
+
+            <details class="rounded-xl border border-gray-200 bg-white p-4 text-sm dark:border-gray-700 dark:bg-gray-900">
+                <summary class="cursor-pointer font-medium">Informations techniques</summary>
+                <dl class="mt-4 space-y-3">
+                    <div>
+                        <dt class="text-gray-500">Canal d’origine</dt>
+                        <dd>{{ $conversation->channel->value }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Conversation créée le</dt>
+                        <dd>{{ $conversation->created_at?->format('d/m/Y H:i') }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">IA active</dt>
+                        <dd>{{ $conversation->ai_enabled ? 'Oui' : 'Non' }}</dd>
+                    </div>
+                    @if ($conversation->human_handover_at)
+                        <div>
+                            <dt class="text-gray-500">Transfert déclenché le</dt>
+                            <dd>{{ $conversation->human_handover_at->format('d/m/Y H:i') }}</dd>
+                        </div>
+                    @endif
+                </dl>
+            </details>
         </aside>
     </div>
 </x-filament-panels::page>

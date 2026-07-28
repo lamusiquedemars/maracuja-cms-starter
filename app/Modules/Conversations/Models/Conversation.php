@@ -7,6 +7,7 @@ use App\Modules\Contacts\Models\Contact;
 use App\Modules\Conversations\Enums\ConversationChannel;
 use App\Modules\Conversations\Enums\ConversationStatus;
 use App\Modules\Conversations\Enums\ConversationUrgency;
+use App\Modules\Conversations\Enums\HandoverReason;
 use App\Modules\Inquiries\Models\Inquiry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,7 @@ class Conversation extends Model
         'ai_enabled',
         'last_message_at',
         'human_handover_at',
+        'handover_reason',
         'closed_at',
     ];
 
@@ -48,6 +50,7 @@ class Conversation extends Model
             'ai_enabled' => 'boolean',
             'last_message_at' => 'datetime',
             'human_handover_at' => 'datetime',
+            'handover_reason' => HandoverReason::class,
             'closed_at' => 'datetime',
         ];
     }

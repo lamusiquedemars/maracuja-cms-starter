@@ -102,6 +102,7 @@ INSTRUCTIONS;
             '- Available options: '.($channels !== [] ? implode('; ', $channels) : 'none; continue the initial conversation only'),
             '- When more than one option is available, explain the practical difference and let the visitor choose.',
             '- Set offer_contact_options to true only when a configured trigger is met and at least one contact option is available.',
+            '- Set requires_human to true only when the assistant must stop. When true, set handover_reason to the closest configured reason; otherwise set handover_reason to null.',
         ];
 
         if (filled($settings->urgency_guidance)) {

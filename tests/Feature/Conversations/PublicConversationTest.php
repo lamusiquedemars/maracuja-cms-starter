@@ -33,8 +33,9 @@ class PublicConversationTest extends TestCase
         ])->assertCreated();
 
         $response
-            ->assertJsonPath('messages.0.author', 'visitor')
-            ->assertJsonPath('messages.1.author', 'ai')
+            ->assertJsonPath('messages.0.author', 'ai')
+            ->assertJsonPath('messages.1.author', 'visitor')
+            ->assertJsonPath('messages.2.author', 'ai')
             ->assertJsonPath('conversation.status', 'ai_active');
 
         $this->assertSame(1, Conversation::query()->count());
@@ -49,8 +50,23 @@ class PublicConversationTest extends TestCase
 
         $this->getJson('/conversation/session')
             ->assertOk()
-            ->assertJsonCount(2, 'messages')
-            ->assertJsonPath('messages.0.content', 'Premier message.');
+            ->assertJsonCount(3, 'messages')
+            ->assertJsonPath('messages.1.content', 'Premier message.');
+    }
+
+    public function test_opening_the_widget_shows_a_welcome_message_without_creating_a_conversation(): void
+    {
+        ConversationSetting::current()->update([
+            'welcome_message' => 'Bonjour, comment pouvons-nous vous orienter ?',
+        ]);
+
+        $this->getJson('/conversation/session')
+            ->assertOk()
+            ->assertJsonPath('conversation', null)
+            ->assertJsonPath('messages.0.author', 'ai')
+            ->assertJsonPath('messages.0.content', 'Bonjour, comment pouvons-nous vous orienter ?');
+
+        $this->assertSame(0, Conversation::query()->count());
     }
 
     public function test_internal_notes_are_never_returned_by_the_public_endpoint(): void
@@ -118,6 +134,7 @@ class PublicConversationTest extends TestCase
         $url = $response->json('conversation.whatsapp_url');
 
         $this->assertFalse($conversation->ai_enabled);
+        $this->assertSame('visitor_request', $conversation->handover_reason->value);
         $this->assertStringContainsString('https://wa.me/33612345678', $url);
         $this->assertStringContainsString(rawurlencode($conversation->public_reference), $url);
         $this->assertStringNotContainsString('confidentiel', $url);
@@ -133,6 +150,34 @@ class PublicConversationTest extends TestCase
         $this->getJson('/conversation/session')
             ->assertOk()
             ->assertJsonPath('whatsapp_url', null);
+    }
+
+    public function test_the_configured_interaction_limit_stops_ai_and_exposes_contact_options(): void
+    {
+        ConversationSetting::current()->update([
+            'max_visitor_messages' => 2,
+            'warning_at_message' => 1,
+            'interaction_limit_message' => 'Choisissez maintenant un moyen de contact.',
+            'callback_enabled' => true,
+            'callback_channels' => ['phone'],
+        ]);
+
+        $this->postJson('/conversation/messages', ['content' => 'Premier message.'])
+            ->assertCreated()
+            ->assertJsonPath('conversation.accepting_messages', true);
+
+        $response = $this->postJson('/conversation/messages', ['content' => 'Deuxième message.'])
+            ->assertCreated()
+            ->assertJsonPath('conversation.status', 'needs_human')
+            ->assertJsonPath('conversation.accepting_messages', false)
+            ->assertJsonPath('conversation.callback_enabled', true);
+
+        $conversation = Conversation::query()->sole();
+        $this->assertSame('interaction_limit', $conversation->handover_reason->value);
+        $this->assertSame(
+            'Choisissez maintenant un moyen de contact.',
+            collect($response->json('messages'))->last()['content'],
+        );
     }
 
     public function test_a_visitor_can_request_a_callback_without_a_qualification_form(): void

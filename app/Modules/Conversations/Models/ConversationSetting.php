@@ -32,6 +32,7 @@ class ConversationSetting extends Model
         'is_enabled',
         'widget_button_label',
         'widget_title',
+        'welcome_message',
         'privacy_notice',
         'assistant_language',
         'assistant_tone',
@@ -49,6 +50,9 @@ class ConversationSetting extends Model
         'callback_channels',
         'notification_email',
         'expected_response_time',
+        'max_visitor_messages',
+        'warning_at_message',
+        'interaction_limit_message',
         'additional_instructions',
     ];
 
@@ -61,6 +65,8 @@ class ConversationSetting extends Model
             'whatsapp_enabled' => 'boolean',
             'callback_enabled' => 'boolean',
             'callback_channels' => 'array',
+            'max_visitor_messages' => 'integer',
+            'warning_at_message' => 'integer',
         ];
     }
 
@@ -76,6 +82,12 @@ class ConversationSetting extends Model
             if ($setting->callback_enabled && blank($setting->callback_channels)) {
                 throw ValidationException::withMessages([
                     'callback_channels' => 'Sélectionnez au moins un canal de rappel.',
+                ]);
+            }
+
+            if ($setting->warning_at_message >= $setting->max_visitor_messages) {
+                throw ValidationException::withMessages([
+                    'warning_at_message' => 'L’avertissement doit intervenir avant la limite de conversation.',
                 ]);
             }
         });
@@ -95,6 +107,7 @@ class ConversationSetting extends Model
             'is_enabled' => false,
             'widget_button_label' => 'Nous écrire',
             'widget_title' => 'Comment pouvons-nous vous aider ?',
+            'welcome_message' => 'Bonjour ! Expliquez brièvement l’objet de votre demande pour que nous puissions vous orienter.',
             'privacy_notice' => 'Ne transmettez pas de mots de passe, coordonnées bancaires ou documents sensibles.',
             'assistant_language' => 'fr',
             'assistant_tone' => 'clair, calme et concis',
@@ -112,6 +125,9 @@ class ConversationSetting extends Model
             'callback_channels' => ['phone', 'email'],
             'notification_email' => null,
             'expected_response_time' => null,
+            'max_visitor_messages' => 12,
+            'warning_at_message' => 10,
+            'interaction_limit_message' => 'Nous avons atteint la limite de cet échange initial. Vous pouvez choisir l’un des moyens de contact proposés.',
             'additional_instructions' => null,
         ];
     }

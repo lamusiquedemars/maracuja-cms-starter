@@ -51,9 +51,11 @@ export function initConversation(root = document) {
         const conversation = payload.conversation;
         const whatsappUrl = conversation?.whatsapp_url ?? payload.whatsapp_url;
         const inquiryCreated = Boolean(conversation?.inquiry_created);
+        const acceptingMessages = conversation === null
+            || Boolean(conversation?.accepting_messages);
 
         status.textContent = '';
-        form.hidden = inquiryCreated;
+        form.hidden = inquiryCreated || !acceptingMessages;
         completed.hidden = !inquiryCreated;
         whatsapp.hidden = !whatsappUrl;
         callback.hidden = !conversation?.callback_enabled

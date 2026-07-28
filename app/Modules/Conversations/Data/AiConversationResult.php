@@ -3,6 +3,7 @@
 namespace App\Modules\Conversations\Data;
 
 use App\Modules\Conversations\Enums\ConversationUrgency;
+use App\Modules\Conversations\Enums\HandoverReason;
 
 readonly class AiConversationResult
 {
@@ -15,6 +16,7 @@ readonly class AiConversationResult
         public ?string $topic,
         public ConversationUrgency $urgency,
         public bool $requiresHuman,
+        public ?HandoverReason $handoverReason,
         public bool $offerContactOptions,
         public array $qualification = [],
     ) {}

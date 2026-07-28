@@ -65,6 +65,12 @@ class ConversationSettingResource extends Resource
                         ->required()
                         ->maxLength(255)
                         ->columnSpanFull(),
+                    Textarea::make('welcome_message')
+                        ->label('Message d’accueil')
+                        ->rows(2)
+                        ->maxLength(1000)
+                        ->helperText('Affiché dès l’ouverture, sans créer de conversation tant que le visiteur n’écrit pas.')
+                        ->columnSpanFull(),
                     Textarea::make('privacy_notice')
                         ->label('Avertissement affiché au visiteur')
                         ->rows(2)
@@ -189,6 +195,32 @@ class ConversationSettingResource extends Resource
                         ->rows(5)
                         ->maxLength(4000),
                 ]),
+
+            Section::make('Limites et fonctionnement avancé')
+                ->description('Réglages techniques protégés. Les valeurs proposées conviennent à la plupart des sites.')
+                ->schema([
+                    TextInput::make('max_visitor_messages')
+                        ->label('Nombre maximal de messages du visiteur')
+                        ->numeric()
+                        ->minValue(4)
+                        ->maxValue(50)
+                        ->required(),
+                    TextInput::make('warning_at_message')
+                        ->label('Avertir l’assistant à partir du message')
+                        ->numeric()
+                        ->minValue(2)
+                        ->maxValue(49)
+                        ->required(),
+                    Textarea::make('interaction_limit_message')
+                        ->label('Message affiché lorsque la limite est atteinte')
+                        ->rows(2)
+                        ->maxLength(1000)
+                        ->required()
+                        ->columnSpanFull(),
+                ])
+                ->columns(2)
+                ->collapsed()
+                ->collapsible(),
         ]);
     }
 

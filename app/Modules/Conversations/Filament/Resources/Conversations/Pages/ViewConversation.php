@@ -6,6 +6,7 @@ use App\Modules\Conversations\Actions\AddMessage;
 use App\Modules\Conversations\Enums\ConversationStatus;
 use App\Modules\Conversations\Enums\MessageAuthorType;
 use App\Modules\Conversations\Enums\MessageVisibility;
+use App\Modules\Conversations\Enums\HandoverReason;
 use App\Modules\Conversations\Filament\Resources\Conversations\ConversationResource;
 use App\Modules\Conversations\Support\WhatsAppHandoverLink;
 use Filament\Actions\Action;
@@ -35,6 +36,7 @@ class ViewConversation extends ViewRecord
                         'status' => ConversationStatus::HumanActive,
                         'ai_enabled' => false,
                         'human_handover_at' => $this->record->human_handover_at ?? now(),
+                        'handover_reason' => $this->record->handover_reason ?? HandoverReason::Manual,
                     ]);
 
                     Notification::make()->title('Conversation prise en charge')->success()->send();

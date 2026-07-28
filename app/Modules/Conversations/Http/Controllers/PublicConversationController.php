@@ -11,6 +11,7 @@ use App\Modules\Conversations\Actions\GenerateAiReply;
 use App\Modules\Conversations\Actions\RequestHumanHandover;
 use App\Modules\Conversations\Actions\StartAnonymousConversation;
 use App\Modules\Conversations\Enums\ConversationStatus;
+use App\Modules\Conversations\Enums\HandoverReason;
 use App\Modules\Conversations\Enums\MessageAuthorType;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;
@@ -34,7 +35,7 @@ class PublicConversationController extends Controller
         return response()->json($conversation === null
             ? [
                 'conversation' => null,
-                'messages' => [],
+                'messages' => $this->welcomeMessages(),
                 'whatsapp_url' => null,
             ]
             : $this->payload($conversation));
@@ -60,6 +61,14 @@ class PublicConversationController extends Controller
             $conversation = $anonymousSession->conversation;
             $request->session()->put(self::SESSION_ID, $conversation->getKey());
             $request->session()->put(self::SESSION_TOKEN, $anonymousSession->token);
+
+            if (filled(ConversationSetting::current()->welcome_message)) {
+                AddMessage::run(
+                    $conversation,
+                    (string) ConversationSetting::current()->welcome_message,
+                    MessageAuthorType::Ai,
+                );
+            }
         }
 
         abort_if(
@@ -79,7 +88,20 @@ class PublicConversationController extends Controller
         if ($collectingCallback) {
             CollectCallbackDetail::run($conversation, $data['content']);
         } elseif ($conversation->ai_enabled && $conversation->status !== ConversationStatus::HumanActive) {
-            GenerateAiReply::run($conversation);
+            $settings = ConversationSetting::current();
+            $visitorMessageCount = $conversation->publicMessages()
+                ->where('author_type', MessageAuthorType::Visitor->value)
+                ->count();
+
+            if ($visitorMessageCount >= $settings->max_visitor_messages) {
+                RequestHumanHandover::run(
+                    $conversation,
+                    HandoverReason::InteractionLimit,
+                    (string) $settings->interaction_limit_message,
+                );
+            } else {
+                GenerateAiReply::run($conversation);
+            }
         }
 
         return response()->json($this->payload($conversation->refresh()), 201);
@@ -156,6 +178,7 @@ class PublicConversationController extends Controller
                 ], true),
                 'collecting_contact' => $this->collectingCallback($conversation),
                 'inquiry_created' => $conversation->inquiry()->exists(),
+                'accepting_messages' => $conversation->ai_enabled || $this->collectingCallback($conversation),
                 'offer_contact_options' => $offerContactOptions,
                 'callback_enabled' => $offerContactOptions && $settings->callback_enabled,
                 'whatsapp_url' => $offerContactOptions && $settings->whatsapp_enabled
@@ -179,6 +202,23 @@ class PublicConversationController extends Controller
     private function collectingCallback(Conversation $conversation): bool
     {
         return filled(data_get($conversation->qualification, 'callback.step'));
+    }
+
+    /**
+     * @return list<array{id: string, author: string, content: string, sent_at: null}>
+     */
+    private function welcomeMessages(): array
+    {
+        $message = ConversationSetting::current()->welcome_message;
+
+        return filled($message)
+            ? [[
+                'id' => 'welcome',
+                'author' => MessageAuthorType::Ai->value,
+                'content' => (string) $message,
+                'sent_at' => null,
+            ]]
+            : [];
     }
 
     private function enabled(): bool
