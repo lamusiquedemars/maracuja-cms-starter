@@ -11,7 +11,8 @@
 
 .conversation-widget__panel {
     width: min(24rem, calc(100vw - 2rem));
-    max-height: min(42rem, calc(100vh - 2rem));
+    height: min(44rem, calc(100dvh - 2rem));
+    max-height: calc(100dvh - 2rem);
     margin-bottom: var(--space-sm);
     overflow: hidden;
     border: 1px solid var(--color-line);
@@ -33,6 +34,7 @@
 
 .conversation-widget__actions {
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
     flex: none;
     gap: var(--space-xs);
     padding: 0 var(--space-md) var(--space-md);
@@ -74,6 +76,15 @@
 
 .conversation-widget__notice {
     background: var(--color-surface-muted);
+}
+
+.conversation-widget__notice summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.conversation-widget__notice p {
+    margin: var(--space-xs) 0 0;
 }
 
 .conversation-widget__messages {
@@ -126,6 +137,7 @@
 
     .conversation-widget__panel {
         width: calc(100vw - 1rem);
-        max-height: calc(100vh - 1rem);
+        height: calc(100dvh - 1rem);
+        max-height: calc(100dvh - 1rem);
     }
 }
