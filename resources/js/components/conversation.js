@@ -39,6 +39,7 @@ export function initConversation(root = document) {
     const status = widget.querySelector('[data-conversation-status]');
     const reference = widget.querySelector('[data-conversation-reference]');
     const whatsapp = widget.querySelector('[data-conversation-whatsapp]');
+    const callback = widget.querySelector('[data-conversation-callback]');
     let loaded = false;
 
     const render = (payload) => {
@@ -51,6 +52,9 @@ export function initConversation(root = document) {
 
         status.textContent = '';
         whatsapp.hidden = !whatsappUrl;
+        callback.hidden = !conversation?.callback_enabled
+            || conversation?.collecting_contact
+            || conversation?.inquiry_created;
         if (whatsappUrl) {
             const destination = whatsappDestination(whatsappUrl);
             whatsapp.href = destination.url;
@@ -95,6 +99,22 @@ export function initConversation(root = document) {
         panel.hidden = true;
         toggle.setAttribute('aria-expanded', 'false');
         toggle.focus();
+    });
+
+    callback.addEventListener('click', async () => {
+        callback.disabled = true;
+        status.textContent = 'Préparation de votre demande…';
+
+        try {
+            render(await request(widget.dataset.callbackUrl, {
+                method: 'POST',
+                body: '{}',
+            }));
+            input.focus();
+        } catch {
+            callback.disabled = false;
+            status.textContent = 'La demande de contact n’a pas pu être préparée.';
+        }
     });
 
     form.addEventListener('submit', async (event) => {

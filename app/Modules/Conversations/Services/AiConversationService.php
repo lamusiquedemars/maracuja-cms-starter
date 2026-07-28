@@ -8,6 +8,7 @@ use App\Modules\Conversations\Data\AiConversationRequest;
 use App\Modules\Conversations\Enums\ConversationStatus;
 use App\Modules\Conversations\Enums\MessageAuthorType;
 use App\Modules\Conversations\Models\Conversation;
+use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Conversations\Models\Message;
 
 class AiConversationService
@@ -33,7 +34,7 @@ class AiConversationService
             ->all();
 
         $result = $this->provider->respond(new AiConversationRequest(
-            instructions: (string) config('maracuja.conversations.ai.instructions'),
+            instructions: app(ConversationInstructionsBuilder::class)->build(ConversationSetting::current()),
             messages: $messages,
             safetyIdentifier: hash_hmac('sha256', (string) $conversation->getKey(), (string) config('app.key')),
         ));
@@ -42,7 +43,12 @@ class AiConversationService
             'summary' => $result->summary,
             'topic' => $result->topic,
             'urgency' => $result->urgency,
-            'qualification' => $result->qualification,
+            'qualification' => [
+                ...$result->qualification,
+                '_routing' => [
+                    'contact_options_suggested' => $result->offerContactOptions,
+                ],
+            ],
             'status' => $result->requiresHuman
                 ? ConversationStatus::NeedsHuman
                 : ConversationStatus::AiActive,

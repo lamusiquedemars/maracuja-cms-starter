@@ -76,6 +76,7 @@ class OpenAiConversationProvider implements ConversationAiProvider
             'topic' => ['nullable', 'string', 'max:255'],
             'urgency' => ['required', Rule::enum(ConversationUrgency::class)],
             'requires_human' => ['required', 'boolean'],
+            'offer_contact_options' => ['required', 'boolean'],
             'qualification' => ['required', 'array'],
             'qualification.category' => ['nullable', 'string', 'max:120'],
             'qualification.location' => ['nullable', 'string', 'max:120'],
@@ -88,6 +89,7 @@ class OpenAiConversationProvider implements ConversationAiProvider
             topic: $validated['topic'],
             urgency: ConversationUrgency::from($validated['urgency']),
             requiresHuman: $validated['requires_human'],
+            offerContactOptions: $validated['offer_contact_options'],
             qualification: $validated['qualification'],
         );
     }
@@ -108,6 +110,7 @@ class OpenAiConversationProvider implements ConversationAiProvider
                     'enum' => array_column(ConversationUrgency::cases(), 'value'),
                 ],
                 'requires_human' => ['type' => 'boolean'],
+                'offer_contact_options' => ['type' => 'boolean'],
                 'qualification' => [
                     'type' => 'object',
                     'properties' => [
@@ -119,7 +122,15 @@ class OpenAiConversationProvider implements ConversationAiProvider
                     'additionalProperties' => false,
                 ],
             ],
-            'required' => ['reply', 'summary', 'topic', 'urgency', 'requires_human', 'qualification'],
+            'required' => [
+                'reply',
+                'summary',
+                'topic',
+                'urgency',
+                'requires_human',
+                'offer_contact_options',
+                'qualification',
+            ],
             'additionalProperties' => false,
         ];
     }

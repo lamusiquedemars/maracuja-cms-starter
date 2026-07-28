@@ -13,6 +13,7 @@ use App\Modules\Conversations\Actions\StartAnonymousConversation;
 use App\Modules\Conversations\Enums\ConversationStatus;
 use App\Modules\Conversations\Enums\MessageAuthorType;
 use App\Modules\Conversations\Models\Conversation;
+use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Conversations\Support\WhatsAppHandoverLink;
 use App\Support\Modules;
 use Illuminate\Http\JsonResponse;
@@ -26,7 +27,7 @@ class PublicConversationController extends Controller
 
     public function show(Request $request): JsonResponse
     {
-        abort_unless(Modules::enabled('conversations'), 404);
+        abort_unless($this->enabled(), 404);
 
         $conversation = $this->fromSession($request);
 
@@ -34,14 +35,14 @@ class PublicConversationController extends Controller
             ? [
                 'conversation' => null,
                 'messages' => [],
-                'whatsapp_url' => WhatsAppHandoverLink::make(),
+                'whatsapp_url' => null,
             ]
             : $this->payload($conversation));
     }
 
     public function store(Request $request): JsonResponse
     {
-        abort_unless(Modules::enabled('conversations'), 404);
+        abort_unless($this->enabled(), 404);
 
         $data = $request->validate([
             'website' => ['nullable', 'string', 'max:0'],
@@ -81,7 +82,7 @@ class PublicConversationController extends Controller
 
     public function handover(Request $request): JsonResponse
     {
-        abort_unless(Modules::enabled('conversations'), 404);
+        abort_unless($this->enabled(), 404);
 
         $conversation = $this->fromSession($request);
         abort_if($conversation === null, 404);
@@ -99,7 +100,12 @@ class PublicConversationController extends Controller
 
     public function callback(Request $request): JsonResponse
     {
-        abort_unless(Modules::enabled('conversations') && Modules::enabled('inquiries'), 404);
+        abort_unless(
+            $this->enabled()
+                && Modules::enabled('inquiries')
+                && ConversationSetting::current()->callback_enabled,
+            404,
+        );
 
         $conversation = $this->fromSession($request);
         abort_if($conversation === null, 404);
@@ -128,6 +134,13 @@ class PublicConversationController extends Controller
      */
     private function payload(Conversation $conversation): array
     {
+        $settings = ConversationSetting::current();
+        $offerContactOptions = (bool) data_get(
+            $conversation->qualification,
+            '_routing.contact_options_suggested',
+            false,
+        );
+
         return [
             'conversation' => [
                 'reference' => $conversation->public_reference,
@@ -138,7 +151,11 @@ class PublicConversationController extends Controller
                 ], true),
                 'collecting_contact' => $this->collectingCallback($conversation),
                 'inquiry_created' => $conversation->inquiry()->exists(),
-                'whatsapp_url' => WhatsAppHandoverLink::make($conversation),
+                'offer_contact_options' => $offerContactOptions,
+                'callback_enabled' => $offerContactOptions && $settings->callback_enabled,
+                'whatsapp_url' => $offerContactOptions && $settings->whatsapp_enabled
+                    ? WhatsAppHandoverLink::make($conversation)
+                    : null,
             ],
             'messages' => $conversation->publicMessages()
                 ->oldest('sent_at')
@@ -150,12 +167,17 @@ class PublicConversationController extends Controller
                     'sent_at' => $message->sent_at?->toIso8601String(),
                 ])
                 ->all(),
-            'whatsapp_url' => WhatsAppHandoverLink::make($conversation),
+            'whatsapp_url' => null,
         ];
     }
 
     private function collectingCallback(Conversation $conversation): bool
     {
         return filled(data_get($conversation->qualification, 'callback.step'));
+    }
+
+    private function enabled(): bool
+    {
+        return Modules::enabled('conversations') && ConversationSetting::current()->is_enabled;
     }
 }

@@ -46,12 +46,6 @@ return [
     'conversations' => [
         'retention_days' => env('MARACUJA_CONVERSATIONS_RETENTION_DAYS', 90),
         'public' => [
-            'button_label' => env('MARACUJA_CONVERSATIONS_BUTTON_LABEL', 'Nous écrire'),
-            'title' => env('MARACUJA_CONVERSATIONS_TITLE', 'Comment pouvons-nous vous aider ?'),
-            'notice' => env(
-                'MARACUJA_CONVERSATIONS_NOTICE',
-                'Évitez de transmettre des mots de passe, coordonnées bancaires ou documents sensibles.',
-            ),
             'handover_message' => env(
                 'MARACUJA_CONVERSATIONS_HANDOVER_MESSAGE',
                 'Votre demande de prise en charge humaine a bien été enregistrée.',
@@ -76,22 +70,6 @@ return [
             'recipient' => env('MARACUJA_CONVERSATIONS_NOTIFICATION_EMAIL'),
             'subject' => 'Nouvelle demande de rappel depuis le site',
         ],
-        'whatsapp' => [
-            'enabled' => env('MARACUJA_CONVERSATIONS_WHATSAPP_ENABLED', false),
-            'number' => env('MARACUJA_CONVERSATIONS_WHATSAPP_NUMBER'),
-            'direct_message' => env(
-                'MARACUJA_CONVERSATIONS_WHATSAPP_DIRECT_MESSAGE',
-                'Bonjour, je souhaite contacter votre équipe.',
-            ),
-            'message' => env(
-                'MARACUJA_CONVERSATIONS_WHATSAPP_MESSAGE',
-                'Bonjour, je viens du site. Ma référence de conversation est {{reference}}.',
-            ),
-            'contact_message' => env(
-                'MARACUJA_CONVERSATIONS_WHATSAPP_CONTACT_MESSAGE',
-                'Bonjour, je vous contacte au sujet de votre demande {{reference}}.',
-            ),
-        ],
         'ai' => [
             'provider' => env('MARACUJA_CONVERSATIONS_AI_PROVIDER', 'fake'),
             'model' => env('OPENAI_CONVERSATIONS_MODEL', 'gpt-5.6-luna'),
@@ -99,14 +77,6 @@ return [
             'max_output_tokens' => env('OPENAI_CONVERSATIONS_MAX_OUTPUT_TOKENS', 600),
             'history_messages' => env('MARACUJA_CONVERSATIONS_HISTORY_MESSAGES', 12),
             'timeout_seconds' => env('MARACUJA_CONVERSATIONS_AI_TIMEOUT', 20),
-            'instructions' => env(
-                'MARACUJA_CONVERSATIONS_AI_INSTRUCTIONS',
-                'You are the initial assistant for this organization. Be clear, calm and concise. '
-                .'Ask only for information necessary to understand and route the request. '
-                .'Do not promise outcomes, impersonate a professional, or request passwords, bank details, '
-                .'identity documents, or unnecessarily sensitive information. Escalate urgent, sensitive, '
-                .'uncertain, or explicitly requested cases to a human.',
-            ),
             'fallback_message' => env(
                 'MARACUJA_CONVERSATIONS_AI_FALLBACK_MESSAGE',
                 'Je ne peux pas répondre pour le moment. Votre demande va être transmise à une personne.',

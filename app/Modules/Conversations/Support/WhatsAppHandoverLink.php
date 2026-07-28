@@ -3,38 +3,40 @@
 namespace App\Modules\Conversations\Support;
 
 use App\Modules\Conversations\Models\Conversation;
+use App\Modules\Conversations\Models\ConversationSetting;
 
 class WhatsAppHandoverLink
 {
     public static function make(?Conversation $conversation = null): ?string
     {
-        if (! config('maracuja.conversations.whatsapp.enabled')) {
+        $settings = ConversationSetting::current();
+
+        if (! $settings->whatsapp_enabled) {
             return null;
         }
 
         $number = preg_replace(
             '/\D/',
             '',
-            (string) config('maracuja.conversations.whatsapp.number'),
+            (string) $settings->whatsapp_number,
         );
 
         if (blank($number)) {
             return null;
         }
 
-        $message = $conversation === null
-            ? (string) config('maracuja.conversations.whatsapp.direct_message')
-            : str_replace(
-                '{{reference}}',
-                $conversation->public_reference,
-                (string) config('maracuja.conversations.whatsapp.message'),
-            );
+        $message = str_replace(
+            '{{reference}}',
+            $conversation?->public_reference ?? '',
+            (string) $settings->whatsapp_message_template,
+        );
 
         return "https://wa.me/{$number}?text=".rawurlencode(trim($message));
     }
 
     public static function makeForContact(Conversation $conversation): ?string
     {
+        $settings = ConversationSetting::current();
         $phone = preg_replace(
             '/\D/',
             '',
@@ -48,7 +50,7 @@ class WhatsAppHandoverLink
         $message = str_replace(
             '{{reference}}',
             $conversation->public_reference,
-            (string) config('maracuja.conversations.whatsapp.contact_message'),
+            (string) $settings->whatsapp_contact_message_template,
         );
 
         return "https://wa.me/{$phone}?text=".rawurlencode(trim($message));

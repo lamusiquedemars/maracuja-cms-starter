@@ -5,6 +5,7 @@ namespace App\Modules\Conversations\Actions;
 use App\Modules\Contacts\Actions\ResolveContact;
 use App\Modules\Conversations\Mail\ConversationCallbackReceived;
 use App\Modules\Conversations\Models\Conversation;
+use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Inquiries\Enums\InquiryStatus;
 use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\SiteSettings\Models\SiteSetting;
@@ -69,7 +70,8 @@ class CreateInquiryFromConversation
         });
 
         if ($created && config('maracuja.conversations.notifications.enabled')) {
-            $recipient = config('maracuja.conversations.notifications.recipient')
+            $recipient = ConversationSetting::current()->notification_email
+                ?: config('maracuja.conversations.notifications.recipient')
                 ?: SiteSetting::current()->contact_email;
 
             if (filled($recipient)) {

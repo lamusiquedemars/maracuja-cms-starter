@@ -1,8 +1,11 @@
+@php($conversationSettings = \App\Modules\Conversations\Models\ConversationSetting::current())
+
 <div
     class="conversation-widget"
     data-conversation-widget
     data-history-url="{{ route('conversations.public.show') }}"
     data-message-url="{{ route('conversations.public.store') }}"
+    data-callback-url="{{ route('conversations.public.callback') }}"
 >
     <button
         class="btn btn--primary conversation-widget__toggle"
@@ -11,7 +14,7 @@
         aria-controls="conversation-panel"
         data-conversation-toggle
     >
-        {{ config('maracuja.conversations.public.button_label') }}
+        {{ $conversationSettings->widget_button_label }}
     </button>
 
     <aside
@@ -23,14 +26,14 @@
     >
         <header class="conversation-widget__header">
             <div>
-                <strong>{{ config('maracuja.conversations.public.title') }}</strong>
+                <strong>{{ $conversationSettings->widget_title }}</strong>
                 <small data-conversation-reference></small>
             </div>
             <button type="button" aria-label="Fermer la conversation" data-conversation-close>×</button>
         </header>
 
         <div class="conversation-widget__notice">
-            {{ config('maracuja.conversations.public.notice') }}
+            {{ $conversationSettings->privacy_notice }}
         </div>
 
         <div
@@ -47,6 +50,9 @@
             <a class="btn btn--secondary" href="#" target="_blank" rel="nofollow noopener" hidden data-conversation-whatsapp>
                 Continuer sur WhatsApp
             </a>
+            <button class="btn btn--secondary" type="button" hidden data-conversation-callback>
+                Être contacté
+            </button>
         </div>
 
         <form class="conversation-widget__form" data-conversation-form>

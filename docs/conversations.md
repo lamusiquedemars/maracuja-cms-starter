@@ -1,8 +1,8 @@
 # Conversations
 
 Le module `Conversations` fournit un accueil conversationnel progressif, une
-reprise humaine et une boîte de réception Filament. Il ne remplace ni un
-professionnel ni un canal d’urgence.
+orientation vers les canaux configurés et une boîte de réception Filament. Il
+ne remplace ni un professionnel ni un canal d’urgence.
 
 ## Activation
 
@@ -22,30 +22,47 @@ OPENAI_CONVERSATIONS_REASONING_EFFORT=low
 OPENAI_CONVERSATIONS_MAX_OUTPUT_TOKENS=600
 ```
 
-La clé reste exclusivement dans l’environnement serveur. L’adaptateur utilise
+La clé reste exclusivement dans l’environnement serveur. Le fournisseur, le
+modèle et ses limites techniques restent également dans l’environnement.
+L’adaptateur utilise
 la Responses API avec une sortie JSON Schema stricte, `store: false`, un
 historique borné et un identifiant de sécurité pseudonymisé. Un autre
 fournisseur implémente simplement `ConversationAiProvider`.
 
-Les instructions génériques peuvent être remplacées avec
-`MARACUJA_CONVERSATIONS_AI_INSTRUCTIONS`. Chaque site doit définir son propre
-profil métier, ses limites, sa langue et ses règles de transfert humain.
+## Paramétrage par site
+
+Après la migration, la page **Accueil > Accueil conversationnel** permet de
+configurer :
+
+- le contexte de l’organisation, la langue et le ton ;
+- les informations minimales que l’assistant peut demander ;
+- les critères d’urgence et les moments où proposer une orientation ;
+- WhatsApp, la demande de contact et les canaux autorisés ;
+- les textes publics, les messages WhatsApp et les notifications ;
+- des instructions particulières bornées.
+
+Ces réglages sont enregistrés dans `conversation_settings`, séparément des
+secrets. `ConversationInstructionsBuilder` assemble le profil du site avec les
+protections universelles codées dans le starter. Un site ne peut donc pas
+remplacer librement le prompt système ni retirer ces protections.
 
 ## WhatsApp
 
-```dotenv
-MARACUJA_CONVERSATIONS_WHATSAPP_ENABLED=true
-MARACUJA_CONVERSATIONS_WHATSAPP_NUMBER=33612345678
-MARACUJA_CONVERSATIONS_WHATSAPP_DIRECT_MESSAGE="Bonjour, je souhaite contacter votre équipe."
-MARACUJA_CONVERSATIONS_WHATSAPP_MESSAGE="Bonjour, ma référence est {{reference}}."
-```
+WhatsApp se configure dans l’administration. Aucun lien n’est présenté avant
+que l’IA ait compris le contexte minimal ou détecté un autre déclencheur
+configuré. Le signal structuré `offer_contact_options` contrôle cet affichage :
+l’IA choisit le moment de la proposition, jamais le canal à la place du
+visiteur.
 
-Le lien direct utilise un message sans référence tant qu’aucune conversation
-n’existe. Après un échange, le lien `wa.me` contient uniquement un texte
-configuré et la référence publique.
+Après l’orientation, le lien `wa.me` contient uniquement le texte configuré et
+la référence publique.
 Il ne contient jamais le résumé ou les messages. Cette V1 ne synchronise aucun
 message WhatsApp. Un futur adaptateur WhatsApp Business pourra recevoir et
 émettre des messages en conservant `ConversationChannel::WhatsApp`.
+
+Si la demande de contact est activée, le second choix lance une collecte
+progressive dans le fil : nom d’usage, canal, coordonnée et consentement. Une
+`Inquiry` n’est créée qu’après ce consentement explicite.
 
 ## Contacts et Audience
 

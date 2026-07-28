@@ -6,6 +6,7 @@ use App\Modules\Conversations\Actions\AddMessage;
 use App\Modules\Conversations\Enums\MessageAuthorType;
 use App\Modules\Conversations\Enums\MessageVisibility;
 use App\Modules\Conversations\Models\Conversation;
+use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Inquiries\Models\Inquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,6 +21,7 @@ class PublicConversationTest extends TestCase
 
         config()->set('maracuja.modules.conversations', true);
         config()->set('maracuja.conversations.ai.provider', 'fake');
+        ConversationSetting::current()->update(['is_enabled' => true]);
     }
 
     public function test_the_first_message_starts_a_session_without_a_qualification_form(): void
@@ -97,12 +99,11 @@ class PublicConversationTest extends TestCase
 
     public function test_human_handover_stops_ai_and_whatsapp_contains_only_the_public_reference(): void
     {
-        config()->set('maracuja.conversations.whatsapp.enabled', true);
-        config()->set('maracuja.conversations.whatsapp.number', '+33 6 12 34 56 78');
-        config()->set(
-            'maracuja.conversations.whatsapp.message',
-            'Bonjour, référence {{reference}}.',
-        );
+        ConversationSetting::current()->update([
+            'whatsapp_enabled' => true,
+            'whatsapp_number' => '+33 6 12 34 56 78',
+            'whatsapp_message_template' => 'Bonjour, référence {{reference}}.',
+        ]);
 
         $this->postJson('/conversation/messages', [
             'content' => 'Détail confidentiel qui ne doit pas être dans URL.',
@@ -122,24 +123,25 @@ class PublicConversationTest extends TestCase
         $this->assertStringNotContainsString('confidentiel', $url);
     }
 
-    public function test_direct_whatsapp_is_available_before_starting_a_conversation(): void
+    public function test_contact_channels_are_not_exposed_before_the_ai_routes_the_conversation(): void
     {
-        config()->set('maracuja.conversations.whatsapp.enabled', true);
-        config()->set('maracuja.conversations.whatsapp.number', '+55 65 99999-0000');
-        config()->set('maracuja.conversations.whatsapp.direct_message', 'Bonjour, contact direct.');
+        ConversationSetting::current()->update([
+            'whatsapp_enabled' => true,
+            'whatsapp_number' => '+55 65 99999-0000',
+        ]);
 
         $this->getJson('/conversation/session')
             ->assertOk()
-            ->assertJsonPath(
-                'whatsapp_url',
-                fn (string $url): bool => str_starts_with($url, 'https://wa.me/5565999990000')
-                    && str_contains(rawurldecode($url), 'Bonjour, contact direct.')
-                    && ! str_contains($url, '{{reference}}'),
-            );
+            ->assertJsonPath('whatsapp_url', null);
     }
 
     public function test_a_visitor_can_request_a_callback_without_a_qualification_form(): void
     {
+        ConversationSetting::current()->update([
+            'callback_enabled' => true,
+            'callback_channels' => ['whatsapp', 'phone', 'email'],
+        ]);
+
         $this->postJson('/conversation/messages', [
             'content' => 'Je souhaite parler à une personne.',
         ])->assertCreated();

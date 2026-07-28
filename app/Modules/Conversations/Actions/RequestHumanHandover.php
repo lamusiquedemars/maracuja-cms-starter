@@ -12,9 +12,13 @@ class RequestHumanHandover
 {
     public static function run(Conversation $conversation): Message
     {
+        $qualification = $conversation->qualification ?? [];
+        data_set($qualification, '_routing.contact_options_suggested', true);
+
         $conversation->forceFill([
             'status' => ConversationStatus::NeedsHuman,
             'ai_enabled' => false,
+            'qualification' => $qualification,
             'human_handover_at' => $conversation->human_handover_at ?? now(),
         ])->save();
         HumanHandoverRequested::dispatch($conversation);

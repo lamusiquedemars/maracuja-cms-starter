@@ -37,6 +37,7 @@ class ConversationAiTest extends TestCase
                             'topic' => 'assistance',
                             'urgency' => 'high',
                             'requires_human' => true,
+                            'offer_contact_options' => true,
                             'qualification' => [
                                 'category' => 'assistance',
                                 'location' => null,
@@ -59,6 +60,7 @@ class ConversationAiTest extends TestCase
         $this->assertSame(ConversationUrgency::High, $conversation->urgency);
         $this->assertFalse($conversation->ai_enabled);
         $this->assertSame('assistance', $conversation->qualification['category']);
+        $this->assertTrue($conversation->qualification['_routing']['contact_options_suggested']);
 
         Http::assertSent(function (Request $request): bool {
             $payload = $request->data();

@@ -15,6 +15,7 @@ readonly class AiConversationResult
         public ?string $topic,
         public ConversationUrgency $urgency,
         public bool $requiresHuman,
+        public bool $offerContactOptions,
         public array $qualification = [],
     ) {}
 }
