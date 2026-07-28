@@ -29,7 +29,13 @@ class CollectCallbackDetail
     private static function name(Conversation $conversation, array $qualification, array $data, string $answer): Message
     {
         $name = trim($answer);
-        if (mb_strlen($name) < 2 || mb_strlen($name) > 120) {
+        if (
+            mb_strlen($name) < 2
+            || mb_strlen($name) > 120
+            || self::contactPreference($name) !== null
+            || filter_var($name, FILTER_VALIDATE_EMAIL)
+            || preg_match('/(?:\D*\d){8,}/', $name)
+        ) {
             return self::prompt($conversation, config('maracuja.conversations.callback.invalid_name'));
         }
 
@@ -41,10 +47,7 @@ class CollectCallbackDetail
 
     private static function preference(Conversation $conversation, array $qualification, array $data, string $answer): Message
     {
-        $answer = mb_strtolower(trim($answer));
-        $preference = str_contains($answer, 'mail')
-            ? 'email'
-            : (str_contains($answer, 'whats') ? 'whatsapp' : (str_contains($answer, 'tél') || str_contains($answer, 'tel') ? 'phone' : null));
+        $preference = self::contactPreference($answer);
 
         if ($preference === null) {
             return self::prompt($conversation, config('maracuja.conversations.callback.invalid_preference'));
@@ -117,6 +120,17 @@ class CollectCallbackDetail
     {
         $qualification['callback'] = compact('step', 'data');
         $conversation->update(['qualification' => $qualification]);
+    }
+
+    private static function contactPreference(string $answer): ?string
+    {
+        $answer = mb_strtolower(trim($answer));
+
+        return str_contains($answer, 'mail')
+            ? 'email'
+            : (str_contains($answer, 'whats')
+                ? 'whatsapp'
+                : (str_contains($answer, 'tél') || str_contains($answer, 'tel') ? 'phone' : null));
     }
 
     private static function prompt(
