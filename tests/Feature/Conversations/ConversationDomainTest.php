@@ -21,6 +21,16 @@ class ConversationDomainTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_public_references_use_the_configured_unambiguous_format(): void
+    {
+        config()->set('maracuja.conversations.reference_length', 6);
+
+        $reference = StartAnonymousConversation::run()->conversation->public_reference;
+
+        $this->assertSame(6, strlen($reference));
+        $this->assertMatchesRegularExpression('/^[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/', $reference);
+    }
+
     public function test_it_starts_and_resumes_an_anonymous_website_conversation(): void
     {
         $session = StartAnonymousConversation::run(

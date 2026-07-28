@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 
 class StartAnonymousConversation
 {
+    private const REFERENCE_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+
     public static function run(
         ConversationChannel $channel = ConversationChannel::Website,
         ?string $locale = null,
@@ -37,9 +39,23 @@ class StartAnonymousConversation
 
     private static function uniqueReference(): string
     {
+        $length = min(16, max(6, (int) config('maracuja.conversations.reference_length', 8)));
+
         do {
-            $reference = Str::upper(Str::random(10));
+            $reference = self::randomReference($length);
         } while (Conversation::query()->where('public_reference', $reference)->exists());
+
+        return $reference;
+    }
+
+    private static function randomReference(int $length): string
+    {
+        $lastIndex = strlen(self::REFERENCE_ALPHABET) - 1;
+        $reference = '';
+
+        for ($index = 0; $index < $length; $index++) {
+            $reference .= self::REFERENCE_ALPHABET[random_int(0, $lastIndex)];
+        }
 
         return $reference;
     }

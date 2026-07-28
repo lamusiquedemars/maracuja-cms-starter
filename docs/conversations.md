@@ -81,10 +81,12 @@ Les notes internes ne sont jamais renvoyées par les endpoints publics. Les
 erreurs IA journalisent uniquement l’identifiant de conversation, le fournisseur
 et la classe d’erreur.
 
-Les conversations clôturées ou archivées peuvent être supprimées après la durée
-configurée :
+Les conversations inactives sans `Inquiry` sont archivées après un délai court.
+Les conversations déjà clôturées ou archivées sont ensuite supprimées après la
+durée de rétention :
 
 ```dotenv
+MARACUJA_CONVERSATIONS_ARCHIVE_INACTIVE_AFTER_HOURS=48
 MARACUJA_CONVERSATIONS_RETENTION_DAYS=90
 ```
 
@@ -93,8 +95,24 @@ php artisan conversations:prune --dry-run
 php artisan conversations:prune
 ```
 
+La commande est planifiée chaque jour à 03:30. Le serveur doit exécuter le
+scheduler Laravel pour que cette règle soit automatique.
+
 La suppression cascade vers les messages, mais ne supprime pas automatiquement
 le contact central, qui peut être utilisé par d’autres modules.
+
+## Références publiques
+
+La longueur est un réglage technique :
+
+```dotenv
+MARACUJA_CONVERSATIONS_REFERENCE_LENGTH=8
+```
+
+Le minimum appliqué est 6 et le maximum 16. Les références utilisent uniquement
+des majuscules et chiffres non ambigus, sans `0`, `O`, `1`, `I` ni `L`. Une
+contrainte unique en base et une nouvelle génération en cas de collision
+garantissent l’unicité.
 
 ## Points d’extension
 

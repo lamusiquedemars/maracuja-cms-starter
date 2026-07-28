@@ -45,6 +45,8 @@ return [
 
     'conversations' => [
         'retention_days' => env('MARACUJA_CONVERSATIONS_RETENTION_DAYS', 90),
+        'archive_inactive_after_hours' => env('MARACUJA_CONVERSATIONS_ARCHIVE_INACTIVE_AFTER_HOURS', 48),
+        'reference_length' => env('MARACUJA_CONVERSATIONS_REFERENCE_LENGTH', 8),
         'public' => [
             'handover_message' => env(
                 'MARACUJA_CONVERSATIONS_HANDOVER_MESSAGE',

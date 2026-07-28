@@ -61,4 +61,23 @@ class ConversationRetentionTest extends TestCase
 
         $this->assertDatabaseHas('conversations', ['id' => $conversation->id]);
     }
+
+    public function test_inactive_unqualified_conversations_are_archived_without_being_deleted(): void
+    {
+        config()->set('maracuja.conversations.archive_inactive_after_hours', 48);
+        $conversation = StartAnonymousConversation::run()->conversation;
+        AddMessage::run($conversation, 'Conversation abandonnée.', MessageAuthorType::Visitor);
+        $conversation->forceFill([
+            'status' => ConversationStatus::AiActive,
+            'last_message_at' => now()->subHours(49),
+            'updated_at' => now()->subHours(49),
+        ])->saveQuietly();
+
+        $this->artisan('conversations:prune')->assertSuccessful();
+
+        $conversation->refresh();
+        $this->assertSame(ConversationStatus::Archived, $conversation->status);
+        $this->assertFalse($conversation->ai_enabled);
+        $this->assertNotNull($conversation->closed_at);
+    }
 }
