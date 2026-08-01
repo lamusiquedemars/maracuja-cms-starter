@@ -12,6 +12,7 @@ use App\Modules\Media\Models\MediaAsset;
 use App\Modules\Media\Policies\MediaAssetPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->guardTestingDatabase();
+
         $this->commands([
             PruneConversationsCommand::class,
         ]);
@@ -55,5 +58,24 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(Conversation::class, ConversationPolicy::class);
+    }
+
+    private function guardTestingDatabase(): void
+    {
+        if (! $this->app->environment('testing')) {
+            return;
+        }
+
+        $connection = (string) config('database.default');
+        $database = (string) config("database.connections.{$connection}.database");
+
+        if ($database === ':memory:' || str_ends_with($database, '_testing')) {
+            return;
+        }
+
+        throw new RuntimeException(
+            "Tests blocked: database [{$database}] is not a dedicated testing database. "
+            .'Use a database name ending in [_testing].'
+        );
     }
 }

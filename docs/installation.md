@@ -87,6 +87,21 @@ Les tests utilisent une base distincte nommee
 `maracuja_cms_starter_testing`. Elle doit rester strictement locale et ne doit
 contenir aucune donnee a conserver.
 
+Le starter force cette base dans `phpunit.xml` et bloque le démarrage des tests
+si la base active n'est ni une base en mémoire ni une base dont le nom se
+termine par `_testing`. Cette protection ne doit jamais être retirée dans un
+projet client.
+
+Toujours lancer la suite avec `composer test`, qui efface aussi un éventuel
+cache de configuration avant PHPUnit. Ne jamais lancer `migrate:fresh`,
+`migrate:refresh` ou `db:wipe` sur une base contenant des données à conserver.
+
+Avant une migration ou une synchronisation importante, créer un snapshot :
+
+```bash
+php artisan maracuja:db:backup --name=avant-migration
+```
+
 ## Livraison
 
 Avant livraison:
