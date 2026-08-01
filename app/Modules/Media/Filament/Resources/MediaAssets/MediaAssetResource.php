@@ -127,7 +127,11 @@ class MediaAssetResource extends Resource
                     TextColumn::make('type')
                         ->badge()
                         ->formatStateUsing(fn (MediaType $state): string => $state->label())
-                        ->color(fn (MediaType $state): string => $state === MediaType::Image ? 'info' : 'gray'),
+                        ->color(fn (MediaType $state): string => match ($state) {
+                            MediaType::Image => 'info',
+                            MediaType::Video => 'warning',
+                            MediaType::Document => 'gray',
+                        }),
                     TextColumn::make('details')
                         ->state(fn (MediaAsset $record): string => collect([
                             $record->dimensionsLabel(),
@@ -156,6 +160,7 @@ class MediaAssetResource extends Resource
                     ->options([
                         MediaType::Image->value => 'Images',
                         MediaType::Document->value => 'Documents',
+                        MediaType::Video->value => 'Vidéos',
                     ]),
                 TernaryFilter::make('used')
                     ->label('Utilisation')

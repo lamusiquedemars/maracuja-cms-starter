@@ -4,6 +4,7 @@ use App\Console\Commands\MaracujaDoctorCommand;
 use App\Console\Commands\MaracujaDatabaseBackupCommand;
 use App\Console\Commands\MaracujaMediaAuditCommand;
 use App\Console\Commands\MaracujaMediaMigrateCommand;
+use App\Console\Commands\MaracujaMediaThumbnailsCommand;
 use App\Console\Commands\SendPendingAudienceMessagesCommand;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         MaracujaDatabaseBackupCommand::class,
         MaracujaMediaAuditCommand::class,
         MaracujaMediaMigrateCommand::class,
+        MaracujaMediaThumbnailsCommand::class,
         SendPendingAudienceMessagesCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {

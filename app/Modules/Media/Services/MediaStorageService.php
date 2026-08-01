@@ -13,6 +13,8 @@ use Throwable;
 
 class MediaStorageService
 {
+    public function __construct(private readonly VideoThumbnailService $videoThumbnails) {}
+
     /**
      * @param  array{display_name?: string|null, alt_text?: string|null, caption?: string|null, credit?: string|null}  $metadata
      */
@@ -37,7 +39,7 @@ class MediaStorageService
             $dimensions = $type === MediaType::Image ? @getimagesize(Storage::disk($disk)->path($path)) : false;
             $originalName = $this->cleanOriginalName($file->getClientOriginalName());
 
-            return MediaAsset::query()->create([
+            $media = MediaAsset::query()->create([
                 'type' => $type,
                 'disk' => $disk,
                 'path' => $path,
@@ -56,6 +58,12 @@ class MediaStorageService
                 'checksum' => hash_file('sha256', Storage::disk($disk)->path($path)),
                 'uploaded_by' => $uploader?->getKey(),
             ]);
+
+            if ($media->isVideo()) {
+                $this->videoThumbnails->generate($media);
+            }
+
+            return $media->refresh();
         } catch (Throwable $exception) {
             Storage::disk($disk)->delete($path);
 
@@ -80,9 +88,11 @@ class MediaStorageService
 
     private function validateSize(UploadedFile $file, MediaType $type): void
     {
-        $maximumKilobytes = (int) config(
-            $type === MediaType::Image ? 'maracuja.media.image_max_size_kb' : 'maracuja.media.document_max_size_kb'
-        );
+        $maximumKilobytes = (int) config(match ($type) {
+            MediaType::Image => 'maracuja.media.image_max_size_kb',
+            MediaType::Document => 'maracuja.media.document_max_size_kb',
+            MediaType::Video => 'maracuja.media.video_max_size_kb',
+        });
 
         if ($file->getSize() <= $maximumKilobytes * 1024) {
             return;
@@ -95,9 +105,15 @@ class MediaStorageService
 
     private function directoryFor(MediaType $type): string
     {
-        $root = (string) config(
-            $type === MediaType::Image ? 'maracuja.media.images_directory' : 'maracuja.media.documents_directory'
-        );
+        $root = (string) config(match ($type) {
+            MediaType::Image => 'maracuja.media.images_directory',
+            MediaType::Document => 'maracuja.media.documents_directory',
+            MediaType::Video => 'maracuja.media.videos_directory',
+        }, match ($type) {
+            MediaType::Image => 'media/images',
+            MediaType::Document => 'media/documents',
+            MediaType::Video => 'media/videos',
+        });
 
         return trim($root, '/').'/'.now()->format('Y/m');
     }

@@ -17,6 +17,7 @@ class MediaAsset extends Model
         'type',
         'disk',
         'path',
+        'thumbnail_path',
         'original_name',
         'display_name',
         'mime_type',
@@ -51,6 +52,10 @@ class MediaAsset extends Model
 
         static::deleted(function (MediaAsset $media): void {
             Storage::disk($media->disk)->delete($media->path);
+
+            if (filled($media->thumbnail_path)) {
+                Storage::disk($media->disk)->delete($media->thumbnail_path);
+            }
         });
     }
 
@@ -74,6 +79,11 @@ class MediaAsset extends Model
         return $query->where('type', MediaType::Document);
     }
 
+    public function scopeVideos(Builder $query): Builder
+    {
+        return $query->where('type', MediaType::Video);
+    }
+
     public function isImage(): bool
     {
         return $this->type === MediaType::Image;
@@ -82,6 +92,11 @@ class MediaAsset extends Model
     public function isDocument(): bool
     {
         return $this->type === MediaType::Document;
+    }
+
+    public function isVideo(): bool
+    {
+        return $this->type === MediaType::Video;
     }
 
     public function canBeDeleted(): bool
@@ -97,6 +112,13 @@ class MediaAsset extends Model
     public function publicPath(): string
     {
         return '/storage/'.ltrim($this->path, '/');
+    }
+
+    public function thumbnailUrl(): ?string
+    {
+        return filled($this->thumbnail_path)
+            ? Storage::disk($this->disk)->url($this->thumbnail_path)
+            : null;
     }
 
     public function formattedSize(): string

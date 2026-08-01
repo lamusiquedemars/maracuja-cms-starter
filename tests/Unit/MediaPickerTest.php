@@ -37,6 +37,15 @@ class MediaPickerTest extends TestCase
         $this->assertSame('Choisir un média', $picker->selectionModalHeading());
     }
 
+    public function test_it_can_be_restricted_to_videos(): void
+    {
+        $picker = MediaPicker::make('video_media_id')->videosOnly();
+
+        $this->assertSame(MediaType::Video, $picker->acceptedMediaType());
+        $this->assertSame(['type' => 'video'], $picker->tableArgumentsForMedia());
+        $this->assertSame('Choisir une vidéo', $picker->selectionModalHeading());
+    }
+
     public function test_it_offers_upload_inside_the_selection_modal(): void
     {
         $picker = MediaPicker::make('hero_media_id')->imagesOnly();

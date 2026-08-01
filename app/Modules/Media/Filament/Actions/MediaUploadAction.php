@@ -18,11 +18,14 @@ class MediaUploadAction
         $acceptedFileTypes = match ($type) {
             MediaType::Image => ['image/jpeg', 'image/png', 'image/webp'],
             MediaType::Document => ['application/pdf'],
-            null => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
+            MediaType::Video => ['video/mp4', 'video/webm'],
+            null => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4', 'video/webm'],
         };
-        $maximumSize = $type === MediaType::Image
-            ? (int) config('maracuja.media.image_max_size_kb')
-            : (int) config('maracuja.media.document_max_size_kb');
+        $maximumSize = (int) config(match ($type) {
+            MediaType::Image => 'maracuja.media.image_max_size_kb',
+            MediaType::Document => 'maracuja.media.document_max_size_kb',
+            MediaType::Video, null => 'maracuja.media.video_max_size_kb',
+        });
 
         return Action::make('uploadMedia')
             ->label('Importer depuis l’ordinateur')
@@ -59,7 +62,8 @@ class MediaUploadAction
         return match ($type) {
             MediaType::Image => 'Images JPEG, PNG ou WebP, 5 Mo maximum.',
             MediaType::Document => 'Documents PDF, 15 Mo maximum.',
-            null => 'Images JPEG, PNG ou WebP (5 Mo) et documents PDF (15 Mo).',
+            MediaType::Video => 'Vidéos MP4 ou WebM, 100 Mo maximum.',
+            null => 'Images JPEG, PNG ou WebP, documents PDF et vidéos MP4 ou WebM.',
         };
     }
 }

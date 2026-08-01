@@ -27,6 +27,7 @@ class MediaPicker extends ModalTableSelect
                 ->label(fn (): string => match ($this->acceptedMediaType) {
                     MediaType::Image => 'Choisir ou importer une image',
                     MediaType::Document => 'Choisir ou importer un document',
+                    MediaType::Video => 'Choisir ou importer une vidéo',
                     null => 'Choisir ou importer un média',
                 })
                 ->modalHeading($this->selectionModalHeading())
@@ -49,6 +50,13 @@ class MediaPicker extends ModalTableSelect
         return $this;
     }
 
+    public function videosOnly(): static
+    {
+        $this->acceptedMediaType = MediaType::Video;
+
+        return $this;
+    }
+
     public function acceptedMediaType(): ?MediaType
     {
         return $this->acceptedMediaType;
@@ -65,6 +73,7 @@ class MediaPicker extends ModalTableSelect
         return match ($this->acceptedMediaType) {
             MediaType::Image => 'Choisir une image',
             MediaType::Document => 'Choisir un document',
+            MediaType::Video => 'Choisir une vidéo',
             null => 'Choisir un média',
         };
     }

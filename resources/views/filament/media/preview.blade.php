@@ -2,6 +2,8 @@
     <div class="overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
         @if ($media->isImage())
             <img src="{{ $media->url() }}" alt="{{ $media->alt_text }}" class="h-auto w-full object-contain">
+        @elseif ($media->isVideo())
+            <video src="{{ $media->url() }}" controls preload="metadata" @if ($media->thumbnailUrl()) poster="{{ $media->thumbnailUrl() }}" @endif class="h-auto w-full"></video>
         @else
             <div class="flex min-h-64 flex-col items-center justify-center gap-4 p-8 text-gray-500">
                 <x-filament::icon icon="heroicon-o-document-text" class="h-16 w-16" />

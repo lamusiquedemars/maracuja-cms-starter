@@ -11,6 +11,19 @@
             style="position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: 100%; object-fit: cover"
             loading="lazy"
         >
+    @elseif ($media->isVideo())
+        @if ($media->thumbnailUrl())
+            <img
+                src="{{ $media->thumbnailUrl() }}"
+                alt=""
+                style="position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: 100%; object-fit: cover"
+                loading="lazy"
+            >
+        @else
+            <div class="flex items-center justify-center text-gray-400" style="position: absolute; inset: 0">
+                <x-filament::icon icon="heroicon-o-video-camera" class="h-14 w-14" />
+            </div>
+        @endif
     @else
         <div class="flex items-center justify-center text-gray-400" style="position: absolute; inset: 0">
             <x-filament::icon icon="heroicon-o-document-text" class="h-14 w-14" />

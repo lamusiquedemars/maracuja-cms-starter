@@ -71,6 +71,18 @@ class MediaStorageServiceTest extends TestCase
         Storage::disk('public')->assertExists($media->path);
     }
 
+    public function test_it_stores_a_video_in_the_canonical_videos_directory(): void
+    {
+        $file = UploadedFile::fake()->create('presentation.mp4', 128, 'video/mp4');
+
+        $media = app(MediaStorageService::class)->store($file);
+
+        $this->assertSame(MediaType::Video, $media->type);
+        $this->assertMatchesRegularExpression('~^media/videos/2026/07/[0-9A-HJKMNP-TV-Z]{26}\\.mp4$~', $media->path);
+        $this->assertSame('video/mp4', $media->mime_type);
+        Storage::disk('public')->assertExists($media->path);
+    }
+
     public function test_it_rejects_a_file_whose_content_type_is_not_allowed(): void
     {
         $file = UploadedFile::fake()->createWithContent('illustration.svg', '<svg><script>alert(1)</script></svg>');
