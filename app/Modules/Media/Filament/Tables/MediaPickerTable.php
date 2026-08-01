@@ -32,11 +32,13 @@ class MediaPickerTable
                         ->label('Nom')
                         ->weight('semibold')
                         ->searchable(['display_name', 'original_name', 'alt_text', 'caption', 'credit'])
+                        ->lineClamp(2)
                         ->wrap(),
                     TextColumn::make('original_name')
                         ->label('Fichier')
                         ->color('gray')
                         ->size('sm')
+                        ->lineClamp(1)
                         ->limit(40),
                     TextColumn::make('details')
                         ->state(fn (MediaAsset $record): string => collect([
@@ -45,7 +47,9 @@ class MediaPickerTable
                         ])->filter()->implode(' · '))
                         ->color('gray')
                         ->size('sm'),
-                ])->space(2),
+                ])
+                    ->space(2)
+                    ->extraAttributes(['style' => 'min-height: 6.25rem']),
             ])
             ->contentGrid([
                 'sm' => 2,
