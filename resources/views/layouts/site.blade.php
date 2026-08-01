@@ -9,6 +9,7 @@
             'type' => $seoType ?? null,
             'canonical' => $canonical ?? null,
         ]);
+        $brandLogo = $settings->logoUrl();
     @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,7 +45,13 @@
 <body class="site-shell theme-{{ config('maracuja.theme', 'default') }}">
     <header class="site-header container" data-nav>
         <a class="site-brand" href="{{ route('home') }}">
-            <span class="site-brand__mark">M</span>
+            @if ($brandLogo)
+                <span class="site-brand__mark site-brand__mark--image" aria-hidden="true">
+                    <img src="{{ $brandLogo }}" alt="">
+                </span>
+            @else
+                <span class="site-brand__mark">M</span>
+            @endif
             <span>
                 <strong>{{ $settings->site_name }}</strong>
                 @if ($settings->baseline)

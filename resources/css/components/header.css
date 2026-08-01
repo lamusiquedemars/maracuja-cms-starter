@@ -26,6 +26,18 @@
     font-weight: 800;
 }
 
+.site-brand__mark--image {
+    overflow: hidden;
+    background: transparent;
+}
+
+.site-brand__mark--image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 .site-brand small,
 .brand small {
     display: block;

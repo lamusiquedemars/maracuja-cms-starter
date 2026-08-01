@@ -35,6 +35,10 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(fn (): string => Schema::hasTable('site_settings')
                 ? SiteSetting::query()->value('site_name') ?: config('maracuja.product_name', 'Maracuja CMS')
                 : config('maracuja.product_name', 'Maracuja CMS'))
+            ->brandLogo(fn (): ?string => Schema::hasTable('site_settings')
+                ? SiteSetting::query()->first()?->logoUrl()
+                : null)
+            ->brandLogoHeight('2.5rem')
             ->colors([
                 'primary' => Color::Amber,
             ])
