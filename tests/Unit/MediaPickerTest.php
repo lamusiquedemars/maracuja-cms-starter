@@ -36,4 +36,11 @@ class MediaPickerTest extends TestCase
         $this->assertSame(['type' => null], $picker->tableArgumentsForMedia());
         $this->assertSame('Choisir un média', $picker->selectionModalHeading());
     }
+
+    public function test_it_offers_upload_inside_the_selection_modal(): void
+    {
+        $picker = MediaPicker::make('hero_media_id')->imagesOnly();
+
+        $this->assertSame('uploadMedia', $picker->selectionModalActions()[0]->getName());
+    }
 }
