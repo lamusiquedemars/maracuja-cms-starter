@@ -8,6 +8,38 @@
     color: var(--color-muted);
 }
 
+.social-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--space-xs);
+}
+
+.social-links__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 50%;
+    color: inherit;
+    transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.social-links__link:hover,
+.social-links__link:focus-visible {
+    border-color: currentColor;
+    color: var(--color-text);
+    transform: translateY(-2px);
+}
+
+.social-links__link svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    fill: currentColor;
+}
+
 @media (max-width: 760px) {
     .site-footer {
         align-items: flex-start;

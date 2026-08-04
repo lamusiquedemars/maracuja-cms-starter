@@ -91,6 +91,7 @@
 
     <footer class="site-footer container">
         <p>&copy; {{ now()->year }} {{ $settings->site_name }}</p>
+        <x-site.social-links :settings="$settings" />
         @if ($settings->contact_email)
             <a href="mailto:{{ $settings->contact_email }}">{{ $settings->contact_email }}</a>
         @endif
