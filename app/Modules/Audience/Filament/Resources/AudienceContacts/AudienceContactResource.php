@@ -67,13 +67,11 @@ class AudienceContactResource extends Resource
                 TextInput::make('last_name')
                     ->label('Nom'),
                 TextInput::make('organization_name')
-                    ->label('Organisation')
-                    ->columnSpanFull(),
+                    ->label('Organisation'),
                 TextInput::make('email')
                     ->label('Email')
                     ->email()
-                    ->required()
-                    ->columnSpanFull(),
+                    ->required(),
                 Select::make('segments')
                     ->label('Segments')
                     ->relationship('segments', 'name')
