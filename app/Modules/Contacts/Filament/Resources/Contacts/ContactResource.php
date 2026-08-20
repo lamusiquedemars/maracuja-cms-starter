@@ -53,6 +53,7 @@ class ContactResource extends Resource
     {
         return $schema->components([
             Section::make(__('admin.contacts.identity'))
+                ->columnSpanFull()
                 ->schema([
                     TextInput::make('first_name')->label(__('admin.contacts.first_name'))->maxLength(255),
                     TextInput::make('last_name')->label(__('admin.contacts.last_name'))->maxLength(255),
