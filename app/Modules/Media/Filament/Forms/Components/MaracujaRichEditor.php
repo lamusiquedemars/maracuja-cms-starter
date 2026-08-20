@@ -21,11 +21,11 @@ class MaracujaRichEditor extends RichEditor
             ->fileAttachments(false)
             ->tools([
                 RichEditorTool::make('insertImage')
-                    ->label('Insérer une image')
+                    ->label(__('admin.media.insert_image'))
                     ->action()
                     ->icon(Heroicon::OutlinedPhoto),
                 RichEditorTool::make('insertDocument')
-                    ->label('Insérer un document')
+                    ->label(__('admin.media.insert_document'))
                     ->action()
                     ->icon(Heroicon::OutlinedDocumentArrowDown),
             ])
@@ -46,16 +46,16 @@ class MaracujaRichEditor extends RichEditor
     private function insertImageAction(): Action
     {
         return Action::make('insertImage')
-            ->label('Insérer une image')
-            ->modalHeading('Choisir une image de la médiathèque')
+            ->label(__('admin.media.insert_image'))
+            ->modalHeading(__('admin.media.choose_image'))
             ->schema([
                 MediaIdSelect::make('media_id')
-                    ->label('Image')
+                    ->label(__('admin.media.image'))
                     ->imagesOnly()
                     ->required(),
                 TextInput::make('alt_text')
-                    ->label('Texte alternatif')
-                    ->helperText('Laisser vide pour reprendre le texte alternatif du média.'),
+                    ->label(__('admin.media.alt_text'))
+                    ->helperText(__('admin.media.alt_text_help')),
             ])
             ->action(function (array $arguments, array $data, MaracujaRichEditor $component): void {
                 $media = MediaAsset::query()->images()->findOrFail($data['media_id']);
@@ -76,11 +76,11 @@ class MaracujaRichEditor extends RichEditor
     private function insertDocumentAction(): Action
     {
         return Action::make('insertDocument')
-            ->label('Insérer un document')
-            ->modalHeading('Ajouter un document à télécharger')
+            ->label(__('admin.media.insert_document'))
+            ->modalHeading(__('admin.media.add_document'))
             ->schema([
                 MediaIdSelect::make('media_id')
-                    ->label('Document')
+                    ->label(__('admin.media.document'))
                     ->documentsOnly()
                     ->live()
                     ->afterStateUpdated(function (Set $set, int|string|null $state): void {
@@ -88,8 +88,8 @@ class MaracujaRichEditor extends RichEditor
                     })
                     ->required(),
                 TextInput::make('label')
-                    ->label('Texte du lien')
-                    ->placeholder('Télécharger le document')
+                    ->label(__('admin.media.link_text'))
+                    ->placeholder(__('admin.media.download_document'))
                     ->required(),
             ])
             ->action(function (array $arguments, array $data, MaracujaRichEditor $component): void {

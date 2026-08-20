@@ -34,6 +34,11 @@ class ConversationResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    public static function getNavigationLabel(): string { return __('admin.conversations.navigation'); }
+    public static function getNavigationGroup(): ?string { return __('admin.conversations.group'); }
+    public static function getModelLabel(): string { return __('admin.conversations.singular'); }
+    public static function getPluralModelLabel(): string { return __('admin.conversations.plural'); }
+
     public static function shouldRegisterNavigation(): bool
     {
         return Modules::enabled('conversations');
@@ -52,43 +57,43 @@ class ConversationResource extends Resource
                 ->latest('last_message_at'))
             ->columns([
                 TextColumn::make('public_reference')
-                    ->label('Référence')
+                    ->label(__('admin.conversations.reference'))
                     ->searchable(),
                 TextColumn::make('contact.display_name')
-                    ->label('Contact')
-                    ->default('Visiteur anonyme')
+                    ->label(__('admin.conversations.contact'))
+                    ->default(__('admin.conversations.anonymous_visitor'))
                     ->searchable(),
                 TextColumn::make('status')
-                    ->label('Statut')
+                    ->label(__('admin.conversations.status'))
                     ->badge()
                     ->formatStateUsing(fn (ConversationStatus $state): string => $state->label())
                     ->color(fn (ConversationStatus $state): string => $state->color()),
                 TextColumn::make('urgency')
-                    ->label('Urgence')
+                    ->label(__('admin.conversations.urgency'))
                     ->badge()
                     ->formatStateUsing(fn (ConversationUrgency $state): string => $state->label())
                     ->color(fn (ConversationUrgency $state): string => $state->color()),
-                TextColumn::make('topic')->label('Sujet')->limit(32)->toggleable(),
+                TextColumn::make('topic')->label(__('admin.conversations.subject'))->limit(32)->toggleable(),
                 TextColumn::make('messages.content')
-                    ->label('Dernier message')
+                    ->label(__('admin.conversations.last_message'))
                     ->getStateUsing(fn (Conversation $record): ?string => $record->messages
                         ->sortByDesc('sent_at')
                         ->first()
                         ?->content)
                     ->limit(48),
                 TextColumn::make('last_message_at')
-                    ->label('Dernier échange')
+                    ->label(__('admin.conversations.last_interaction'))
                     ->since()
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->label('Statut')
+                    ->label(__('admin.conversations.status'))
                     ->options(collect(ConversationStatus::cases())
                         ->mapWithKeys(fn (ConversationStatus $status): array => [$status->value => $status->label()])
                         ->all()),
                 SelectFilter::make('urgency')
-                    ->label('Urgence')
+                    ->label(__('admin.conversations.urgency'))
                     ->options(collect(ConversationUrgency::cases())
                         ->mapWithKeys(fn (ConversationUrgency $urgency): array => [$urgency->value => $urgency->label()])
                         ->all()),

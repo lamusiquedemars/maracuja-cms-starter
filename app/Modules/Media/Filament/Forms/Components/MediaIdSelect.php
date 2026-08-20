@@ -32,13 +32,13 @@ class MediaIdSelect extends Select
             ->preload()
             ->allowHtml()
             ->createOptionAction(fn (Action $action): Action => $action
-                ->label('Importer depuis l’ordinateur')
+                ->label(__('admin.media.upload_from_computer'))
                 ->modalHeading(fn (): string => $this->acceptedMediaType === MediaType::Image
-                    ? 'Importer une image'
-                    : 'Importer un document'))
+                    ? __('admin.media.upload_image')
+                    : __('admin.media.upload_document')))
             ->createOptionForm(fn (): array => [
                 FileUpload::make('file')
-                    ->label('Fichier')
+                    ->label(__('admin.media.file'))
                     ->storeFiles(false)
                     ->acceptedFileTypes($this->acceptedFileTypes())
                     ->maxSize($this->maximumSize())

@@ -32,6 +32,11 @@ class ContactResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    public static function getNavigationLabel(): string { return __('admin.contacts.navigation'); }
+    public static function getNavigationGroup(): ?string { return __('admin.contacts.group'); }
+    public static function getModelLabel(): string { return __('admin.contacts.singular'); }
+    public static function getPluralModelLabel(): string { return __('admin.contacts.plural'); }
+
     public static function shouldRegisterNavigation(): bool
     {
         return Modules::enabled('contacts');
@@ -45,16 +50,16 @@ class ContactResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Identité et coordonnées')
+            Section::make(__('admin.contacts.identity'))
                 ->schema([
-                    TextInput::make('first_name')->label('Prénom')->maxLength(255),
-                    TextInput::make('last_name')->label('Nom')->maxLength(255),
-                    TextInput::make('display_name')->label('Nom affiché')->maxLength(255),
-                    TextInput::make('organization_name')->label('Organisation')->maxLength(255),
-                    TextInput::make('email')->label('Email')->email()->maxLength(255),
-                    TextInput::make('phone')->label('Téléphone')->tel()->maxLength(255),
-                    TextInput::make('locale')->label('Langue')->maxLength(16),
-                    TextInput::make('country_code')->label('Pays')->length(2),
+                    TextInput::make('first_name')->label(__('admin.contacts.first_name'))->maxLength(255),
+                    TextInput::make('last_name')->label(__('admin.contacts.last_name'))->maxLength(255),
+                    TextInput::make('display_name')->label(__('admin.contacts.display_name'))->maxLength(255),
+                    TextInput::make('organization_name')->label(__('admin.contacts.organization'))->maxLength(255),
+                    TextInput::make('email')->label(__('admin.contacts.email'))->email()->maxLength(255),
+                    TextInput::make('phone')->label(__('admin.contacts.phone'))->tel()->maxLength(255),
+                    TextInput::make('locale')->label(__('admin.contacts.language'))->maxLength(16),
+                    TextInput::make('country_code')->label(__('admin.contacts.country'))->length(2),
                 ])
                 ->columns(2),
         ]);
@@ -65,14 +70,14 @@ class ContactResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('display_name')
-                    ->label('Contact')
-                    ->default(fn (Contact $record): string => trim("{$record->first_name} {$record->last_name}") ?: 'Sans nom')
+                    ->label(__('admin.conversations.contact'))
+                    ->default(fn (Contact $record): string => trim("{$record->first_name} {$record->last_name}") ?: __('admin.contacts.unnamed'))
                     ->searchable(['display_name', 'first_name', 'last_name']),
-                TextColumn::make('email')->label('Email')->searchable(),
-                TextColumn::make('phone')->label('Téléphone')->searchable(),
-                TextColumn::make('organization_name')->label('Organisation')->toggleable(),
-                TextColumn::make('source')->label('Origine')->badge(),
-                TextColumn::make('updated_at')->label('Mis à jour')->dateTime()->sortable(),
+                TextColumn::make('email')->label(__('admin.contacts.email'))->searchable(),
+                TextColumn::make('phone')->label(__('admin.contacts.phone'))->searchable(),
+                TextColumn::make('organization_name')->label(__('admin.contacts.organization'))->toggleable(),
+                TextColumn::make('source')->label(__('admin.contacts.source'))->badge(),
+                TextColumn::make('updated_at')->label(__('admin.contacts.updated_at'))->dateTime()->sortable(),
             ])
             ->recordActions([
                 EditAction::make(),
