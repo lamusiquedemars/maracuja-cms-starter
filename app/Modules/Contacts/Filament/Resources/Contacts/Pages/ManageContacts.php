@@ -3,6 +3,7 @@
 namespace App\Modules\Contacts\Filament\Resources\Contacts\Pages;
 
 use App\Modules\Contacts\Filament\Resources\Contacts\ContactResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageContacts extends ManageRecords
@@ -11,6 +12,9 @@ class ManageContacts extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            CreateAction::make()
+                ->label('Créer un contact'),
+        ];
     }
 }
