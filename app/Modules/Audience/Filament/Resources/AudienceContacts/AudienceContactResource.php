@@ -21,6 +21,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -59,13 +60,15 @@ class AudienceContactResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
                 TextInput::make('first_name')
                     ->label('Prénom'),
                 TextInput::make('last_name')
                     ->label('Nom'),
                 TextInput::make('organization_name')
-                    ->label('Organisation'),
+                    ->label('Organisation')
+                    ->columnSpanFull(),
                 TextInput::make('email')
                     ->label('Email')
                     ->email()
@@ -74,7 +77,8 @@ class AudienceContactResource extends Resource
                     ->label('Segments')
                     ->relationship('segments', 'name')
                     ->multiple()
-                    ->preload(),
+                    ->preload()
+                    ->columnSpanFull(),
                 Toggle::make('accepts_email')
                     ->label('Accepte les emails')
                     ->default(true),
@@ -124,7 +128,8 @@ class AudienceContactResource extends Resource
                     ->label('Accepte les emails'),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->modalWidth(Width::FourExtraLarge),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
