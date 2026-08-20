@@ -25,7 +25,7 @@ class ConversationAdminTest extends TestCase
 
     public function test_admin_can_open_the_inbox_and_conversation_timeline(): void
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN, 'is_admin' => true]);
         $conversation = StartAnonymousConversation::run()->conversation;
         AddMessage::run($conversation, 'Message visible dans la boîte.', MessageAuthorType::Visitor);
 
@@ -57,7 +57,7 @@ class ConversationAdminTest extends TestCase
 
     public function test_non_admin_cannot_access_conversation_records(): void
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create(['role' => User::ROLE_VIEWER, 'is_admin' => false]);
         $conversation = StartAnonymousConversation::run()->conversation;
 
         $this->assertFalse(Gate::forUser($user)->allows('viewAny', Conversation::class));
@@ -70,7 +70,7 @@ class ConversationAdminTest extends TestCase
 
     public function test_conversations_cannot_be_deleted_from_the_inbox(): void
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN, 'is_admin' => true]);
         $conversation = StartAnonymousConversation::run()->conversation;
 
         $this->assertFalse(Gate::forUser($admin)->allows('delete', $conversation));

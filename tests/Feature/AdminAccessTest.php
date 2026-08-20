@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Modules\Contacts\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase
@@ -17,19 +19,49 @@ class AdminAccessTest extends TestCase
 
     public function test_admin_user_can_access_panel(): void
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN, 'is_admin' => true]);
 
         $this->actingAs($admin)
             ->get('/admin')
             ->assertOk();
     }
 
-    public function test_non_admin_user_cannot_access_panel(): void
+    public function test_viewer_can_access_panel_in_read_only_mode(): void
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create(['role' => User::ROLE_VIEWER, 'is_admin' => false]);
 
         $this->actingAs($user)
             ->get('/admin')
-            ->assertForbidden();
+            ->assertOk();
+    }
+
+    public function test_editor_can_create_contacts(): void
+    {
+        $editor = User::factory()->create(['role' => User::ROLE_EDITOR, 'is_admin' => false]);
+
+        $this->assertTrue(Gate::forUser($editor)->allows('create', Contact::class));
+    }
+
+    public function test_viewer_cannot_create_contacts(): void
+    {
+        $viewer = User::factory()->create(['role' => User::ROLE_VIEWER, 'is_admin' => false]);
+
+        $this->assertFalse(Gate::forUser($viewer)->allows('create', Contact::class));
+    }
+
+    public function test_ivo_is_an_administrator_even_if_his_stored_role_is_viewer(): void
+    {
+        $ivo = User::factory()->create([
+            'email' => 'ivo@maracujadigital.fr',
+            'role' => User::ROLE_VIEWER,
+            'is_admin' => false,
+        ]);
+
+        $this->assertTrue($ivo->isAdministrator());
+        $this->assertTrue(Gate::forUser($ivo)->allows('create', Contact::class));
+
+        $this->actingAs($ivo)
+            ->get('/admin')
+            ->assertOk();
     }
 }

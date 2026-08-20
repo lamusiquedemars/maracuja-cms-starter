@@ -24,7 +24,7 @@ class MediaAssetPolicy
 
     public function update(User $user, MediaAsset $media): bool
     {
-        return $user->is_admin;
+        return $user->isAdministrator();
     }
 
     public function delete(User $user, MediaAsset $media): bool

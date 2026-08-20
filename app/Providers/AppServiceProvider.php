@@ -65,23 +65,38 @@ class AppServiceProvider extends ServiceProvider
 
     private function registerRoleGate(): void
     {
-        Gate::before(function (User $user, string $ability, mixed ...$arguments): ?bool {
+        Gate::before(function (User $user, string $ability, array $arguments): ?bool {
+            $subject = $arguments[0] ?? null;
+            $subjectClass = is_object($subject) ? $subject::class : $subject;
+
+            // A viewer is read-only across the entire administration. This
+            // must happen before model policies, so a permissive policy on a
+            // current or future resource cannot accidentally grant a write.
+            if (! $user->isAdministrator()
+                && ! $user->canEditContent()
+                && ! in_array($ability, ['viewAny', 'view'], true)) {
+                return false;
+            }
+
+            // Let a resource-specific policy decide first. In particular,
+            // conversations must remain undeletable, even to an administrator.
+            if ($subjectClass && Gate::getPolicyFor($subjectClass)) {
+                return null;
+            }
+
             if ($user->isAdministrator()) {
                 return true;
             }
 
-            if (in_array($ability, ['viewAny', 'view'], true)) {
-                return null;
-            }
-
-            if (! $user->canEditContent()) {
+            if ($subjectClass === SiteSetting::class) {
                 return false;
             }
 
-            $subject = $arguments[0] ?? null;
-            $subjectClass = is_object($subject) ? $subject::class : $subject;
+            if (in_array($ability, ['viewAny', 'view'], true)) {
+                return true;
+            }
 
-            return $subjectClass === SiteSetting::class ? false : null;
+            return $user->canEditContent();
         });
     }
 

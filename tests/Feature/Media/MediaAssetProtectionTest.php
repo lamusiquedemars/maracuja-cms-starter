@@ -54,8 +54,8 @@ class MediaAssetProtectionTest extends TestCase
     public function test_policy_allows_only_an_admin_to_delete_an_unused_media(): void
     {
         $media = $this->media();
-        $admin = User::factory()->create(['is_admin' => true]);
-        $user = User::factory()->create(['is_admin' => false]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN, 'is_admin' => true]);
+        $user = User::factory()->create(['role' => User::ROLE_VIEWER, 'is_admin' => false]);
         $policy = new MediaAssetPolicy;
 
         $this->assertTrue($policy->delete($admin, $media));

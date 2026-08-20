@@ -19,6 +19,7 @@ class User extends Authenticatable implements FilamentUser
     public const ROLE_ADMIN = 'admin';
     public const ROLE_EDITOR = 'editor';
     public const ROLE_VIEWER = 'viewer';
+    public const SUPER_ADMIN_EMAILS = ['ivo@maracujadigital.fr'];
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
@@ -38,7 +39,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function isAdministrator(): bool
     {
-        return $this->role === self::ROLE_ADMIN;
+        // Keep installations upgraded from the former boolean permission model
+        // working until every account has been explicitly assigned a role.
+        return $this->role === self::ROLE_ADMIN
+            || $this->is_admin
+            || in_array(strtolower($this->email), self::SUPER_ADMIN_EMAILS, true);
     }
 
     public function canEditContent(): bool
@@ -48,6 +53,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_EDITOR, self::ROLE_VIEWER], true);
+        return $this->isAdministrator()
+            || in_array($this->role, [self::ROLE_EDITOR, self::ROLE_VIEWER], true);
     }
 }

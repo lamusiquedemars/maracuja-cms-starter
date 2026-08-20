@@ -27,7 +27,7 @@ class MediaAssetResourceTest extends TestCase
 
     public function test_an_administrator_can_open_the_media_library_and_see_a_media_card(): void
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN, 'is_admin' => true]);
         $media = MediaAsset::query()->create([
             'type' => MediaType::Image,
             'disk' => 'public',
@@ -53,7 +53,7 @@ class MediaAssetResourceTest extends TestCase
 
     public function test_an_administrator_can_upload_an_image_from_the_media_library(): void
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN, 'is_admin' => true]);
         $this->actingAs($admin);
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
