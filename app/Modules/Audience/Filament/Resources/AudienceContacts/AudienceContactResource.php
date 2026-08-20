@@ -60,7 +60,7 @@ class AudienceContactResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->columns(1)
+            ->columns(['default' => 1, 'md' => 2])
             ->components([
                 TextInput::make('first_name')
                     ->label('Prénom'),
@@ -72,7 +72,8 @@ class AudienceContactResource extends Resource
                 TextInput::make('email')
                     ->label('Email')
                     ->email()
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
                 Select::make('segments')
                     ->label('Segments')
                     ->relationship('segments', 'name')
@@ -81,7 +82,8 @@ class AudienceContactResource extends Resource
                     ->columnSpanFull(),
                 Toggle::make('accepts_email')
                     ->label('Accepte les emails')
-                    ->default(true),
+                    ->default(true)
+                    ->columnSpanFull(),
                 Textarea::make('notes')
                     ->label('Notes')
                     ->columnSpanFull(),

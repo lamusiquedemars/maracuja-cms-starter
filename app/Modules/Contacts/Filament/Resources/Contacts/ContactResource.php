@@ -69,7 +69,7 @@ class ContactResource extends Resource
                     TextInput::make('locale')->label(__('admin.contacts.language'))->maxLength(16),
                     TextInput::make('country_code')->label(__('admin.contacts.country'))->length(2),
                 ])
-                ->columns(1),
+                ->columns(['default' => 1, 'md' => 2]),
         ]);
     }
 
