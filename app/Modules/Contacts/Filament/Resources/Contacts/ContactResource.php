@@ -6,11 +6,13 @@ use App\Modules\Contacts\Filament\Resources\Contacts\Pages\ManageContacts;
 use App\Modules\Contacts\Models\Contact;
 use App\Support\Modules;
 use BackedEnum;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -54,8 +56,14 @@ class ContactResource extends Resource
                 ->schema([
                     TextInput::make('first_name')->label(__('admin.contacts.first_name'))->maxLength(255),
                     TextInput::make('last_name')->label(__('admin.contacts.last_name'))->maxLength(255),
-                    TextInput::make('display_name')->label(__('admin.contacts.display_name'))->maxLength(255),
-                    TextInput::make('organization_name')->label(__('admin.contacts.organization'))->maxLength(255),
+                    TextInput::make('display_name')
+                        ->label(__('admin.contacts.display_name'))
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    TextInput::make('organization_name')
+                        ->label(__('admin.contacts.organization'))
+                        ->maxLength(255)
+                        ->columnSpanFull(),
                     TextInput::make('email')->label(__('admin.contacts.email'))->email()->maxLength(255),
                     TextInput::make('phone')->label(__('admin.contacts.phone'))->tel()->maxLength(255),
                     TextInput::make('locale')->label(__('admin.contacts.language'))->maxLength(16),
@@ -80,7 +88,14 @@ class ContactResource extends Resource
                 TextColumn::make('updated_at')->label(__('admin.contacts.updated_at'))->dateTime()->sortable(),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->label('Editar')
+                    ->modalWidth(Width::FourExtraLarge),
+                DeleteAction::make()
+                    ->label('Excluir')
+                    ->modalHeading('Excluir contato?')
+                    ->modalDescription('O contato será excluído permanentemente. As solicitações, conversas e inscrições relacionadas serão mantidas, mas desvinculadas deste contato.')
+                    ->modalSubmitActionLabel('Excluir contato'),
             ])
             ->toolbarActions([]);
     }
