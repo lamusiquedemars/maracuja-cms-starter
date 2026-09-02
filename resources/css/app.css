@@ -33,6 +33,7 @@
 @import './components/disclosure.css';
 @import './components/reveal.css';
 @import './components/carousel.css';
+@import './components/acquisition-consent.css';
 
 @import './modules/news.css';
 @import './modules/articles.css';

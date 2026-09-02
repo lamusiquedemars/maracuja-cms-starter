@@ -123,6 +123,11 @@ class InquiryResource extends Resource
                 TextColumn::make('subject')
                     ->label('Sujet')
                     ->searchable(),
+                TextColumn::make('attribution_source')
+                    ->label('Acquisition')
+                    ->placeholder('Directe / inconnue')
+                    ->description(fn (Inquiry $record): ?string => $record->attribution_campaign)
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Reçu le')
                     ->dateTime()

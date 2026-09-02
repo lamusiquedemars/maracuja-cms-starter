@@ -10,6 +10,9 @@
             'canonical' => $canonical ?? null,
         ]);
         $brandLogo = $settings->logoUrl();
+        $acquisitionSettings = \App\Support\Modules::enabled('acquisition')
+            ? \App\Modules\Acquisition\Models\AcquisitionSetting::current()
+            : null;
     @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,9 +43,13 @@
         <link rel="icon" href="{{ \App\Support\Seo::absoluteUrl($settings->faviconUrl()) }}">
     @endif
 
+    @include('site.partials.acquisition-head', ['acquisitionSettings' => $acquisitionSettings])
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="site-shell theme-{{ config('maracuja.theme', 'default') }}">
+    @include('site.partials.acquisition-body', ['acquisitionSettings' => $acquisitionSettings])
+
     <header class="site-header container" data-nav>
         <a class="site-brand" href="{{ route('home') }}">
             @if ($brandLogo)

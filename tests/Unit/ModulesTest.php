@@ -65,6 +65,14 @@ class ModulesTest extends TestCase
         $this->assertFalse(Modules::enabled('campaigns'));
     }
 
+    public function test_installed_acquisition_module_can_be_enabled_explicitly(): void
+    {
+        config(['maracuja.modules.acquisition' => true]);
+
+        $this->assertTrue(Modules::installed('acquisition'));
+        $this->assertTrue(Modules::enabled('acquisition'));
+    }
+
     public function test_developer_tool_visibility_is_separate_from_modules(): void
     {
         config([

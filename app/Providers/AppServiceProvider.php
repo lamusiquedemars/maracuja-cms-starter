@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\SyncAcquisitionSummaryCommand;
+use App\Models\User;
 use App\Modules\Conversations\Console\Commands\PruneConversationsCommand;
 use App\Modules\Conversations\Contracts\ConversationAiProvider;
 use App\Modules\Conversations\Models\Conversation;
@@ -11,7 +13,6 @@ use App\Modules\Conversations\Providers\OpenAiConversationProvider;
 use App\Modules\Media\Models\MediaAsset;
 use App\Modules\Media\Policies\MediaAssetPolicy;
 use App\Modules\SiteSettings\Models\SiteSetting;
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
@@ -41,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->commands([
             PruneConversationsCommand::class,
+            SyncAcquisitionSummaryCommand::class,
         ]);
 
         $moduleMigrationPaths = [
@@ -49,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
             app_path('Modules/Contacts/database/migrations'),
             app_path('Modules/Conversations/database/migrations'),
             app_path('Modules/Audience/database/migrations'),
+            app_path('Modules/Acquisition/database/migrations'),
             app_path('Modules/Media/database/migrations'),
         ];
 

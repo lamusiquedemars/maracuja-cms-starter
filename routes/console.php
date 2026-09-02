@@ -12,3 +12,7 @@ Artisan::command('inspire', function () {
 if (Modules::enabled('conversations')) {
     Schedule::command('conversations:prune')->dailyAt('03:30');
 }
+
+if (Modules::enabled('acquisition')) {
+    Schedule::command('acquisition:sync-summary')->hourly();
+}

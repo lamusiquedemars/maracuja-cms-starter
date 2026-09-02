@@ -103,6 +103,14 @@ class AdminPanelProvider extends PanelProvider
             );
         }
 
+        if (Modules::enabled('acquisition') && is_dir(app_path('Modules/Acquisition/Filament/Resources'))) {
+            $panel->discoverResources(
+                in: app_path('Modules/Acquisition/Filament/Resources'),
+                for: 'App\Modules\Acquisition\Filament\Resources',
+            );
+            $panel->discoverWidgets(in: app_path('Modules/Acquisition/Filament/Widgets'), for: 'App\Modules\Acquisition\Filament\Widgets');
+        }
+
         if (is_dir(app_path('Modules/Media/Filament/Resources'))) {
             $panel->discoverResources(
                 in: app_path('Modules/Media/Filament/Resources'),

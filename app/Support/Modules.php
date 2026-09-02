@@ -36,6 +36,7 @@ class Modules
             'contacts' => app_path('Modules/Contacts'),
             'conversations' => app_path('Modules/Conversations'),
             'audience' => app_path('Modules/Audience'),
+            'acquisition' => app_path('Modules/Acquisition'),
             'campaigns' => app_path('Modules/Campaigns'),
         ];
 

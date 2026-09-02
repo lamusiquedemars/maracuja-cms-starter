@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\Acquisition\Actions\QueueInquiryForCremona;
+use App\Modules\Acquisition\Support\Attribution;
 use App\Modules\ContactForm\Data\ContactMessage;
 use App\Modules\ContactForm\Mail\ContactMessageConfirmation;
 use App\Modules\ContactForm\Mail\ContactMessageReceived;
@@ -40,6 +42,7 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:5000'],
             'phone' => ['nullable', 'string', 'max:60'],
             'subject' => ['nullable', 'string', 'max:160'],
+            'acquisition_attribution' => ['nullable', 'json', 'max:20000'],
         ];
 
         if ($settings->contact_form_show_name) {
@@ -54,10 +57,21 @@ class ContactController extends Controller
             $data['name'] = $data['email'];
         }
 
+        $attribution = Attribution::fromJson($data['acquisition_attribution'] ?? null);
+        unset($data['acquisition_attribution']);
+        $data['attribution_source'] = $attribution['source'];
+        $data['attribution_medium'] = $attribution['medium'];
+        $data['attribution_campaign'] = $attribution['campaign'];
+        $data['attribution_first_touch'] = $attribution['first_touch'];
+        $data['attribution_last_touch'] = $attribution['last_touch'];
+        $data['attribution_method'] = $attribution['method'];
+        $data['attribution_confidence'] = $attribution['confidence'];
+
         $message = ContactMessage::fromArray($data);
 
         if (Modules::enabled('inquiries') && class_exists(StoreInquiry::class)) {
-            StoreInquiry::run($message);
+            $inquiry = StoreInquiry::run($message);
+            QueueInquiryForCremona::run($inquiry);
         }
 
         if ($settings->contact_form_send_admin_email && $settings->contact_email) {

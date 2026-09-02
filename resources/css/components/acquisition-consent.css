@@ -1,0 +1,30 @@
+.acquisition-consent {
+    position: fixed;
+    z-index: 100;
+    right: 1rem;
+    bottom: 1rem;
+    width: min(28rem, calc(100vw - 2rem));
+    padding: 1.25rem;
+    color: var(--color-ink, #1b1b1b);
+    background: var(--color-surface, #fff);
+    border: 1px solid color-mix(in srgb, var(--color-ink, #1b1b1b) 18%, transparent);
+    border-radius: var(--radius-lg, 1rem);
+    box-shadow: 0 1rem 3rem rgb(0 0 0 / 18%);
+}
+
+.acquisition-consent strong,
+.acquisition-consent p {
+    display: block;
+    margin: 0 0 .75rem;
+}
+
+.acquisition-consent p {
+    font-size: .9375rem;
+    line-height: 1.45;
+}
+
+.acquisition-consent__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .625rem;
+}

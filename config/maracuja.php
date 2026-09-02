@@ -11,6 +11,16 @@ return [
         'indexable' => env('MARACUJA_INDEXABLE', false),
     ],
 
+    'acquisition' => [
+        'cremona' => [
+            'enabled' => env('MARACUJA_CREMONA_ENABLED', false),
+            'endpoint' => env('MARACUJA_CREMONA_ENDPOINT'),
+            'reporting_endpoint' => env('MARACUJA_CREMONA_REPORTING_ENDPOINT'),
+            'token' => env('MARACUJA_CREMONA_TOKEN'),
+            'site_reference' => env('MARACUJA_CREMONA_SITE_REFERENCE'),
+        ],
+    ],
+
     'gallery' => [
         'slug' => env('MARACUJA_GALLERY_SLUG', 'home'),
         'layout' => env('MARACUJA_GALLERY_LAYOUT', 'grid'),
@@ -109,6 +119,7 @@ return [
         'conversations' => env('MARACUJA_MODULE_CONVERSATIONS', false),
         'appointments' => env('MARACUJA_MODULE_APPOINTMENTS', false),
         'audience' => env('MARACUJA_MODULE_AUDIENCE', false),
+        'acquisition' => env('MARACUJA_MODULE_ACQUISITION', false),
         'campaigns' => env('MARACUJA_MODULE_CAMPAIGNS', false),
     ],
 
@@ -134,6 +145,7 @@ return [
             'conversations' => false,
             'appointments' => false,
             'audience' => false,
+            'acquisition' => false,
             'campaigns' => false,
         ],
         'signature' => [
@@ -152,6 +164,7 @@ return [
             'conversations' => false,
             'appointments' => false,
             'audience' => false,
+            'acquisition' => false,
             'campaigns' => false,
         ],
         'univers' => [
@@ -170,6 +183,7 @@ return [
             'conversations' => true,
             'appointments' => true,
             'audience' => true,
+            'acquisition' => false,
             'campaigns' => false,
         ],
     ],
