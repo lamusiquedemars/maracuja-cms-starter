@@ -46,6 +46,8 @@ class AcquisitionTrackingTest extends TestCase
             ->assertSee('GTM-ABC1234', false)
             ->assertSee("analytics_storage: 'denied'", false)
             ->assertSee('window.maracujaLoadGtm', false)
+            ->assertSee("'gtm.start': new Date().getTime()", false)
+            ->assertSee("event: 'gtm.js'", false)
             ->assertSee('data-acquisition-consent-banner', false)
             ->assertSee('data-acquisition-consent="granted"', false)
             ->assertDontSee('<noscript>', false);
