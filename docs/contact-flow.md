@@ -40,6 +40,14 @@ MARACUJA_MODULE_AUDIENCE=false
 
 Si `Inquiries` est désactivé, le contact reste utilisable, mais la demande ne s’écrit pas en base.
 
+## Mode connecté à Cremona
+
+Une instance peut activer le bridge par `MARACUJA_CREMONA_ENABLED=true` et
+fournir l'endpoint, le jeton et la référence de site dans son `.env`. Dans ce
+mode, le formulaire garde validation et accusé de réception, mais ne crée pas
+de demande locale : une livraison chiffrée et rejouable est envoyée à Cremona.
+Les demandes et réponses sont alors traitées dans Cremona.
+
 ## Admin
 
 Dans l’admin, le flux doit rester lisible:
@@ -56,4 +64,3 @@ Dans l’admin, le flux doit rester lisible:
 - ne pas rendre `Audience` obligatoire pour le contact;
 - ne pas dupliquer les mêmes données dans plusieurs tables sans raison;
 - ne pas faire du contact un objet générique trop lourd.
-

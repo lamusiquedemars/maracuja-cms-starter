@@ -28,6 +28,11 @@ class SendAcquisitionDelivery implements ShouldQueue
         $delivery->update(['status' => 'sending', 'attempts' => $delivery->attempts + 1, 'last_attempt_at' => now(), 'last_error' => null]);
         try {
             $response = Http::acceptJson()->asJson()->withToken((string) config('maracuja.acquisition.cremona.token'))->withHeader('Idempotency-Key', $delivery->idempotency_key)->timeout(15)->post((string) config('maracuja.acquisition.cremona.endpoint'), $delivery->payload);
+            if (in_array($response->status(), [401, 403, 409, 422], true)) {
+                $delivery->update(['status' => 'failed', 'response_status' => $response->status(), 'last_error' => "Cremona returned HTTP {$response->status()}."]);
+
+                return;
+            }
             if (! $response->successful()) {
                 throw new RuntimeException("Cremona returned HTTP {$response->status()}.");
             }
