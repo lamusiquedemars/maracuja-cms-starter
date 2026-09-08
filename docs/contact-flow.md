@@ -48,6 +48,21 @@ mode, le formulaire garde validation et accusé de réception, mais ne crée pas
 de demande locale : une livraison chiffrée et rejouable est envoyée à Cremona.
 Les demandes et réponses sont alors traitées dans Cremona.
 
+L'instance garde seulement une boîte d'envoi technique (`acquisition_deliveries`),
+chiffrée et non exposée comme une boîte de demandes dans l'admin CMS. L'envoi
+est tenté tout de suite ; une indisponibilité temporaire de Cremona reste
+`pending` et peut être relancée sans doublon grâce à la clé d'idempotence.
+
+Sur un hébergement sans worker permanent, programmer toutes les cinq minutes :
+
+```bash
+php artisan acquisition:retry-deliveries --limit=50
+```
+
+Les erreurs de configuration ou de contrat (`401`, `403`, `409`, `422`) passent
+en `failed` et demandent une correction explicite ; elles ne sont pas relancées
+indéfiniment.
+
 ## Admin
 
 Dans l’admin, le flux doit rester lisible:

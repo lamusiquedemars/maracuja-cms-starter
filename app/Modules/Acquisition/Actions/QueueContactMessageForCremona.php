@@ -25,7 +25,7 @@ class QueueContactMessageForCremona
                 'request' => ['subject' => $message->subject, 'message' => $message->message],
             ],
         ]);
-        SendAcquisitionDelivery::dispatch($delivery->getKey())->afterCommit();
+        (new SendAcquisitionDelivery($delivery->getKey()))->handle();
 
         return $delivery;
     }

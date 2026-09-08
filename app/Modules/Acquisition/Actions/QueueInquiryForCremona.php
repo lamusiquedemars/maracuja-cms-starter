@@ -22,7 +22,7 @@ class QueueInquiryForCremona
                 'consent' => ['purpose' => 'respond_to_request', 'status' => 'granted', 'source' => 'website_contact_form', 'granted_at' => $inquiry->consent_at?->toIso8601String()], ],
         ]);
         if ($delivery->wasRecentlyCreated || $delivery->status !== 'sent') {
-            SendAcquisitionDelivery::dispatch($delivery->getKey())->afterCommit();
+            (new SendAcquisitionDelivery($delivery->getKey()))->handle();
         }
 
         return $delivery;

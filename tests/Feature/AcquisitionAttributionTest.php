@@ -2,13 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Modules\Acquisition\Jobs\SendAcquisitionDelivery;
 use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\SiteSettings\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class AcquisitionAttributionTest extends TestCase
@@ -58,33 +57,46 @@ class AcquisitionAttributionTest extends TestCase
 
     public function test_contact_lead_is_queued_once_for_cremona_with_an_encrypted_payload(): void
     {
-        Queue::fake();
         config(['maracuja.acquisition.cremona' => [
             'enabled' => true,
             'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests',
             'token' => 'site-integration-secret',
             'site_reference' => 'example-site',
         ]]);
+        Http::fake(['cremona.example.test/*' => Http::response([], 201)]);
 
         $this->post('/contact', [
             'name' => 'Camille Martin', 'email' => 'camille@example.test',
             'message' => 'Je souhaite être recontactée.',
         ])->assertRedirect('/contact');
 
-        Queue::assertPushed(SendAcquisitionDelivery::class, 1);
         $delivery = DB::table('acquisition_deliveries')->sole();
-        $this->assertSame('pending', $delivery->status);
+        $this->assertSame('sent', $delivery->status);
         $this->assertStringNotContainsString('camille@example.test', $delivery->payload);
     }
 
     public function test_a_connected_contact_form_does_not_create_a_local_inquiry(): void
     {
-        Queue::fake();
         config(['maracuja.acquisition.cremona' => ['enabled' => true, 'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests', 'token' => 'site-integration-secret', 'site_reference' => 'example-site']]);
+        Http::fake(['cremona.example.test/*' => Http::response([], 201)]);
 
         $this->post('/contact', ['name' => 'Camille Martin', 'email' => 'camille@example.test', 'message' => 'Bonjour.'])->assertRedirect('/contact');
 
         $this->assertDatabaseCount(Inquiry::class, 0);
         $this->assertDatabaseCount('acquisition_deliveries', 1);
+    }
+
+    public function test_a_temporary_cremona_failure_is_recorded_for_a_scheduled_retry(): void
+    {
+        config(['maracuja.acquisition.cremona' => ['enabled' => true, 'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests', 'token' => 'site-integration-secret', 'site_reference' => 'example-site']]);
+        Http::fake(['cremona.example.test/*' => Http::response([], 503)]);
+
+        $this->post('/contact', ['name' => 'Camille Martin', 'email' => 'camille@example.test', 'message' => 'Bonjour.'])->assertRedirect('/contact');
+
+        $this->assertDatabaseHas('acquisition_deliveries', [
+            'status' => 'pending',
+            'response_status' => 503,
+            'attempts' => 1,
+        ]);
     }
 }
