@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\Acquisition\Actions\QueueContactMessageForCremona;
 use App\Modules\Acquisition\Actions\QueueInquiryForCremona;
 use App\Modules\Acquisition\Support\Attribution;
 use App\Modules\ContactForm\Data\ContactMessage;
@@ -69,7 +70,11 @@ class ContactController extends Controller
 
         $message = ContactMessage::fromArray($data);
 
-        if (Modules::enabled('inquiries') && class_exists(StoreInquiry::class)) {
+        $connected = (bool) config('maracuja.acquisition.cremona.enabled');
+
+        if ($connected) {
+            QueueContactMessageForCremona::run($message);
+        } elseif (Modules::enabled('inquiries') && class_exists(StoreInquiry::class)) {
             $inquiry = StoreInquiry::run($message);
             QueueInquiryForCremona::run($inquiry);
         }
@@ -84,7 +89,7 @@ class ContactController extends Controller
 
         return redirect()
             ->route('contact')
-            ->with('status', Modules::enabled('inquiries')
+            ->with('status', ! $connected && Modules::enabled('inquiries')
                 ? 'Votre message a bien été enregistré. Nous répondrons dans les meilleurs délais.'
                 : 'Votre message a bien été envoyé.');
     }

@@ -76,4 +76,15 @@ class AcquisitionAttributionTest extends TestCase
         $this->assertSame('pending', $delivery->status);
         $this->assertStringNotContainsString('camille@example.test', $delivery->payload);
     }
+
+    public function test_a_connected_contact_form_does_not_create_a_local_inquiry(): void
+    {
+        Queue::fake();
+        config(['maracuja.acquisition.cremona' => ['enabled' => true, 'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests', 'token' => 'site-integration-secret', 'site_reference' => 'example-site']]);
+
+        $this->post('/contact', ['name' => 'Camille Martin', 'email' => 'camille@example.test', 'message' => 'Bonjour.'])->assertRedirect('/contact');
+
+        $this->assertDatabaseCount(Inquiry::class, 0);
+        $this->assertDatabaseCount('acquisition_deliveries', 1);
+    }
 }
