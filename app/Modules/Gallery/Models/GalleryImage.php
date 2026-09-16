@@ -49,6 +49,7 @@ class GalleryImage extends Model
     {
         static::saving(function (GalleryImage $image): void {
             if ($image->media) {
+                $image->image_path = $image->media->path;
                 $image->width = $image->media->width;
                 $image->height = $image->media->height;
 

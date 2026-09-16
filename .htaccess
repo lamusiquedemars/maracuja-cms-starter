@@ -5,6 +5,9 @@ RewriteBase /
 RewriteRule ^(?:app|bootstrap|config|database|docs|resources|routes|scripts|tests|vendor)(?:/|$) - [F,L,NC]
 RewriteRule ^(?:\.env|artisan|composer\.(?:json|lock)|package(?:-lock)?\.json|phpunit\.xml|vite\.config\.js)$ - [F,L,NC]
 
+# LWS pointe vers la racine du depot : exposer les assets Laravel publics.
+RewriteRule ^(build|css|demo|fonts|images|js|media|storage)/(.*)$ public/$1/$2 [L,NC]
+
 # Routage Laravel deja utilise par LWS.
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
