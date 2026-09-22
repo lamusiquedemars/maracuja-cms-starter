@@ -17,9 +17,13 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements FilamentUser
 {
     public const ROLE_ADMIN = 'admin';
+
     public const ROLE_EDITOR = 'editor';
+
     public const ROLE_VIEWER = 'viewer';
+
     public const SUPER_ADMIN_EMAILS = ['ivo@maracujadigital.fr'];
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
@@ -35,6 +39,19 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
             'is_admin' => 'boolean',
         ];
+    }
+
+    public function getAuthPassword()
+    {
+        $password = $this->{$this->getAuthPasswordName()};
+
+        // Imported $2b$ hashes are equivalent to PHP's $2y$ bcrypt hashes,
+        // but PHP's algorithm metadata only recognizes the latter.
+        if (is_string($password) && preg_match('/\A\$2b\$(?:0[4-9]|[12][0-9]|3[01])\$[.\/A-Za-z0-9]{53}\z/', $password)) {
+            return '$2y$'.substr($password, 4);
+        }
+
+        return $password;
     }
 
     public function isAdministrator(): bool

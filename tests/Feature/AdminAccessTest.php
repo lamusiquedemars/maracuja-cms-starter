@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Modules\Contacts\Models\Contact;
+use Filament\Auth\Pages\Login;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase
@@ -15,6 +17,24 @@ class AdminAccessTest extends TestCase
     public function test_filament_login_page_is_available(): void
     {
         $this->get('/admin/login')->assertOk();
+    }
+
+    public function test_imported_bcrypt_password_can_log_in_through_filament(): void
+    {
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN, 'is_admin' => true]);
+        $hash = password_hash('imported-password', PASSWORD_BCRYPT, ['cost' => 4]);
+        $user->getConnection()->table($user->getTable())->where('id', $user->id)->update([
+            'password' => '$2b$'.substr($hash, 4),
+        ]);
+
+        $this->get('/admin/login')->assertOk();
+        Livewire::test(Login::class)
+            ->fillForm(['email' => $user->email, 'password' => 'imported-password'])
+            ->call('authenticate')
+            ->assertHasNoFormErrors()
+            ->assertRedirect();
+
+        $this->assertAuthenticatedAs($user);
     }
 
     public function test_admin_user_can_access_panel(): void
