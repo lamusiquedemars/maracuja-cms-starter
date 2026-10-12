@@ -121,3 +121,10 @@ MARACUJA_NEWS_DEFAULT_DURATION_DAYS=30
 ## Règle produit
 
 Un contenu devient administrable quand il correspond à une responsabilité client claire. La mise en page, les titres structurants, les CTA et les variantes de composants restent dans le thème ou les templates Blade.
+
+## Permissions éditoriales
+
+L’activation des modules est propre à chaque installation. Lorsqu’un site a
+plusieurs comptes, les accès d’un client se limitent par rubrique, sans ouvrir
+les réglages, pages ou modules qui ne relèvent pas de sa responsabilité. Voir
+`docs/content-permissions.md` pour la procédure et les capacités disponibles.
