@@ -29,6 +29,7 @@ class MaracujaDoctorCommand extends Command
         $this->checkOfferConfiguration();
         $this->checkDatabaseContent();
         $this->checkStorage();
+        $this->checkImageProcessing();
         $this->checkSeo($production);
 
         $this->table(['Statut', 'Contrôle', 'Détail'], $this->results);
@@ -147,6 +148,21 @@ class MaracujaDoctorCommand extends Command
             is_link(public_path('storage')) || file_exists(public_path('storage'))
                 ? 'public/storage existe.'
                 : 'Créez le dossier public/storage et rendez-le accessible en écriture.'
+        );
+    }
+
+    private function checkImageProcessing(): void
+    {
+        $imagick = class_exists(\Imagick::class);
+        $gd = function_exists('imagewebp');
+        $available = $imagick || $gd;
+
+        $this->record(
+            $available ? 'ok' : 'warn',
+            'Traitement d’images',
+            $available
+                ? ($imagick ? 'Imagick prépare les originaux en variantes WebP.' : 'GD prépare les JPEG, PNG et WebP en variantes WebP.')
+                : 'Imagick et GD WebP sont indisponibles : les nouveaux originaux ne pourront pas être préparés.'
         );
     }
 

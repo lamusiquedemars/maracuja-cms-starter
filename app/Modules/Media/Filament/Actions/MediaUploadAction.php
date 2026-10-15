@@ -16,10 +16,10 @@ class MediaUploadAction
     public static function make(?MediaType $type = null): Action
     {
         $acceptedFileTypes = match ($type) {
-            MediaType::Image => ['image/jpeg', 'image/png', 'image/webp'],
+            MediaType::Image => ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'],
             MediaType::Document => ['application/pdf'],
             MediaType::Video => ['video/mp4', 'video/webm'],
-            null => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4', 'video/webm'],
+            null => ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/pdf', 'video/mp4', 'video/webm'],
         };
         $maximumSize = (int) config(match ($type) {
             MediaType::Image => 'maracuja.media.image_max_size_kb',
@@ -60,10 +60,10 @@ class MediaUploadAction
     private static function description(?MediaType $type): string
     {
         return match ($type) {
-            MediaType::Image => 'Images JPEG, PNG ou WebP, 5 Mo maximum.',
+            MediaType::Image => 'Images jusqu’à 25 Mo : l’original reste privé et le site crée automatiquement les versions WebP adaptées au web.',
             MediaType::Document => 'Documents PDF, 15 Mo maximum.',
             MediaType::Video => 'Vidéos MP4 ou WebM, 100 Mo maximum.',
-            null => 'Images JPEG, PNG ou WebP, documents PDF et vidéos MP4 ou WebM.',
+            null => 'Images jusqu’à 25 Mo, documents PDF et vidéos MP4 ou WebM. Les images sont préparées automatiquement pour le web.',
         };
     }
 }

@@ -7,7 +7,7 @@ Le Media System encadre les images du starter : upload, métadonnées, accessibi
 - Éviter les images sans `alt`, sans dimensions ou sans convention de stockage.
 - Rendre les galeries compatibles PhotoSwipe.
 - Garder un rendu responsive simple en V1.
-- Préparer plus tard les conversions WebP/AVIF et thumbnails.
+- Conserver l’original hors de l’espace public et servir des variantes web légères.
 
 ## Contrat de stockage Maracuja
 
@@ -56,6 +56,26 @@ Ne jamais enregistrer en base un chemin absolu, un chemin commençant par
 `public/storage` ou une URL liée au domaine courant. Les URL sont calculées au
 moment du rendu afin que les données restent portables entre local, LWS et les
 autres hébergeurs.
+
+## Préparation automatique des images
+
+L’administration accepte un original JPEG, PNG, WebP et, si le serveur sait le
+décoder, HEIC/HEIF, jusqu’à 25 Mo. L’original est conservé hors de la zone
+publique, sous `storage/app/private/media/originals/YYYY/MM`. Il ne possède
+pas d’URL publique.
+
+Lors de l’import, Maracuja corrige l’orientation, retire les métadonnées
+intégrées — y compris une éventuelle géolocalisation — puis génère des fichiers
+WebP publics aux largeurs 640, 960, 1440 et 1920 px, sans agrandir l’image.
+Le plus grand fichier devient la version de compatibilité; les autres sont
+enregistrés dans `variants` et peuvent être utilisés dans un attribut
+`srcset`.
+
+Le serveur doit fournir Imagick avec l’encodage WebP, ou GD avec le support
+WebP. GD prépare les JPEG, PNG et WebP; Imagick est nécessaire pour HEIC/HEIF.
+La commande `php artisan maracuja:doctor` le signale avant livraison. Si un
+serveur ne propose aucune de ces capacités, l’import est refusé : l’original
+n’est jamais rendu public par défaut.
 
 ### Stockage privé et exceptions techniques
 
@@ -122,14 +142,15 @@ position ou l'état de publication.
 
 ## Upload admin
 
-Règles pour les images publiques:
+Règles pour les originaux images:
 
 ```txt
-disk: public
-visibility: public
-types: jpg, jpeg, png, webp
-max: 5 MB
-dossier: media/images/YYYY/MM
+disk original: local (privé)
+disk des versions: public
+types: jpg, jpeg, png, webp, heic, heif
+max: 25 MB
+original: storage/app/private/media/originals/YYYY/MM
+versions publiques: public/storage/media/images/YYYY/MM
 ```
 
 Règles initiales pour les documents publics:
@@ -325,7 +346,10 @@ Le rendu front reste cadré par les composants:
 - article: image contrainte par la largeur du contenu;
 - cartes média: image en `cover`.
 
-La V1 ne génère pas encore de thumbnails, WebP/AVIF ou recadrages. Ces optimisations viendront seulement si le besoin projet le justifie.
+La préparation ne recadre jamais automatiquement une photo : l’image complète
+reste la référence. Les cadrages artistiques d’un hero ou d’une carte relèvent
+d’une étape éditoriale distincte. Les images existantes restent inchangées;
+elles ne reçoivent des variantes qu’après un import ou une migration explicite.
 
 ## Composants Blade
 

@@ -22,6 +22,7 @@ class MediaStorageServiceTest extends TestCase
         parent::setUp();
 
         Storage::fake('public');
+        Storage::fake('local');
         Carbon::setTestNow('2026-07-21 10:00:00');
     }
 
@@ -32,29 +33,25 @@ class MediaStorageServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_it_stores_an_image_in_the_canonical_directory_with_metadata(): void
+    public function test_it_keeps_an_original_private_and_creates_web_variants_for_an_image(): void
     {
         $uploader = User::factory()->create();
-        $file = UploadedFile::fake()->image('Photo originale.jpeg', 1200, 800);
-
-        $media = app(MediaStorageService::class)->store($file, [
+        $media = app(MediaStorageService::class)->store(UploadedFile::fake()->image('atelier.jpg', 1200, 800), [
             'display_name' => 'Portrait de l’atelier',
             'alt_text' => 'Portrait dans l’atelier',
-            'caption' => 'Une journée de travail',
-            'credit' => 'Ivo',
         ], $uploader);
 
         $this->assertSame(MediaType::Image, $media->type);
-        $this->assertMatchesRegularExpression('~^media/images/2026/07/[0-9A-HJKMNP-TV-Z]{26}\.jpg$~', $media->path);
-        $this->assertSame('Photo originale.jpeg', $media->original_name);
+        $this->assertStringStartsWith('media/images/2026/07/', $media->path);
+        $this->assertStringEndsWith('.webp', $media->path);
+        $this->assertSame('webp', $media->extension);
         $this->assertSame('Portrait de l’atelier', $media->display_name);
-        $this->assertSame('image/jpeg', $media->mime_type);
-        $this->assertSame('jpg', $media->extension);
-        $this->assertSame(1200, $media->width);
-        $this->assertSame(800, $media->height);
         $this->assertSame($uploader->id, $media->uploaded_by);
-        $this->assertSame(64, strlen($media->checksum));
+        $this->assertCount(3, $media->variants);
+        $this->assertStringContainsString('640w', (string) $media->srcset());
+        $this->assertStringContainsString('1200w', (string) $media->srcset());
         Storage::disk('public')->assertExists($media->path);
+        Storage::disk('local')->assertExists((string) $media->source_path);
     }
 
     public function test_it_stores_a_pdf_in_the_canonical_documents_directory(): void
@@ -96,6 +93,7 @@ class MediaStorageServiceTest extends TestCase
 
         $this->assertDatabaseCount('media_assets', 0);
         $this->assertSame([], Storage::disk('public')->allFiles());
+        $this->assertSame([], Storage::disk('local')->allFiles());
     }
 
     public function test_it_rejects_an_image_larger_than_the_configured_limit(): void
@@ -122,5 +120,6 @@ class MediaStorageServiceTest extends TestCase
         }
 
         $this->assertSame([], Storage::disk('public')->allFiles());
+        $this->assertSame([], Storage::disk('local')->allFiles());
     }
 }

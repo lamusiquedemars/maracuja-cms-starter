@@ -16,8 +16,11 @@ class MediaAsset extends Model
     protected $fillable = [
         'type',
         'disk',
+        'source_disk',
+        'source_path',
         'path',
         'thumbnail_path',
+        'variants',
         'original_name',
         'display_name',
         'mime_type',
@@ -39,6 +42,7 @@ class MediaAsset extends Model
             'size' => 'integer',
             'width' => 'integer',
             'height' => 'integer',
+            'variants' => 'array',
         ];
     }
 
@@ -52,6 +56,15 @@ class MediaAsset extends Model
 
         static::deleted(function (MediaAsset $media): void {
             Storage::disk($media->disk)->delete($media->path);
+
+            Storage::disk($media->disk)->delete(collect($media->variants ?? [])
+                ->pluck('path')
+                ->reject(fn (string $path): bool => $path === $media->path)
+                ->all());
+
+            if (filled($media->source_path)) {
+                Storage::disk($media->source_disk ?: 'local')->delete($media->source_path);
+            }
 
             if (filled($media->thumbnail_path)) {
                 Storage::disk($media->disk)->delete($media->thumbnail_path);
@@ -119,6 +132,18 @@ class MediaAsset extends Model
         return filled($this->thumbnail_path)
             ? Storage::disk($this->disk)->url($this->thumbnail_path)
             : null;
+    }
+
+    public function srcset(): ?string
+    {
+        if (! $this->isImage() || empty($this->variants)) {
+            return null;
+        }
+
+        return collect($this->variants)
+            ->filter(fn (array $variant): bool => filled($variant['path'] ?? null) && filled($variant['width'] ?? null))
+            ->map(fn (array $variant): string => Storage::disk($this->disk)->url($variant['path']).' '.$variant['width'].'w')
+            ->implode(', ');
     }
 
     public function formattedSize(): string

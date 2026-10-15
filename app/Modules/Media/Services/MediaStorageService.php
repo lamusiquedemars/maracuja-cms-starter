@@ -13,7 +13,10 @@ use Throwable;
 
 class MediaStorageService
 {
-    public function __construct(private readonly VideoThumbnailService $videoThumbnails) {}
+    public function __construct(
+        private readonly VideoThumbnailService $videoThumbnails,
+        private readonly ImageVariantService $images,
+    ) {}
 
     /**
      * @param  array{display_name?: string|null, alt_text?: string|null, caption?: string|null, credit?: string|null}  $metadata
@@ -25,6 +28,12 @@ class MediaStorageService
         $this->validateSize($file, $type);
 
         $disk = (string) config('maracuja.media.disk', 'public');
+        $originalName = $this->cleanOriginalName($file->getClientOriginalName());
+
+        if ($type === MediaType::Image) {
+            return $this->storeImage($file, $definition, $metadata, $uploader, $originalName, $disk);
+        }
+
         $directory = $this->directoryFor($type);
         $filename = Str::ulid().'.'.$definition['extension'];
         $path = $file->storeAs($directory, $filename, $disk);
@@ -37,8 +46,6 @@ class MediaStorageService
 
         try {
             $dimensions = $type === MediaType::Image ? @getimagesize(Storage::disk($disk)->path($path)) : false;
-            $originalName = $this->cleanOriginalName($file->getClientOriginalName());
-
             $media = MediaAsset::query()->create([
                 'type' => $type,
                 'disk' => $disk,
@@ -66,6 +73,56 @@ class MediaStorageService
             return $media->refresh();
         } catch (Throwable $exception) {
             Storage::disk($disk)->delete($path);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param  array{type: string, extension: string, mime_type: string}  $definition
+     * @param  array{display_name?: string|null, alt_text?: string|null, caption?: string|null, credit?: string|null}  $metadata
+     */
+    private function storeImage(UploadedFile $file, array $definition, array $metadata, ?User $uploader, string $originalName, string $publicDisk): MediaAsset
+    {
+        $sourceDisk = (string) config('maracuja.media.originals_disk', 'local');
+        $sourceDirectory = trim((string) config('maracuja.media.originals_directory', 'media/originals'), '/')
+            .'/'.now()->format('Y/m');
+        $sourcePath = $file->storeAs($sourceDirectory, Str::ulid().'.'.$definition['extension'], $sourceDisk);
+
+        if (! is_string($sourcePath)) {
+            throw ValidationException::withMessages(['file' => 'L’original n’a pas pu être conservé.']);
+        }
+
+        $image = null;
+
+        try {
+            $image = $this->images->create($sourceDisk, $sourcePath, $publicDisk);
+
+            return MediaAsset::query()->create([
+                'type' => MediaType::Image,
+                'disk' => $publicDisk,
+                'source_disk' => $sourceDisk,
+                'source_path' => $sourcePath,
+                'path' => $image['path'],
+                'variants' => $image['variants'],
+                'original_name' => $originalName,
+                'display_name' => filled($metadata['display_name'] ?? null)
+                    ? trim((string) $metadata['display_name'])
+                    : pathinfo($originalName, PATHINFO_FILENAME),
+                'mime_type' => $definition['mime_type'],
+                'extension' => 'webp',
+                'size' => $image['size'],
+                'width' => $image['width'],
+                'height' => $image['height'],
+                'alt_text' => $metadata['alt_text'] ?? null,
+                'caption' => $metadata['caption'] ?? null,
+                'credit' => $metadata['credit'] ?? null,
+                'checksum' => hash_file('sha256', Storage::disk($sourceDisk)->path($sourcePath)),
+                'uploaded_by' => $uploader?->getKey(),
+            ])->refresh();
+        } catch (Throwable $exception) {
+            Storage::disk($sourceDisk)->delete($sourcePath);
+            Storage::disk($publicDisk)->delete(collect($image['variants'] ?? [])->pluck('path')->all());
 
             throw $exception;
         }
