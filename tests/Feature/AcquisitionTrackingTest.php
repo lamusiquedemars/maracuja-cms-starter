@@ -48,11 +48,13 @@ class AcquisitionTrackingTest extends TestCase
             ->assertSee('window.maracujaLoadGtm', false)
             ->assertSee("'gtm.start': new Date().getTime()", false)
             ->assertSee("event: 'gtm.js'", false)
+            ->assertSee('maracujaIsGtmPreview', false)
+            ->assertSee('gtm_cookies_win', false)
             ->assertSee('data-acquisition-consent-banner', false)
             ->assertSee('data-acquisition-consent="granted"', false)
             ->assertDontSee('<noscript>', false);
 
-        $this->assertSame(1, substr_count($response->getContent(), 'window.maracujaLoadGtm();'));
+        $this->assertSame(2, substr_count($response->getContent(), 'window.maracujaLoadGtm();'));
     }
 
     public function test_tracking_without_consent_gate_loads_gtm_and_noscript(): void

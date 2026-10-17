@@ -43,9 +43,27 @@
 
             const script = document.createElement('script');
             script.async = true;
-            script.src = 'https://www.googletagmanager.com/gtm.js?id='
-                + encodeURIComponent(window.MaracujaAcquisitionConfig.gtmContainerId);
+            const source = new URL('https://www.googletagmanager.com/gtm.js');
+            source.searchParams.set('id', window.MaracujaAcquisitionConfig.gtmContainerId);
+
+            // Tag Assistant uses these session parameters to obtain the preview
+            // container. Normal visitors have none of them.
+            const pageParameters = new URLSearchParams(window.location.search);
+            ['gtm_auth', 'gtm_preview', 'gtm_debug', 'gtm_cookies_win'].forEach((name) => {
+                const value = pageParameters.get(name);
+                if (value) source.searchParams.set(name, value);
+            });
+
+            script.src = source.toString();
             document.head.appendChild(script);
+        };
+
+        window.maracujaIsGtmPreview = window.maracujaIsGtmPreview || function () {
+            const pageParameters = new URLSearchParams(window.location.search);
+
+            return ['gtm_auth', 'gtm_preview', 'gtm_debug'].some((name) => pageParameters.has(name))
+                || document.referrer.startsWith('https://tagassistant.google.com')
+                || /(?:^|;\\s*)__TAG_ASSISTANT=/.test(document.cookie);
         };
 
         window.maracujaSetConsent = window.maracujaSetConsent || function (choice) {
@@ -73,6 +91,10 @@
 
         @if ($acquisitionSettings->loadsContainerBeforeConsent())
             window.maracujaLoadGtm();
+        @elseif ($acquisitionSettings->consent_enabled)
+            // Preview is an explicit local debugging session. It does not alter
+            // the consent-first behavior for ordinary public visits.
+            if (window.maracujaIsGtmPreview()) window.maracujaLoadGtm();
         @endif
         @endif
     </script>

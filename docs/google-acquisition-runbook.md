@@ -163,6 +163,13 @@ Les écrans varient ; les valeurs ci-dessous ne varient pas. Ne pas ajouter une
 6. Tester le consentement dans une fenêtre privée : le refus ne charge pas
    GTM ; l’acceptation charge GTM. Une préférence mémorisée dans Safari peut
    masquer la bannière ; elle ne démontre ni un défaut de site ni un succès.
+7. Si Tag Assistant affiche un délai de connexion avec un site en consentement
+   `basic`, vérifier le code déployé avant de changer la configuration Google :
+   le chargeur GTM doit transmettre `gtm_auth`, `gtm_preview`, `gtm_debug` et
+   `gtm_cookies_win` lorsqu’ils sont présents, et reconnaître la session
+   Tag Assistant (`__TAG_ASSISTANT` ou référent). Cette exception ne s’applique
+   qu’au débogage ; les visiteurs ordinaires ne chargent toujours pas GTM avant
+   leur accord.
 
 ### 4. Google Ads et MCC
 
