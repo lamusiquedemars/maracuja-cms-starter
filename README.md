@@ -1,6 +1,6 @@
-# Maracuja CMS Starter
+# Maracuja Site
 
-Maracuja CMS is a Laravel + Filament starter for building focused, administrable showcase websites. The V1 target is simple: one installation per client, a custom Blade frontend, and a Filament admin that only exposes the modules enabled for that project.
+Maracuja Site est l’application Laravel + Filament de référence pour les sites vitrines administrables. Chaque client reçoit sa propre installation, son thème, ses modules activés et ses données isolées ; les capacités communes sont fournies par Maracuja Site Core.
 
 ## V1 Modules
 
