@@ -15,7 +15,8 @@ class MediaMigrationApplyTest extends TestCase
 
     public function test_a_plan_can_be_applied_without_removing_sources_and_rolled_back(): void
     {
-        Storage::fake('public');
+        Storage::fake('object-public');
+        config()->set('maracuja-media.public_disk', 'object-public');
         $root = sys_get_temp_dir().'/maracuja-media-apply-'.uniqid();
         mkdir($root.'/public/pages', 0777, true);
         mkdir($root.'/legacy', 0777, true);
@@ -34,8 +35,9 @@ class MediaMigrationApplyTest extends TestCase
 
             $this->assertSame('applied', $applied['status']);
             $this->assertFileExists($source);
-            $this->assertDatabaseHas('media_assets', ['id' => $entry['media_asset_id'], 'path' => $entry['destination']]);
-            Storage::disk('public')->assertExists($entry['destination']);
+            $this->assertSame('object-public', $applied['target_disk']);
+            $this->assertDatabaseHas('media_assets', ['id' => $entry['media_asset_id'], 'path' => $entry['destination'], 'disk' => 'object-public']);
+            Storage::disk('object-public')->assertExists($entry['destination']);
 
             $cleaned = $planner->cleanup($name);
 
@@ -46,7 +48,7 @@ class MediaMigrationApplyTest extends TestCase
 
             $this->assertSame('rolled_back', $rolledBack['status']);
             $this->assertDatabaseCount('media_assets', 0);
-            Storage::disk('public')->assertMissing($entry['destination']);
+            Storage::disk('object-public')->assertMissing($entry['destination']);
             $this->assertFileExists($source);
         } finally {
             @unlink($planner->manifestPath($name));

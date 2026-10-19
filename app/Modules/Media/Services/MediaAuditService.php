@@ -380,7 +380,7 @@ class MediaAuditService
 
     private function isAllowedPrivatePath(string $path): bool
     {
-        return Str::startsWith($path, ['imports/', 'exports/', 'temporary/', 'livewire-tmp/']);
+        return Str::startsWith($path, ['media/originals/', 'imports/', 'exports/', 'temporary/', 'livewire-tmp/', 'database-backups/', 'media-migrations/']);
     }
 
     /** @return array{type: string, location: string, detail: string} */

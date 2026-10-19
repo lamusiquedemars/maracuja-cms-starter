@@ -60,6 +60,35 @@ return [
             'report' => false,
         ],
 
+        // Scaleway Object Storage utilise l'API S3. Les buckets sont séparés :
+        // rendus publics du site d'un côté, originaux privés de l'autre.
+        'scaleway_media_public' => [
+            'driver' => 's3',
+            'key' => env('SCW_OBJECT_STORAGE_ACCESS_KEY'),
+            'secret' => env('SCW_OBJECT_STORAGE_SECRET_KEY'),
+            'region' => env('SCW_OBJECT_STORAGE_REGION', 'fr-par'),
+            'bucket' => env('SCW_MEDIA_PUBLIC_BUCKET'),
+            'url' => env('SCW_MEDIA_PUBLIC_URL'),
+            'endpoint' => env('SCW_OBJECT_STORAGE_ENDPOINT'),
+            'use_path_style_endpoint' => env('SCW_OBJECT_STORAGE_PATH_STYLE', false),
+            'visibility' => 'public',
+            'throw' => true,
+            'report' => true,
+        ],
+
+        'scaleway_media_originals' => [
+            'driver' => 's3',
+            'key' => env('SCW_OBJECT_STORAGE_ACCESS_KEY'),
+            'secret' => env('SCW_OBJECT_STORAGE_SECRET_KEY'),
+            'region' => env('SCW_OBJECT_STORAGE_REGION', 'fr-par'),
+            'bucket' => env('SCW_MEDIA_ORIGINALS_BUCKET'),
+            'endpoint' => env('SCW_OBJECT_STORAGE_ENDPOINT'),
+            'use_path_style_endpoint' => env('SCW_OBJECT_STORAGE_PATH_STYLE', false),
+            'visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ],
+
     ],
 
     /*

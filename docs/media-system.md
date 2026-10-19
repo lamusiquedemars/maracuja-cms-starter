@@ -17,9 +17,10 @@ public/storage/media/documents/YYYY/MM/{ulid}.{extension}
 ```
 
 Ce contrat est identique pour tous les sites Maracuja, quel que soit
-l'hébergeur. Le chemin absolu varie selon le serveur, mais le disque Laravel
-`public` pointe toujours vers `public_path('storage')`. Aucun lien symbolique
-ni `php artisan storage:link` n'est nécessaire.
+l'hébergeur. Le disque peut être le filesystem local (`public/storage`) ou le
+bucket public Scaleway ; la base ne conserve jamais une URL ou un chemin
+absolu. Aucun lien symbolique ni `php artisan storage:link` n'est nécessaire
+pour la configuration locale.
 
 Le dossier `public/storage` fait partie de la structure du projet, son contenu
 reste hors Git et il doit être accessible en écriture par PHP. Tous les médias
@@ -61,8 +62,8 @@ autres hébergeurs.
 
 L’administration accepte un original JPEG, PNG, WebP et, si le serveur sait le
 décoder, HEIC/HEIF, jusqu’à 25 Mo. L’original est conservé hors de la zone
-publique, sous `storage/app/private/media/originals/YYYY/MM`. Il ne possède
-pas d’URL publique.
+publique, sous `storage/app/private/media/originals/YYYY/MM` en local ou dans
+le bucket privé Scaleway. Il ne possède pas d’URL publique.
 
 Lors de l’import, Maracuja corrige l’orientation, retire les métadonnées
 intégrées — y compris une éventuelle géolocalisation — puis génère des fichiers

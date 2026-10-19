@@ -10,6 +10,7 @@
         "filament/filament": "^4.0",
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "maracuja-digital/site-core-gallery": "^0.4",
         "maracuja-digital/site-core-media": "^0.3"
     },

@@ -63,6 +63,15 @@ class MediaAuditServiceTest extends TestCase
         $this->assertSame(0, $report['summary']['anomalies']);
     }
 
+    public function test_it_allows_private_media_originals(): void
+    {
+        $this->write('private/media/originals/2026/10/photo.jpg', 'private-original');
+
+        $report = $this->service()->audit(includeDatabase: false);
+
+        $this->assertSame(0, $report['summary']['anomalies']);
+    }
+
     public function test_it_detects_forbidden_upload_directories_in_code(): void
     {
         $this->write('code/ExampleResource.php', "<?php\nFileUpload::make('image')->directory('pages');");

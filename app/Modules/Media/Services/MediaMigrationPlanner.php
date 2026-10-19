@@ -66,6 +66,7 @@ class MediaMigrationPlanner
             'project' => basename(base_path()),
             'created_at' => now()->toIso8601String(),
             'status' => 'planned',
+            'target_disk' => (string) config('maracuja-media.public_disk', 'public'),
             'summary' => [
                 'physical_files' => count($audit['files']),
                 'unique_media' => $entries->count(),
@@ -125,6 +126,8 @@ class MediaMigrationPlanner
         $plan['applied_at'] = now()->toIso8601String();
         $this->saveManifest($name, $plan);
 
+        $targetDisk = (string) ($plan['target_disk'] ?? config('maracuja-media.public_disk', 'public'));
+
         try {
             foreach ($plan['entries'] as $index => $entry) {
                 if (filled($entry['media_asset_id'] ?? null)) {
@@ -145,17 +148,22 @@ class MediaMigrationPlanner
                 }
 
                 $stream = fopen($source, 'rb');
-                if ($stream === false || ! Storage::disk('public')->put($entry['destination'], $stream)) {
-                    throw new RuntimeException("Copie impossible vers {$entry['destination']}");
+                if ($stream === false) {
+                    throw new RuntimeException("Lecture impossible de {$entry['source']}");
                 }
-                if (is_resource($stream)) {
+                try {
+                    $copied = Storage::disk($targetDisk)->put($entry['destination'], $stream, 'public');
+                } finally {
                     fclose($stream);
+                }
+                if (! $copied) {
+                    throw new RuntimeException("Copie impossible vers {$entry['destination']}");
                 }
 
                 try {
                     $asset = MediaAsset::query()->create([
                         'type' => $entry['type'],
-                        'disk' => 'public',
+                        'disk' => $targetDisk,
                         'path' => $entry['destination'],
                         'original_name' => $entry['original_name'],
                         'display_name' => pathinfo($entry['original_name'], PATHINFO_FILENAME),
@@ -167,7 +175,7 @@ class MediaMigrationPlanner
                         'checksum' => $entry['checksum'],
                     ]);
                 } catch (\Throwable $exception) {
-                    Storage::disk('public')->delete($entry['destination']);
+                    Storage::disk($targetDisk)->delete($entry['destination']);
                     throw $exception;
                 }
 
@@ -198,7 +206,7 @@ class MediaMigrationPlanner
         if (($plan['status'] ?? null) === 'cleaned') {
             foreach ($plan['entries'] as $entry) {
                 $asset = MediaAsset::query()->find($entry['media_asset_id'] ?? null);
-                if (! $asset || hash_file('sha256', Storage::disk('public')->path($asset->path)) !== $entry['checksum']) {
+                if (! $asset || $this->checksumForDisk($asset->disk, $asset->path) !== $entry['checksum']) {
                     throw new RuntimeException("Restauration impossible pour {$entry['source']}.");
                 }
                 foreach ($entry['removed_sources'] ?? [] as $sourceReference) {
@@ -206,7 +214,7 @@ class MediaMigrationPlanner
                     if (! is_dir(dirname($target))) {
                         mkdir(dirname($target), 0755, true);
                     }
-                    if (! copy(Storage::disk('public')->path($asset->path), $target)) {
+                    if (! $this->copyDiskToLocal($asset->disk, $asset->path, $target)) {
                         throw new RuntimeException("Restauration impossible vers {$sourceReference}.");
                     }
                 }
@@ -243,10 +251,10 @@ class MediaMigrationPlanner
 
         foreach ($plan['entries'] as $index => $entry) {
             $asset = MediaAsset::query()->find($entry['media_asset_id'] ?? null);
-            if (! $asset || ! Storage::disk('public')->exists($asset->path)) {
+            if (! $asset || ! Storage::disk($asset->disk)->exists($asset->path)) {
                 throw new RuntimeException("Copie canonique absente pour {$entry['source']}.");
             }
-            if (hash_file('sha256', Storage::disk('public')->path($asset->path)) !== $entry['checksum']) {
+            if ($this->checksumForDisk($asset->disk, $asset->path) !== $entry['checksum']) {
                 throw new RuntimeException("Copie canonique modifiée pour {$entry['source']}.");
             }
 
@@ -321,7 +329,7 @@ class MediaMigrationPlanner
 
     private function isAllowedPrivatePath(string $path): bool
     {
-        return Str::startsWith($path, ['imports/', 'exports/', 'temporary/', 'livewire-tmp/']);
+        return Str::startsWith($path, ['media/originals/', 'imports/', 'exports/', 'temporary/', 'livewire-tmp/', 'database-backups/', 'media-migrations/']);
     }
 
     private function extensionForMime(string $mime): string
@@ -330,5 +338,41 @@ class MediaMigrationPlanner
             'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'application/pdf' => 'pdf',
             default => throw new RuntimeException("Type MIME non pris en charge : {$mime}"),
         };
+    }
+
+    private function checksumForDisk(string $disk, string $path): string
+    {
+        $stream = Storage::disk($disk)->readStream($path);
+        if (! is_resource($stream)) {
+            throw new RuntimeException("Lecture impossible de {$path} sur {$disk}.");
+        }
+
+        $hash = hash_init('sha256');
+        hash_update_stream($hash, $stream);
+        fclose($stream);
+
+        return hash_final($hash);
+    }
+
+    private function copyDiskToLocal(string $disk, string $path, string $target): bool
+    {
+        $stream = Storage::disk($disk)->readStream($path);
+        if (! is_resource($stream)) {
+            return false;
+        }
+
+        try {
+            $destination = fopen($target, 'wb');
+            if ($destination === false) {
+                return false;
+            }
+            try {
+                return stream_copy_to_stream($stream, $destination) !== false;
+            } finally {
+                fclose($destination);
+            }
+        } finally {
+            fclose($stream);
+        }
     }
 }
