@@ -2,7 +2,7 @@
 
 namespace App\Modules\Audience\Models;
 
-use App\Modules\Media\Concerns\TracksMediaUsages;
+use Maracuja\SiteCore\Media\Concerns\TracksMediaUsages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

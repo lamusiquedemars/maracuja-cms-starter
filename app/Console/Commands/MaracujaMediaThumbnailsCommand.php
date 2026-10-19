@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Modules\Media\Models\MediaAsset;
-use App\Modules\Media\Services\VideoThumbnailService;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Services\VideoThumbnailService;
 use Illuminate\Console\Command;
 
 class MaracujaMediaThumbnailsCommand extends Command

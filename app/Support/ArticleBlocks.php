@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use Illuminate\Support\HtmlString;
 
 class ArticleBlocks

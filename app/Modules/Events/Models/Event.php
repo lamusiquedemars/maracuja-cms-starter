@@ -2,8 +2,8 @@
 
 namespace App\Modules\Events\Models;
 
-use App\Modules\Media\Concerns\TracksMediaUsages;
-use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Concerns\TracksMediaUsages;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use App\Modules\Venues\Models\Venue;
 use App\Support\MediaFiles;
 use Illuminate\Database\Eloquent\Builder;

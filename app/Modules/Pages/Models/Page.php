@@ -2,8 +2,8 @@
 
 namespace App\Modules\Pages\Models;
 
-use App\Modules\Media\Concerns\TracksMediaUsages;
-use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Concerns\TracksMediaUsages;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use App\Support\MediaFiles;
 use App\Support\Modules;
 use Illuminate\Database\Eloquent\Model;
