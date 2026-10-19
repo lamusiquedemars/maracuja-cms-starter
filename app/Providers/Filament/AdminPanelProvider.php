@@ -22,6 +22,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Maracuja\SiteCore\Media\Filament\Resources\MediaAssets\MediaAssetResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -111,12 +112,7 @@ class AdminPanelProvider extends PanelProvider
             $panel->discoverWidgets(in: app_path('Modules/Acquisition/Filament/Widgets'), for: 'App\Modules\Acquisition\Filament\Widgets');
         }
 
-        if (is_dir(app_path('Modules/Media/Filament/Resources'))) {
-            $panel->discoverResources(
-                in: app_path('Modules/Media/Filament/Resources'),
-                for: 'App\Modules\Media\Filament\Resources',
-            );
-        }
+        $panel->resources([MediaAssetResource::class]);
 
         return $panel;
     }

@@ -17,6 +17,7 @@ use App\Support\ContentPermissions;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
+use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -63,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
+        Gate::policy(CoreMediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(Conversation::class, ConversationPolicy::class);
         $this->registerRoleGate();
     }

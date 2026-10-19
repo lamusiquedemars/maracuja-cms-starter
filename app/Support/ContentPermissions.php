@@ -17,6 +17,7 @@ use App\Modules\Events\Models\Event;
 use App\Modules\Gallery\Models\Gallery;
 use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
 use App\Modules\News\Models\NewsPost;
 use App\Modules\Notices\Models\SiteNotice;
 use App\Modules\Pages\Models\Page;
@@ -56,7 +57,7 @@ class ContentPermissions
             Article::class => 'articles',
             Inquiry::class => 'inquiries',
             Contact::class => 'contacts',
-            MediaAsset::class => 'media',
+            MediaAsset::class, CoreMediaAsset::class => 'media',
             Gallery::class => 'gallery',
             Event::class => 'events',
             Venue::class => 'venues',

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa4d1ecab3aa3c6e0a2cc667585fd0a0",
+    "content-hash": "bb6d90c894f0c317616ed75dc3335cde",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3474,19 +3474,20 @@
         },
         {
             "name": "maracuja-digital/site-core-media",
-            "version": "v0.1.2",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:lamusiquedemars/maracuja-site-core-media.git",
-                "reference": "5ece4aae20cecfbe28c4bbfc9afc26c9e67920b9"
+                "reference": "6a1401dd2ea56c33db3a8b7643f8de489b682a62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-media/zipball/5ece4aae20cecfbe28c4bbfc9afc26c9e67920b9",
-                "reference": "5ece4aae20cecfbe28c4bbfc9afc26c9e67920b9",
+                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-media/zipball/6a1401dd2ea56c33db3a8b7643f8de489b682a62",
+                "reference": "6a1401dd2ea56c33db3a8b7643f8de489b682a62",
                 "shasum": ""
             },
             "require": {
+                "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/http": "^13.0",
                 "illuminate/process": "^13.0",
@@ -3511,10 +3512,10 @@
             ],
             "description": "Médiathèque et contrats de stockage pour Maracuja Site Core.",
             "support": {
-                "source": "https://github.com/lamusiquedemars/maracuja-site-core-media/tree/v0.1.2",
+                "source": "https://github.com/lamusiquedemars/maracuja-site-core-media/tree/v0.2.1",
                 "issues": "https://github.com/lamusiquedemars/maracuja-site-core-media/issues"
             },
-            "time": "2026-10-19T13:31:02+00:00"
+            "time": "2026-10-19T14:19:50+00:00"
         },
         {
             "name": "monolog/monolog",

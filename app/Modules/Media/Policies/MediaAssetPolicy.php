@@ -3,7 +3,7 @@
 namespace App\Modules\Media\Policies;
 
 use App\Models\User;
-use App\Modules\Media\Models\MediaAsset;
+use Illuminate\Database\Eloquent\Model;
 
 class MediaAssetPolicy
 {
@@ -12,7 +12,7 @@ class MediaAssetPolicy
         return $user->canEditContent();
     }
 
-    public function view(User $user, MediaAsset $media): bool
+    public function view(User $user, Model $media): bool
     {
         return $user->canEditContent();
     }
@@ -22,12 +22,12 @@ class MediaAssetPolicy
         return $user->canEditContent();
     }
 
-    public function update(User $user, MediaAsset $media): bool
+    public function update(User $user, Model $media): bool
     {
         return $user->isAdministrator();
     }
 
-    public function delete(User $user, MediaAsset $media): bool
+    public function delete(User $user, Model $media): bool
     {
         return $user->canEditContent() && $media->canBeDeleted();
     }
