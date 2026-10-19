@@ -6,7 +6,7 @@ use App\Modules\Audience\Actions\DispatchSegmentMessage;
 use App\Modules\Audience\Actions\SendPendingSegmentMessages;
 use App\Modules\Audience\Filament\Resources\SegmentMessages\Pages\ManageSegmentMessages;
 use App\Modules\Audience\Models\SegmentMessage;
-use App\Modules\Media\Filament\Forms\Components\MaracujaRichEditor;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MaracujaRichEditor;
 use App\Support\Modules;
 use BackedEnum;
 use Carbon\CarbonImmutable;

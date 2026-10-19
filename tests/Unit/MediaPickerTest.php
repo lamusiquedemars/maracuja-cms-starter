@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Media\Enums\MediaType;
-use App\Modules\Media\Filament\Forms\Components\MediaPicker;
-use App\Modules\Media\Filament\Tables\MediaPickerTable;
+use Maracuja\SiteCore\Media\Enums\MediaType;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaPicker;
+use Maracuja\SiteCore\Media\Filament\Tables\MediaPickerTable;
 use Tests\TestCase;
 
 class MediaPickerTest extends TestCase

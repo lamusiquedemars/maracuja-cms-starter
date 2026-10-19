@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Galleries\RelationManagers;
 
-use App\Modules\Media\Filament\Forms\Components\MediaPicker;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaPicker;
 use App\Modules\Gallery\Models\Gallery;
 use App\Modules\Gallery\Models\GalleryImage;
 use Filament\Actions\BulkActionGroup;

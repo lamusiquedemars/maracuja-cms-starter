@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Articles;
 
 use App\Filament\Resources\Articles\Pages\ManageArticles;
-use App\Modules\Media\Filament\Forms\Components\MediaPicker;
-use App\Modules\Media\Filament\Forms\Components\MaracujaRichEditor;
-use App\Modules\Media\Filament\Forms\Components\MediaIdSelect;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaPicker;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MaracujaRichEditor;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaIdSelect;
 use App\Modules\Articles\Models\Article;
 use App\Support\Modules;
 use BackedEnum;

@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\NewsPosts;
 
 use App\Filament\Resources\NewsPosts\Pages\ManageNewsPosts;
-use App\Modules\Media\Filament\Forms\Components\MediaPicker;
-use App\Modules\Media\Filament\Forms\Components\MaracujaRichEditor;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaPicker;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MaracujaRichEditor;
 use App\Modules\News\Models\NewsPost;
 use App\Support\Modules;
 use BackedEnum;

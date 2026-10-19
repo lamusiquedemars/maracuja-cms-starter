@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Pages;
 
 use App\Filament\Resources\Pages\Pages\ManagePages;
-use App\Modules\Media\Filament\Forms\Components\MediaPicker;
-use App\Modules\Media\Filament\Forms\Components\MaracujaRichEditor;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaPicker;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MaracujaRichEditor;
 use App\Modules\Pages\Models\Page;
 use App\Support\Modules;
 use BackedEnum;

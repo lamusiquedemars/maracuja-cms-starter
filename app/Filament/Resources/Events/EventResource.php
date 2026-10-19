@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Events;
 
 use App\Filament\Resources\Events\Pages\ManageEvents;
-use App\Modules\Media\Filament\Forms\Components\MediaPicker;
-use App\Modules\Media\Filament\Forms\Components\MaracujaRichEditor;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaPicker;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MaracujaRichEditor;
 use App\Modules\Events\Models\Event;
 use App\Modules\Venues\Models\Venue;
 use App\Support\Modules;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bb6d90c894f0c317616ed75dc3335cde",
+    "content-hash": "b49cdb93ae88cfa4f06586f99c328a82",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3474,16 +3474,16 @@
         },
         {
             "name": "maracuja-digital/site-core-media",
-            "version": "v0.2.1",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:lamusiquedemars/maracuja-site-core-media.git",
-                "reference": "6a1401dd2ea56c33db3a8b7643f8de489b682a62"
+                "reference": "9e78e78e528ff28effa181a16b14397dddfa01fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-media/zipball/6a1401dd2ea56c33db3a8b7643f8de489b682a62",
-                "reference": "6a1401dd2ea56c33db3a8b7643f8de489b682a62",
+                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-media/zipball/9e78e78e528ff28effa181a16b14397dddfa01fe",
+                "reference": "9e78e78e528ff28effa181a16b14397dddfa01fe",
                 "shasum": ""
             },
             "require": {
@@ -3512,10 +3512,10 @@
             ],
             "description": "Médiathèque et contrats de stockage pour Maracuja Site Core.",
             "support": {
-                "source": "https://github.com/lamusiquedemars/maracuja-site-core-media/tree/v0.2.1",
+                "source": "https://github.com/lamusiquedemars/maracuja-site-core-media/tree/v0.3.1",
                 "issues": "https://github.com/lamusiquedemars/maracuja-site-core-media/issues"
             },
-            "time": "2026-10-19T14:19:50+00:00"
+            "time": "2026-10-19T14:27:13+00:00"
         },
         {
             "name": "monolog/monolog",

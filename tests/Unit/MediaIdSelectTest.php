@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Media\Enums\MediaType;
-use App\Modules\Media\Filament\Forms\Components\MediaIdSelect;
-use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Enums\MediaType;
+use Maracuja\SiteCore\Media\Filament\Forms\Components\MediaIdSelect;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use Tests\TestCase;
 
 class MediaIdSelectTest extends TestCase
