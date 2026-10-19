@@ -3474,16 +3474,16 @@
         },
         {
             "name": "maracuja-digital/site-core-media",
-            "version": "v0.1.1",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:lamusiquedemars/maracuja-site-core-media.git",
-                "reference": "0d364e03a697e52f2d18c557b85febe2a93d5334"
+                "reference": "5ece4aae20cecfbe28c4bbfc9afc26c9e67920b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-media/zipball/0d364e03a697e52f2d18c557b85febe2a93d5334",
-                "reference": "0d364e03a697e52f2d18c557b85febe2a93d5334",
+                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-media/zipball/5ece4aae20cecfbe28c4bbfc9afc26c9e67920b9",
+                "reference": "5ece4aae20cecfbe28c4bbfc9afc26c9e67920b9",
                 "shasum": ""
             },
             "require": {
@@ -3511,10 +3511,10 @@
             ],
             "description": "Médiathèque et contrats de stockage pour Maracuja Site Core.",
             "support": {
-                "source": "https://github.com/lamusiquedemars/maracuja-site-core-media/tree/v0.1.1",
+                "source": "https://github.com/lamusiquedemars/maracuja-site-core-media/tree/v0.1.2",
                 "issues": "https://github.com/lamusiquedemars/maracuja-site-core-media/issues"
             },
-            "time": "2026-10-19T13:27:02+00:00"
+            "time": "2026-10-19T13:31:02+00:00"
         },
         {
             "name": "monolog/monolog",
