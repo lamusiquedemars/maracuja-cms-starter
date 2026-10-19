@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Gallery\Models\Gallery;
 use App\Modules\News\Models\NewsPost;
 use App\Modules\Notices\Models\SiteNotice;
 use App\Modules\Pages\Models\Page;
 use App\Modules\SiteSettings\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Contracts\View\View;
+use Maracuja\SiteCore\Gallery\Models\Gallery;
 
 class HomeController extends Controller
 {

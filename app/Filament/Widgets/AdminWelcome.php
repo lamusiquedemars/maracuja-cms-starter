@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Filament\Resources\Articles\ArticleResource;
 use App\Filament\Resources\ContentSlots\ContentSlotResource;
 use App\Filament\Resources\Events\EventResource;
-use App\Filament\Resources\Galleries\GalleryResource;
 use App\Filament\Resources\NewsPosts\NewsPostResource;
 use App\Filament\Resources\Pages\PageResource;
 use App\Filament\Resources\SiteNotices\SiteNoticeResource;
@@ -15,6 +14,7 @@ use App\Modules\SiteSettings\Models\SiteSetting;
 use App\Support\Modules;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Schema;
+use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
 
 class AdminWelcome extends Widget
 {

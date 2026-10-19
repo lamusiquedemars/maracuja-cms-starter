@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Gallery\Models\GalleryImage;
 use App\Support\MediaFiles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use Maracuja\SiteCore\Gallery\Models\GalleryImage;
 use Tests\TestCase;
 
 class MediaFilesTest extends TestCase

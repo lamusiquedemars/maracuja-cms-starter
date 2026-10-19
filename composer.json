@@ -10,6 +10,7 @@
         "filament/filament": "^4.0",
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",
+        "maracuja-digital/site-core-gallery": "^0.4",
         "maracuja-digital/site-core-media": "^0.3"
     },
     "require-dev": {
@@ -32,6 +33,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/lamusiquedemars/maracuja-site-core-media.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/lamusiquedemars/maracuja-site-core-gallery.git"
         }
     ],
     "autoload-dev": {

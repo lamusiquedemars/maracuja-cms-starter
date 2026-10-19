@@ -23,6 +23,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Maracuja\SiteCore\Media\Filament\Resources\MediaAssets\MediaAssetResource;
+use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -112,7 +113,10 @@ class AdminPanelProvider extends PanelProvider
             $panel->discoverWidgets(in: app_path('Modules/Acquisition/Filament/Widgets'), for: 'App\Modules\Acquisition\Filament\Widgets');
         }
 
-        $panel->resources([MediaAssetResource::class]);
+        $panel->resources(array_filter([
+            MediaAssetResource::class,
+            Modules::enabled('gallery') ? GalleryResource::class : null,
+        ]));
 
         return $panel;
     }

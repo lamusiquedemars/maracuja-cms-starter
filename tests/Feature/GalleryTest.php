@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Modules\Gallery\Models\Gallery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Maracuja\SiteCore\Gallery\Models\Gallery;
 use Tests\TestCase;
 
 class GalleryTest extends TestCase

@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Resources\Articles\ArticleResource;
 use App\Filament\Resources\ContentSlots\ContentSlotResource;
 use App\Filament\Resources\Events\EventResource;
-use App\Filament\Resources\Galleries\GalleryResource;
+use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
 use App\Filament\Resources\NewsPosts\NewsPostResource;
 use App\Filament\Resources\Pages\PageResource;
 use App\Filament\Resources\SiteNotices\SiteNoticeResource;

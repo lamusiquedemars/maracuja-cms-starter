@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b49cdb93ae88cfa4f06586f99c328a82",
+    "content-hash": "6d5fdee3e313e6b0d6a1fef76d021d26",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3473,6 +3473,51 @@
             "time": "2026-09-28T18:12:47+00:00"
         },
         {
+            "name": "maracuja-digital/site-core-gallery",
+            "version": "v0.4.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:lamusiquedemars/maracuja-site-core-gallery.git",
+                "reference": "9304ca0d063586c29aba8851048d10b4307c38ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-gallery/zipball/9304ca0d063586c29aba8851048d10b4307c38ab",
+                "reference": "9304ca0d063586c29aba8851048d10b4307c38ab",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "illuminate/database": "^13.0",
+                "illuminate/filesystem": "^13.0",
+                "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-media": "@dev",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Gallery\\Providers\\GalleryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Gallery\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Galeries photo pour Maracuja Site Core.",
+            "support": {
+                "source": "https://github.com/lamusiquedemars/maracuja-site-core-gallery/tree/v0.4.0",
+                "issues": "https://github.com/lamusiquedemars/maracuja-site-core-gallery/issues"
+            },
+            "time": "2026-10-19T16:41:22+00:00"
+        },
+        {
             "name": "maracuja-digital/site-core-media",
             "version": "v0.3.2",
             "source": {
@@ -5276,27 +5321,35 @@
         },
         {
             "name": "spatie/invade",
-            "version": "2.1.1",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/invade.git",
-                "reference": "f929c7b6e75fceeefa7b41a491e91274bafb17af"
+                "reference": "10eb682c480bc5f677a6f9f5c5a64da12590dd97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/invade/zipball/f929c7b6e75fceeefa7b41a491e91274bafb17af",
-                "reference": "f929c7b6e75fceeefa7b41a491e91274bafb17af",
+                "url": "https://api.github.com/repos/spatie/invade/zipball/10eb682c480bc5f677a6f9f5c5a64da12590dd97",
+                "reference": "10eb682c480bc5f677a6f9f5c5a64da12590dd97",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "require-dev": {
-                "pestphp/pest": "^1.20",
-                "phpstan/phpstan": "^1.4",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "pestphp/pest": "^3.8 || ^4.0",
+                "phpstan/phpstan": "^1.12 || ^2.0",
                 "spatie/ray": "^1.28"
             },
             "type": "library",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "phpstan-extension.neon"
+                    ]
+                }
+            },
             "autoload": {
                 "files": [
                     "src/functions.php"
@@ -5323,7 +5376,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/invade/tree/2.1.1"
+                "source": "https://github.com/spatie/invade/tree/2.2.0"
             },
             "funding": [
                 {
@@ -5331,7 +5384,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-24T12:39:05+00:00"
+            "time": "2026-10-19T16:16:47+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
