@@ -112,7 +112,12 @@ php artisan maracuja:doctor --production
 
 ## Product Direction
 
-This repository is a versioned starter, not a Composer package yet. The intended path is:
+This repository is the reference application for Maracuja Site. Shared
+capabilities are progressively consumed as private Composer packages from
+Maracuja Site Core. During a module transition, the local implementation and
+its historical migrations remain until the package has fully replaced it.
+
+The intended path is:
 
 1. Use this starter for the first Maracuja CMS client installations.
 2. Keep changes versioned through the changelog.
