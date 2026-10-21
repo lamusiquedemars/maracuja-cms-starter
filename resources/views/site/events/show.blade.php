@@ -49,10 +49,21 @@
                     </div>
                 @endif
 
-                @if ($event->status !== \App\Modules\Events\Models\Event::STATUS_SCHEDULED)
+                @if ($event->status !== \Maracuja\SiteCore\Events\Models\Event::STATUS_SCHEDULED)
                     <div>
                         <dt>Statut</dt>
                         <dd>{{ $event->statusLabel() }}</dd>
+                    </div>
+                @endif
+
+                @if ($event->participants->isNotEmpty())
+                    <div>
+                        <dt>Avec</dt>
+                        <dd>
+                            @foreach ($event->participants as $participant)
+                                {{ $participant->name }}@if ($participant->pivot->role) <span>({{ $participant->pivot->role }})</span>@endif@if (! $loop->last), @endif
+                            @endforeach
+                        </dd>
                     </div>
                 @endif
             </dl>

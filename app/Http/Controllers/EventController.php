@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Events\Models\Event;
-use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\ContentSlots;
 use App\Support\Modules;
 use Illuminate\View\View;
+use Maracuja\SiteCore\Events\Models\Event;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 
 class EventController extends Controller
 {
@@ -19,7 +19,7 @@ class EventController extends Controller
             'label' => ContentSlots::value('events.public_label', 'Événements'),
             'subtitle' => ContentSlots::value('events.index.subtitle', 'Dates à venir et rendez-vous publics.'),
             'events' => Event::query()
-                ->with('venue')
+                ->with(['venue', 'participants'])
                 ->upcoming()
                 ->paginate(12),
         ]);
@@ -30,7 +30,7 @@ class EventController extends Controller
         abort_unless(Modules::enabled('events'), 404);
 
         $event = Event::query()
-            ->with('venue')
+            ->with(['venue', 'participants'])
             ->where('slug', $slug)
             ->visible()
             ->firstOrFail();

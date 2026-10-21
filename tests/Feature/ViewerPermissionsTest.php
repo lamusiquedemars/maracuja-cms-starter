@@ -2,15 +2,6 @@
 
 namespace Tests\Feature;
 
-use Maracuja\SiteCore\Publication\Filament\Resources\Articles\ArticleResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\ContentSlots\ContentSlotResource;
-use App\Filament\Resources\Events\EventResource;
-use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
-use Maracuja\SiteCore\Publication\Filament\Resources\NewsPosts\NewsPostResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\Pages\PageResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\SiteNotices\SiteNoticeResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\SiteSettings\SiteSettingResource;
-use App\Filament\Resources\Venues\VenueResource;
 use App\Models\User;
 use App\Modules\Appointments\Filament\Resources\AppointmentSettings\AppointmentSettingResource;
 use App\Modules\Audience\Filament\Resources\AudienceBrevoSettings\AudienceBrevoSettingResource;
@@ -24,6 +15,15 @@ use App\Modules\Inquiries\Filament\Resources\Inquiries\InquiryResource;
 use App\Modules\Media\Filament\Resources\MediaAssets\MediaAssetResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Maracuja\SiteCore\Events\Filament\Resources\Events\EventResource;
+use Maracuja\SiteCore\Events\Filament\Resources\Venues\VenueResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\ContentSlots\ContentSlotResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\Pages\PageResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\SiteNotices\SiteNoticeResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\SiteSettings\SiteSettingResource;
+use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\Articles\ArticleResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\NewsPosts\NewsPostResource;
 use Tests\TestCase;
 
 class ViewerPermissionsTest extends TestCase

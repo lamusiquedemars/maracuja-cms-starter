@@ -2,6 +2,9 @@
 
 namespace App\Support;
 
+use Maracuja\SiteCore\Events\Models\Event;
+use Maracuja\SiteCore\Events\Models\Venue;
+
 class Modules
 {
     public static function enabled(string $module): bool
@@ -27,8 +30,8 @@ class Modules
             'pages' => app_path('Modules/Pages'),
             'news' => app_path('Modules/News'),
             'articles' => app_path('Modules/Articles'),
-            'venues' => app_path('Modules/Venues'),
-            'events' => app_path('Modules/Events'),
+            'venues' => class_exists(Venue::class),
+            'events' => class_exists(Event::class),
             'gallery' => app_path('Modules/Gallery'),
             'contact_form' => app_path('Modules/ContactForm'),
             'inquiries' => app_path('Modules/Inquiries'),
@@ -40,7 +43,9 @@ class Modules
             'campaigns' => app_path('Modules/Campaigns'),
         ];
 
-        return is_dir($paths[$module] ?? app_path('Modules/'.str($module)->studly()));
+        $installation = $paths[$module] ?? app_path('Modules/'.str($module)->studly());
+
+        return is_bool($installation) ? $installation : is_dir($installation);
     }
 
     public static function offer(): string

@@ -4,25 +4,26 @@ namespace App\Support;
 
 use App\Models\User;
 use App\Modules\Appointments\Models\AppointmentSetting;
-use Maracuja\SiteCore\Publication\Models\Article;
 use App\Modules\Audience\Models\AudienceBrevoSetting;
 use App\Modules\Audience\Models\AudienceContact;
 use App\Modules\Audience\Models\AudienceSegment;
 use App\Modules\Audience\Models\SegmentMessage;
 use App\Modules\Contacts\Models\Contact;
-use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;
-use App\Modules\Events\Models\Event;
 use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\Media\Models\MediaAsset;
-use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
-use Maracuja\SiteCore\Gallery\Models\Gallery;
-use Maracuja\SiteCore\Publication\Models\NewsPost;
-use Maracuja\SiteCore\Foundation\Models\SiteNotice;
+use Maracuja\SiteCore\Events\Models\Event;
+use Maracuja\SiteCore\Events\Models\Participant;
+use Maracuja\SiteCore\Events\Models\Venue;
+use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 use Maracuja\SiteCore\Foundation\Models\Page;
+use Maracuja\SiteCore\Foundation\Models\SiteNotice;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;
-use App\Modules\Venues\Models\Venue;
+use Maracuja\SiteCore\Gallery\Models\Gallery;
+use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
+use Maracuja\SiteCore\Publication\Models\Article;
+use Maracuja\SiteCore\Publication\Models\NewsPost;
 
 class ContentPermissions
 {
@@ -60,6 +61,7 @@ class ContentPermissions
             MediaAsset::class, CoreMediaAsset::class => 'media',
             Gallery::class => 'gallery',
             Event::class => 'events',
+            Participant::class => 'events',
             Venue::class => 'venues',
             AppointmentSetting::class => 'appointments',
             Conversation::class, ConversationSetting::class => 'conversations',

@@ -12,6 +12,7 @@
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "maracuja-digital/site-core-gallery": "@dev",
+        "maracuja-digital/site-core-events": "@dev",
         "maracuja-digital/site-core-foundation": "@dev",
         "maracuja-digital/site-core-media": "@dev",
         "maracuja-digital/site-core-publication": "@dev"

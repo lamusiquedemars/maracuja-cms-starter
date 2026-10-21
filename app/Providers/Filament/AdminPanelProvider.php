@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\AdminOverview;
 use App\Filament\Widgets\AdminWelcome;
-use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -22,8 +21,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Maracuja\SiteCore\Media\Filament\Resources\MediaAssets\MediaAssetResource;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
+use Maracuja\SiteCore\Media\Filament\Resources\MediaAssets\MediaAssetResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -47,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverResources(in: base_path('vendor/maracuja-digital/site-core-foundation/src/Filament/Resources'), for: 'Maracuja\SiteCore\Foundation\Filament\Resources')
             ->discoverResources(in: base_path('vendor/maracuja-digital/site-core-publication/src/Filament/Resources'), for: 'Maracuja\SiteCore\Publication\Filament\Resources')
+            ->discoverResources(in: base_path('vendor/maracuja-digital/site-core-events/src/Filament/Resources'), for: 'Maracuja\SiteCore\Events\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,

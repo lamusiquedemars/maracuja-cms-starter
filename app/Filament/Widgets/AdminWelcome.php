@@ -2,19 +2,19 @@
 
 namespace App\Filament\Widgets;
 
-use Maracuja\SiteCore\Publication\Filament\Resources\Articles\ArticleResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\ContentSlots\ContentSlotResource;
-use App\Filament\Resources\Events\EventResource;
-use Maracuja\SiteCore\Publication\Filament\Resources\NewsPosts\NewsPostResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\Pages\PageResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\SiteNotices\SiteNoticeResource;
-use Maracuja\SiteCore\Foundation\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Modules\Inquiries\Filament\Resources\Inquiries\InquiryResource;
-use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Schema;
+use Maracuja\SiteCore\Events\Filament\Resources\Events\EventResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\ContentSlots\ContentSlotResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\Pages\PageResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\SiteNotices\SiteNoticeResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\SiteSettings\SiteSettingResource;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\Articles\ArticleResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\NewsPosts\NewsPostResource;
 
 class AdminWelcome extends Widget
 {
@@ -22,7 +22,7 @@ class AdminWelcome extends Widget
 
     protected static ?int $sort = 10;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected string $view = 'filament.widgets.admin-welcome';
 

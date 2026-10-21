@@ -38,7 +38,7 @@
                             @if ($event->publicExcerpt())
                                 <p>{{ $event->publicExcerpt() }}</p>
                             @endif
-                            @if ($event->status !== \App\Modules\Events\Models\Event::STATUS_SCHEDULED)
+                            @if ($event->status !== \Maracuja\SiteCore\Events\Models\Event::STATUS_SCHEDULED)
                                 <span class="event-card__status">{{ $event->statusLabel() }}</span>
                             @endif
                         </div>
