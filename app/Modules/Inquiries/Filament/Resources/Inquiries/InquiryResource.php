@@ -2,7 +2,7 @@
 
 namespace App\Modules\Inquiries\Filament\Resources\Inquiries;
 
-use App\Modules\Audience\Actions\CreateContactFromInquiry;
+use App\Support\Audience\CreateContactFromInquiry;
 use App\Modules\Inquiries\Enums\InquiryStatus;
 use App\Modules\Inquiries\Filament\Resources\Inquiries\Pages\ManageInquiries;
 use App\Modules\Inquiries\Models\Inquiry;

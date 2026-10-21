@@ -2,7 +2,7 @@
 
 namespace App\Modules\Contacts\Models;
 
-use App\Modules\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
 use App\Modules\Inquiries\Models\Inquiry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
