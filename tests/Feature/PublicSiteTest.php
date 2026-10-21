@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Modules\ContactForm\Mail\ContactMessageConfirmation;
-use App\Modules\ContactForm\Mail\ContactMessageReceived;
+use Maracuja\SiteCore\Contact\Mail\ContactRequestConfirmation;
+use Maracuja\SiteCore\Contact\Mail\ContactRequestReceived;
 use Maracuja\SiteCore\Publication\Models\Article;
 use App\Modules\Inquiries\Models\Inquiry;
 use Maracuja\SiteCore\Foundation\Models\ContentSlot;
@@ -26,6 +26,7 @@ class PublicSiteTest extends TestCase
         parent::setUp();
 
         $this->withoutVite();
+        config(['maracuja-contact.consent_required' => false]);
     }
 
     public function test_home_page_renders_the_starter_pitch(): void
@@ -353,7 +354,7 @@ class PublicSiteTest extends TestCase
             'email' => 'ivo@example.test',
         ]);
 
-        Mail::assertSent(ContactMessageReceived::class);
+        Mail::assertSent(ContactRequestReceived::class);
     }
 
     public function test_contact_form_sends_mail_without_storing_inquiry_when_inquiries_module_is_not_enabled(): void
@@ -376,7 +377,7 @@ class PublicSiteTest extends TestCase
 
         $this->assertDatabaseCount(Inquiry::class, 0);
 
-        Mail::assertSent(ContactMessageReceived::class);
+        Mail::assertSent(ContactRequestReceived::class);
     }
 
     public function test_contact_form_rejects_invalid_email_without_top_level_domain(): void
@@ -440,7 +441,7 @@ class PublicSiteTest extends TestCase
             'email' => 'ivo@example.test',
         ]);
 
-        Mail::assertSent(ContactMessageConfirmation::class);
+        Mail::assertSent(ContactRequestConfirmation::class);
     }
 
     public function test_disabled_news_module_returns_not_found(): void

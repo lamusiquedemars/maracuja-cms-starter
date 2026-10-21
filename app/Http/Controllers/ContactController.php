@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Acquisition\Actions\QueueContactMessageForCremona;
-use App\Modules\Acquisition\Actions\QueueInquiryForCremona;
 use App\Modules\Acquisition\Support\Attribution;
-use App\Modules\ContactForm\Data\ContactMessage;
-use App\Modules\ContactForm\Mail\ContactMessageConfirmation;
-use App\Modules\ContactForm\Mail\ContactMessageReceived;
-use App\Modules\Inquiries\Actions\StoreInquiry;
-use Maracuja\SiteCore\Foundation\Models\Page;
-use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Maracuja\SiteCore\Contact\Contracts\LeadReceiver;
+use Maracuja\SiteCore\Contact\Data\ContactRequestData;
+use Maracuja\SiteCore\Contact\Mail\ContactRequestConfirmation;
+use Maracuja\SiteCore\Contact\Mail\ContactRequestReceived;
+use Maracuja\SiteCore\Contact\Support\ContactRequestRules;
+use Maracuja\SiteCore\Foundation\Models\Page;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 
 class ContactController extends Controller
 {
@@ -36,61 +35,37 @@ class ContactController extends Controller
         abort_unless(Modules::enabled('contact_form'), 404);
 
         $settings = SiteSetting::current();
-
-        $rules = [
-            'website' => ['nullable', 'string', 'max:0'],
-            'email' => ['required', 'string', 'max:160', 'email:rfc', 'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/'],
-            'message' => ['required', 'string', 'max:5000'],
-            'phone' => ['nullable', 'string', 'max:60'],
-            'subject' => ['nullable', 'string', 'max:160'],
+        $data = $request->validate([
+            ...ContactRequestRules::make($settings->contact_form_show_name),
             'acquisition_attribution' => ['nullable', 'json', 'max:20000'],
-        ];
-
-        if ($settings->contact_form_show_name) {
-            $rules['name'] = ['required', 'string', 'max:120'];
-        } else {
-            $rules['name'] = ['sometimes', 'nullable', 'string', 'max:120'];
-        }
-
-        $data = $request->validate($rules);
+        ]);
 
         if (! $settings->contact_form_show_name) {
             $data['name'] = $data['email'];
         }
 
-        $attribution = Attribution::fromJson($data['acquisition_attribution'] ?? null);
-        unset($data['acquisition_attribution']);
-        $data['attribution_source'] = $attribution['source'];
-        $data['attribution_medium'] = $attribution['medium'];
-        $data['attribution_campaign'] = $attribution['campaign'];
-        $data['attribution_first_touch'] = $attribution['first_touch'];
-        $data['attribution_last_touch'] = $attribution['last_touch'];
-        $data['attribution_method'] = $attribution['method'];
-        $data['attribution_confidence'] = $attribution['confidence'];
+        $message = new ContactRequestData(
+            name: $data['name'],
+            email: $data['email'],
+            phone: $data['phone'] ?? null,
+            subject: $data['subject'] ?? null,
+            message: $data['message'],
+            consentedAt: ($data['contact_consent'] ?? false) ? now() : null,
+            metadata: ['attribution' => Attribution::fromJson($data['acquisition_attribution'] ?? null)],
+        );
 
-        $message = ContactMessage::fromArray($data);
-
-        $connected = (bool) config('maracuja.acquisition.cremona.enabled');
-
-        if ($connected) {
-            QueueContactMessageForCremona::run($message);
-        } elseif (Modules::enabled('inquiries') && class_exists(StoreInquiry::class)) {
-            $inquiry = StoreInquiry::run($message);
-            QueueInquiryForCremona::run($inquiry);
-        }
+        app(LeadReceiver::class)->receive($message);
 
         if ($settings->contact_form_send_admin_email && $settings->contact_email) {
-            Mail::to($settings->contact_email)->send(new ContactMessageReceived($message));
+            Mail::to($settings->contact_email)->send(new ContactRequestReceived($message));
         }
 
         if ($settings->contact_form_send_confirmation_email) {
-            Mail::to($message->email)->send(new ContactMessageConfirmation($message));
+            Mail::to($message->email)->send(new ContactRequestConfirmation($message));
         }
 
-        return redirect()
-            ->route('contact')
-            ->with('status', ! $connected && Modules::enabled('inquiries')
-                ? 'Votre message a bien été enregistré. Nous répondrons dans les meilleurs délais.'
-                : 'Votre message a bien été envoyé.');
+        return redirect()->route('contact')->with('status', config('maracuja.acquisition.cremona.enabled')
+            ? 'Votre message a bien été envoyé.'
+            : 'Votre message a bien été enregistré. Nous répondrons dans les meilleurs délais.');
     }
 }

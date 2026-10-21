@@ -19,6 +19,7 @@ class AcquisitionAttributionTest extends TestCase
         parent::setUp();
 
         config(['maracuja.modules.acquisition' => true]);
+        config(['maracuja-contact.consent_required' => false]);
         Mail::fake();
         SiteSetting::current()->update(['contact_email' => null]);
     }

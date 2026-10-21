@@ -54,6 +54,13 @@
                 <textarea name="message" rows="7" required>{{ old('message') }}</textarea>
                 @error('message') <small>{{ $message }}</small> @enderror
             </label>
+            @if (config('maracuja-contact.consent_required', true))
+                <label class="full">
+                    <input name="contact_consent" type="checkbox" value="1" @checked(old('contact_consent')) required>
+                    J’accepte que mes coordonnées soient utilisées uniquement pour répondre à cette demande.
+                    @error('contact_consent') <small>{{ $message }}</small> @enderror
+                </label>
+            @endif
             <x-site.button type="submit">Envoyer</x-site.button>
         </form>
     </x-site.section>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "47fb8e2cf03cdbdbff52bcc71ac89900",
+    "content-hash": "aca52c93963875bd9dc1fa1d5c04e61e",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3677,6 +3677,42 @@
                 }
             ],
             "time": "2026-10-21T01:43:35+00:00"
+        },
+        {
+            "name": "maracuja-digital/site-core-contact",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/contact",
+                "reference": "f8fcf0c0c1a2ec1619f399faae1704d58fedcf54"
+            },
+            "require": {
+                "illuminate/database": "^13.0",
+                "illuminate/mail": "^13.0",
+                "illuminate/support": "^13.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Contact\\Providers\\ContactServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Contact\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Formulaire public et capture minimale de demandes de Maracuja Site Core.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "maracuja-digital/site-core-events",
@@ -11246,6 +11282,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "maracuja-digital/site-core-contact": 20,
         "maracuja-digital/site-core-events": 20,
         "maracuja-digital/site-core-foundation": 20,
         "maracuja-digital/site-core-gallery": 20,
