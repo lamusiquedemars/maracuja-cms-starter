@@ -16,9 +16,10 @@ final class ManageUsers extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [CreateAction::make()->label('Ajouter un utilisateur')->mutateDataUsing(function (array $data): array {
-            if (($data['role'] ?? null) === User::ROLE_SITE_MANAGER && ($data['content_permissions'] ?? null) === null) {
-                $data['content_permissions'] = array_keys(collect(ContentPermissions::labels())->filter(fn (string $label, string $module): bool => Modules::enabled($module))->all());
+            if (! ($data['customize_permissions'] ?? false)) {
+                $data['content_permissions'] = null;
             }
+            unset($data['customize_permissions']);
             return $data;
         })];
     }

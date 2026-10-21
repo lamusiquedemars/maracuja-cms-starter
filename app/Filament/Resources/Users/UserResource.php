@@ -12,6 +12,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -46,15 +47,26 @@ final class UserResource extends Resource
             Placeholder::make('profile_permissions')->label('Droits hérités du profil')->content(function (?User $record): string {
                 if ($record?->content_permissions !== null) return 'Cet utilisateur utilise une personnalisation explicite des modules.';
                 return match ($record?->role) {
-                    User::ROLE_ADMIN => 'Administrateur : tous les modules actifs, réglages globaux et SEO.',
-                    User::ROLE_SITE_MANAGER => 'Responsable : tous les modules éditoriaux actifs, sans réglages globaux ni SEO.',
-                    User::ROLE_EDITOR => 'Éditeur : droits hérités pendant la transition ; cochez des modules pour le restreindre explicitement.',
+                    User::ROLE_ADMIN => 'Administrateur : tous les modules actifs, réglages et SEO.',
+                    User::ROLE_SITE_MANAGER => 'Responsable : tous les modules éditoriaux actifs, sans réglages ni SEO.',
+                    User::ROLE_EDITOR => 'Éditeur : droits historiques larges jusqu’à sa première personnalisation.',
                     default => 'Lecteur : consultation interne uniquement.',
                 };
             }),
+            CheckboxList::make('inherited_module_preview')->label('Modules effectivement accordés par le profil')
+                ->options(self::activeModuleOptions())->disabled()->dehydrated(false)
+                ->visible(fn (?User $record): bool => $record?->content_permissions === null)
+                ->afterStateHydrated(function (CheckboxList $component, ?User $record): void {
+                    $component->state(self::inheritedModuleKeys($record));
+                }),
+            Toggle::make('customize_permissions')->label('Personnaliser les modules autorisés')
+                ->default(fn (?User $record): bool => $record?->content_permissions !== null)
+                ->live()->dehydrated(false)
+                ->helperText('Active cette option pour remplacer les droits hérités par une liste précise.'),
             CheckboxList::make('content_permissions')->label('Modules autorisés')->options(
-                collect(ContentPermissions::labels())->filter(fn (string $label, string $module): bool => Modules::enabled($module))->all()
-            )->columns(2)->helperText('Ces cases personnalisent le profil. Laisser la liste vide n’est pas la même chose que ne rien personnaliser : une liste enregistrée vide retire tous les modules.'),
+                self::activeModuleOptions()
+            )->columns(2)->visible(fn ($get): bool => (bool) $get('customize_permissions'))
+                ->helperText('Ces cases remplacent le profil. Une liste vide retire tous les modules.'),
         ]);
     }
 
@@ -69,4 +81,22 @@ final class UserResource extends Resource
     }
 
     public static function getPages(): array { return ['index' => ManageUsers::route('/')]; }
+
+    /** @return array<string, string> */
+    public static function activeModuleOptions(): array
+    {
+        return collect(ContentPermissions::labels())
+            ->filter(fn (string $label, string $module): bool => Modules::enabled($module))
+            ->all();
+    }
+
+    /** @return list<string> */
+    public static function inheritedModuleKeys(?User $user): array
+    {
+        if (! $user || ! in_array($user->role, [User::ROLE_ADMIN, User::ROLE_SITE_MANAGER, User::ROLE_EDITOR], true)) {
+            return [];
+        }
+
+        return array_keys(self::activeModuleOptions());
+    }
 }
