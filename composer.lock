@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "777489734d75c647c283580d1f2fbaaa",
+    "content-hash": "9b78bf832b53afa0c9f23868436e13f1",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3680,17 +3680,11 @@
         },
         {
             "name": "maracuja-digital/site-core-foundation",
-            "version": "v0.1.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:lamusiquedemars/maracuja-site-core-foundation.git",
-                "reference": "f49e59ef15e5c4d1db40883f0111454ba5446f8b"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-foundation/zipball/f49e59ef15e5c4d1db40883f0111454ba5446f8b",
-                "reference": "f49e59ef15e5c4d1db40883f0111454ba5446f8b",
-                "shasum": ""
+                "type": "path",
+                "url": "../maracuja-site-core/packages/foundation",
+                "reference": "41ad1bb569d6fb3075123adc73605c2b0efdaadc"
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -3717,24 +3711,18 @@
                 "proprietary"
             ],
             "description": "Fondation éditoriale de Maracuja Site Core.",
-            "support": {
-                "source": "https://github.com/lamusiquedemars/maracuja-site-core-foundation/tree/v0.1.0"
-            },
-            "time": "2026-10-21T06:09:23+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "maracuja-digital/site-core-gallery",
-            "version": "v0.4.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:lamusiquedemars/maracuja-site-core-gallery.git",
-                "reference": "9304ca0d063586c29aba8851048d10b4307c38ab"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-gallery/zipball/9304ca0d063586c29aba8851048d10b4307c38ab",
-                "reference": "9304ca0d063586c29aba8851048d10b4307c38ab",
-                "shasum": ""
+                "type": "path",
+                "url": "../maracuja-site-core/packages/gallery",
+                "reference": "d980bddaef4e42892daddc20aa1f7c92fd6f8b89"
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -3761,25 +3749,18 @@
                 "proprietary"
             ],
             "description": "Galeries photo pour Maracuja Site Core.",
-            "support": {
-                "source": "https://github.com/lamusiquedemars/maracuja-site-core-gallery/tree/v0.4.0",
-                "issues": "https://github.com/lamusiquedemars/maracuja-site-core-gallery/issues"
-            },
-            "time": "2026-10-19T16:41:22+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "maracuja-digital/site-core-media",
-            "version": "v0.3.3",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:lamusiquedemars/maracuja-site-core-media.git",
-                "reference": "f5d87a2f6cde65b8cf432a85fd6603fc7bf46d80"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lamusiquedemars/maracuja-site-core-media/zipball/f5d87a2f6cde65b8cf432a85fd6603fc7bf46d80",
-                "reference": "f5d87a2f6cde65b8cf432a85fd6603fc7bf46d80",
-                "shasum": ""
+                "type": "path",
+                "url": "../maracuja-site-core/packages/media",
+                "reference": "cca64646b16f8a8984479dc9974d0039a987f955"
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -3806,11 +3787,10 @@
                 "proprietary"
             ],
             "description": "Médiathèque et contrats de stockage pour Maracuja Site Core.",
-            "support": {
-                "source": "https://github.com/lamusiquedemars/maracuja-site-core-media/tree/v0.3.3",
-                "issues": "https://github.com/lamusiquedemars/maracuja-site-core-media/issues"
-            },
-            "time": "2026-10-19T16:55:38+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "monolog/monolog",
@@ -11189,7 +11169,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "maracuja-digital/site-core-foundation": 20,
+        "maracuja-digital/site-core-gallery": 20,
+        "maracuja-digital/site-core-media": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

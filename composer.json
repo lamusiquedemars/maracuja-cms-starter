@@ -11,9 +11,9 @@
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "maracuja-digital/site-core-gallery": "^0.4",
-        "maracuja-digital/site-core-foundation": "^0.1",
-        "maracuja-digital/site-core-media": "^0.3"
+        "maracuja-digital/site-core-gallery": "@dev",
+        "maracuja-digital/site-core-foundation": "@dev",
+        "maracuja-digital/site-core-media": "@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -33,16 +33,11 @@
     },
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/lamusiquedemars/maracuja-site-core-media.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/lamusiquedemars/maracuja-site-core-gallery.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/lamusiquedemars/maracuja-site-core-foundation.git"
+            "type": "path",
+            "url": "../maracuja-site-core/packages/*",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "autoload-dev": {
