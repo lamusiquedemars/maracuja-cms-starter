@@ -58,6 +58,19 @@ class ModulesTest extends TestCase
         $this->assertTrue(Modules::enabled('inquiries'));
     }
 
+    public function test_core_audience_and_brevo_modules_are_detected_from_their_packages(): void
+    {
+        config([
+            'maracuja.modules.audience' => true,
+            'maracuja.modules.brevo' => true,
+        ]);
+
+        $this->assertTrue(Modules::installed('audience'));
+        $this->assertTrue(Modules::installed('brevo'));
+        $this->assertTrue(Modules::enabled('audience'));
+        $this->assertTrue(Modules::enabled('brevo'));
+    }
+
     public function test_missing_module_directory_is_always_disabled(): void
     {
         config(['maracuja.modules.campaigns' => true]);

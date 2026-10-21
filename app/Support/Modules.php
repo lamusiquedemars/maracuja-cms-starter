@@ -4,6 +4,8 @@ namespace App\Support;
 
 use Maracuja\SiteCore\Events\Models\Event;
 use Maracuja\SiteCore\Events\Models\Venue;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Brevo\Models\AudienceBrevoSetting;
 
 class Modules
 {
@@ -42,7 +44,11 @@ class Modules
             'appointments' => app_path('Modules/Appointments'),
             'contacts' => app_path('Modules/Contacts'),
             'conversations' => app_path('Modules/Conversations'),
-            'audience' => app_path('Modules/Audience'),
+            // Ces capacités sont fournies par des packages du Site Core : une
+            // installation client ne doit pas simuler leur présence par un
+            // dossier applicatif vide.
+            'audience' => class_exists(AudienceContact::class),
+            'brevo' => class_exists(AudienceBrevoSetting::class),
             'acquisition' => app_path('Modules/Acquisition'),
             'campaigns' => app_path('Modules/Campaigns'),
         ];
