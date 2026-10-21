@@ -3684,9 +3684,10 @@
             "dist": {
                 "type": "path",
                 "url": "../maracuja-site-core/packages/audience",
-                "reference": "0fab994db23c15154095381ad416857ae893c7b9"
+                "reference": "62c46b1026e3ffedfd54d140f2e27566c937263c"
             },
             "require": {
+                "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/support": "^13.0",
                 "php": "^8.4"
@@ -3719,9 +3720,10 @@
             "dist": {
                 "type": "path",
                 "url": "../maracuja-site-core/packages/brevo",
-                "reference": "b6d1efdd0ea1bead175c8eb9d5a5fa0797b53375"
+                "reference": "7c6a67c021c345ef178a1f7bafcd6a722f16cb8d"
             },
             "require": {
+                "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/http": "^13.0",
                 "illuminate/support": "^13.0",

@@ -101,10 +101,26 @@ class AdminPanelProvider extends PanelProvider
             );
         }
 
-        if (Modules::enabled('audience') && is_dir(app_path('Modules/Audience/Filament/Resources'))) {
+        if (Modules::enabled('audience')
+            && config('maracuja-audience.use_legacy_resources', true)
+            && is_dir(app_path('Modules/Audience/Filament/Resources'))) {
             $panel->discoverResources(
                 in: app_path('Modules/Audience/Filament/Resources'),
                 for: 'App\Modules\Audience\Filament\Resources',
+            );
+        }
+
+        if (Modules::enabled('audience') && ! config('maracuja-audience.use_legacy_resources', true)) {
+            $panel->discoverResources(
+                in: base_path('vendor/maracuja-digital/site-core-audience/src/Filament/Resources'),
+                for: 'Maracuja\SiteCore\Audience\Filament\Resources',
+            );
+        }
+
+        if (Modules::enabled('brevo')) {
+            $panel->discoverResources(
+                in: base_path('vendor/maracuja-digital/site-core-brevo/src/Filament/Resources'),
+                for: 'Maracuja\SiteCore\Brevo\Filament\Resources',
             );
         }
 

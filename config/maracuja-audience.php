@@ -5,4 +5,6 @@
 // Le package est déjà installé pour permettre une bascule contrôlée.
 return [
     'load_migrations' => false,
+    // Passera à false lors de la release qui remplace les ressources locales.
+    'use_legacy_resources' => true,
 ];
