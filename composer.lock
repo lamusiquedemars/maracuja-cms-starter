@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19b288010266650fce1808bbe7646822",
+    "content-hash": "46fd0424efde0bf0aec71358c201b1ce",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3677,6 +3677,79 @@
                 }
             ],
             "time": "2026-10-21T01:43:35+00:00"
+        },
+        {
+            "name": "maracuja-digital/site-core-audience",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/audience",
+                "reference": "0fab994db23c15154095381ad416857ae893c7b9"
+            },
+            "require": {
+                "illuminate/database": "^13.0",
+                "illuminate/support": "^13.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Audience\\Providers\\AudienceServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Audience\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Consentement marketing, contacts, segments et campagnes de Maracuja Site Core.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "maracuja-digital/site-core-brevo",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/brevo",
+                "reference": "b6d1efdd0ea1bead175c8eb9d5a5fa0797b53375"
+            },
+            "require": {
+                "illuminate/database": "^13.0",
+                "illuminate/http": "^13.0",
+                "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-audience": "dev-main",
+                "nesbot/carbon": "^3.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Brevo\\Providers\\BrevoServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Brevo\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Adaptateur Brevo optionnel pour Maracuja Site Core Audience.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "maracuja-digital/site-core-contact",
@@ -11320,6 +11393,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "maracuja-digital/site-core-audience": 20,
+        "maracuja-digital/site-core-brevo": 20,
         "maracuja-digital/site-core-contact": 20,
         "maracuja-digital/site-core-cremona-connector": 20,
         "maracuja-digital/site-core-events": 20,
