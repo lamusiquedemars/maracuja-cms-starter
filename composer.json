@@ -1,15 +1,28 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "maracuja-digital/maracuja-cms-starter",
+    "name": "maracuja-digital/maracuja-site",
     "type": "project",
     "description": "Laravel + Filament starter for focused administrable showcase websites.",
     "keywords": ["laravel", "filament", "cms", "showcase", "maracuja"],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../maracuja-site-core/packages/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "filament/filament": "^4.0",
         "laravel/framework": "^13.8",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "maracuja-digital/site-core-foundation": "dev-main",
+        "maracuja-digital/site-core-gallery": "dev-main",
+        "maracuja-digital/site-core-media": "dev-main",
+        "maracuja-digital/site-core-publication": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

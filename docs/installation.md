@@ -1,11 +1,12 @@
 # Installation
 
-Maracuja CMS V1 est un starter Laravel + Filament. Chaque client a sa propre installation, sa base de donnees, ses medias et sa configuration.
+Maracuja Site est une application Laravel + Filament. Chaque client a sa propre installation, sa base de donnees, ses medias et sa configuration. Le code partagé provient uniquement du checkout voisin `maracuja-site-core`.
 
 ## Nouvelle installation locale
 
-Creer d'abord une base MySQL vide en `utf8mb4`, puis renseigner ses acces dans
-`.env`. Le nom local recommande est `maracuja_cms_starter`.
+Placer `maracuja-site` et `maracuja-site-core` côte à côte, puis créer une base MySQL vide en `utf8mb4` et renseigner ses accès dans `.env`. Composer résout les packages depuis `../maracuja-site-core/packages/*`; aucun module partagé n'est cloné depuis GitHub.
+
+Le nom local recommandé est `maracuja_site`.
 
 ```bash
 composer install
@@ -78,13 +79,13 @@ Exemple:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=maracuja_cms_starter
+DB_DATABASE=maracuja_site
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
 Les tests utilisent une base distincte nommee
-`maracuja_cms_starter_testing`. Elle doit rester strictement locale et ne doit
+`maracuja_site_testing`. Elle doit rester strictement locale et ne doit
 contenir aucune donnee a conserver.
 
 Le starter force cette base dans `phpunit.xml` et bloque le démarrage des tests

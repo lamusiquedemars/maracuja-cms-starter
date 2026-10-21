@@ -1,6 +1,6 @@
-# Maracuja CMS Starter
+# Maracuja Site
 
-Maracuja CMS is a Laravel + Filament starter for building focused, administrable showcase websites. The V1 target is simple: one installation per client, a custom Blade frontend, and a Filament admin that only exposes the modules enabled for that project.
+Maracuja Site is a Laravel + Filament application for focused, administrable showcase websites. Each client site remains an isolated Git repository; its shared capabilities come exclusively from the sibling `maracuja-site-core` monorepo.
 
 ## V1 Modules
 
@@ -16,6 +16,16 @@ Maracuja CMS is a Laravel + Filament starter for building focused, administrable
 - Audience: contacts, segments and targeted messages, currently experimental.
 
 ## Local Setup
+
+The two checkouts must be siblings:
+
+```text
+Sites/
+├── maracuja-site/
+└── maracuja-site-core/
+```
+
+Composer resolves the Site Core packages from `../maracuja-site-core/packages/*` and symlinks them locally. Do not add GitHub VCS repositories for individual modules.
 
 ```bash
 composer install
@@ -112,8 +122,4 @@ php artisan maracuja:doctor --production
 
 ## Product Direction
 
-This repository is a versioned starter, not a Composer package yet. The intended path is:
-
-1. Use this starter for the first Maracuja CMS client installations.
-2. Keep changes versioned through the changelog.
-3. Extract stable shared behavior into a private Laravel package after several real projects.
+This repository is an application, not a shared Composer package. Shared code is versioned together in `maracuja-site-core`; production releases receive their prebuilt `vendor/` directory and never clone individual module repositories.
