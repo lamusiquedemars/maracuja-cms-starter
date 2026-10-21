@@ -9,26 +9,26 @@ class MediaAssetPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->canEditContent();
+        return $user->canEditContent() && $user->canAccessContent('media');
     }
 
     public function view(User $user, Model $media): bool
     {
-        return $user->canEditContent();
+        return $user->canEditContent() && $user->canAccessContent('media');
     }
 
     public function create(User $user): bool
     {
-        return $user->canEditContent();
+        return $user->canEditContent() && $user->canAccessContent('media');
     }
 
     public function update(User $user, Model $media): bool
     {
-        return $user->isAdministrator();
+        return $user->isAdministrator() || ($user->canEditContent() && $user->canAccessContent('media'));
     }
 
     public function delete(User $user, Model $media): bool
     {
-        return $user->canEditContent() && $media->canBeDeleted();
+        return $user->canEditContent() && $user->canAccessContent('media') && $media->canBeDeleted();
     }
 }
