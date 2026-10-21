@@ -58,11 +58,12 @@ class AcquisitionAttributionTest extends TestCase
 
     public function test_contact_lead_is_queued_once_for_cremona_with_an_encrypted_payload(): void
     {
-        config(['maracuja.acquisition.cremona' => [
+        config(['maracuja-cremona-connector' => [
             'enabled' => true,
             'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests',
             'token' => 'site-integration-secret',
             'site_reference' => 'example-site',
+            'delivery_table' => 'acquisition_deliveries',
         ]]);
         Http::fake(['cremona.example.test/*' => Http::response([], 201)]);
 
@@ -78,7 +79,7 @@ class AcquisitionAttributionTest extends TestCase
 
     public function test_a_connected_contact_form_does_not_create_a_local_inquiry(): void
     {
-        config(['maracuja.acquisition.cremona' => ['enabled' => true, 'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests', 'token' => 'site-integration-secret', 'site_reference' => 'example-site']]);
+        config(['maracuja-cremona-connector' => ['enabled' => true, 'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests', 'token' => 'site-integration-secret', 'site_reference' => 'example-site', 'delivery_table' => 'acquisition_deliveries']]);
         Http::fake(['cremona.example.test/*' => Http::response([], 201)]);
 
         $this->post('/contact', ['name' => 'Camille Martin', 'email' => 'camille@example.test', 'message' => 'Bonjour.'])->assertRedirect('/contact');
@@ -89,7 +90,7 @@ class AcquisitionAttributionTest extends TestCase
 
     public function test_a_temporary_cremona_failure_is_recorded_for_a_scheduled_retry(): void
     {
-        config(['maracuja.acquisition.cremona' => ['enabled' => true, 'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests', 'token' => 'site-integration-secret', 'site_reference' => 'example-site']]);
+        config(['maracuja-cremona-connector' => ['enabled' => true, 'endpoint' => 'https://cremona.example.test/api/v1/incoming-requests', 'token' => 'site-integration-secret', 'site_reference' => 'example-site', 'delivery_table' => 'acquisition_deliveries']]);
         Http::fake(['cremona.example.test/*' => Http::response([], 503)]);
 
         $this->post('/contact', ['name' => 'Camille Martin', 'email' => 'camille@example.test', 'message' => 'Bonjour.'])->assertRedirect('/contact');

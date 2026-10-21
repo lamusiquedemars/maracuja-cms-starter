@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use App\Modules\Acquisition\Actions\QueueContactMessageForCremona;
 use App\Modules\Acquisition\Actions\QueueInquiryForCremona;
 use App\Modules\Inquiries\Actions\StoreInquiry;
 use Maracuja\SiteCore\Contact\Contracts\LeadReceiver;
 use Maracuja\SiteCore\Contact\Data\ContactRequestData;
+use Maracuja\SiteCore\CremonaConnector\Services\CremonaLeadReceiver;
 
 final class ReferenceSiteLeadReceiver implements LeadReceiver
 {
     public function receive(ContactRequestData $request): void
     {
-        if (config('maracuja.acquisition.cremona.enabled')) {
-            QueueContactMessageForCremona::run($request);
+        if (config('maracuja-cremona-connector.enabled')) {
+            app(CremonaLeadReceiver::class)->receive($request);
 
             return;
         }

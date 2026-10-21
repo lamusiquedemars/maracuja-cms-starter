@@ -13,6 +13,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "maracuja-digital/site-core-gallery": "@dev",
         "maracuja-digital/site-core-contact": "@dev",
+        "maracuja-digital/site-core-cremona-connector": "@dev",
         "maracuja-digital/site-core-events": "@dev",
         "maracuja-digital/site-core-foundation": "@dev",
         "maracuja-digital/site-core-media": "@dev",

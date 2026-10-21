@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aca52c93963875bd9dc1fa1d5c04e61e",
+    "content-hash": "19b288010266650fce1808bbe7646822",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3709,6 +3709,44 @@
                 "proprietary"
             ],
             "description": "Formulaire public et capture minimale de demandes de Maracuja Site Core.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "maracuja-digital/site-core-cremona-connector",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/cremona-connector",
+                "reference": "fbebcbfcd43aedcf27d613f80ff0b1b1669a5a29"
+            },
+            "require": {
+                "illuminate/console": "^13.0",
+                "illuminate/database": "^13.0",
+                "illuminate/http": "^13.0",
+                "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-contact": "@dev",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\CremonaConnector\\Providers\\CremonaConnectorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\CremonaConnector\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Connecteur fiable entre un site Maracuja et Cremona.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -11283,6 +11321,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "maracuja-digital/site-core-contact": 20,
+        "maracuja-digital/site-core-cremona-connector": 20,
         "maracuja-digital/site-core-events": 20,
         "maracuja-digital/site-core-foundation": 20,
         "maracuja-digital/site-core-gallery": 20,
