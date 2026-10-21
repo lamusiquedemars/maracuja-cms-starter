@@ -14,6 +14,13 @@
     "events": {"package": "site-core-events", "enabled": true},
     "venues": {"package": "site-core-events", "enabled": true},
     "contact_form": {"package": "site-core-contact", "enabled": true},
+    "inquiries": {"package": "legacy-site-module", "enabled": true},
+    "contacts": {"package": "legacy-site-module", "enabled": true},
+    "appointments": {"package": "legacy-site-module", "enabled": false},
+    "conversations": {"package": "legacy-site-module", "enabled": false},
+    "audience": {"package": "legacy-site-module", "enabled": false},
+    "acquisition": {"package": "legacy-site-module", "enabled": false},
+    "campaigns": {"package": "legacy-site-module", "enabled": false},
     "cremona_connector": {"package": "site-core-cremona-connector", "enabled": false}
   }
 }

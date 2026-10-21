@@ -7,6 +7,10 @@ return [
 
     'offer' => env('MARACUJA_OFFER', 'signature'),
 
+    'module_manifest' => [
+        'enabled' => env('MARACUJA_MODULE_MANIFEST_ENABLED', true),
+    ],
+
     'seo' => [
         'indexable' => env('MARACUJA_INDEXABLE', false),
     ],

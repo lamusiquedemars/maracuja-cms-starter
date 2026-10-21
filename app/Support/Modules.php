@@ -18,6 +18,10 @@ class Modules
             return false;
         }
 
+        if (config('maracuja.module_manifest.enabled', false)) {
+            return SiteManifest::declares($module);
+        }
+
         return (bool) config("maracuja.modules.{$module}", false);
     }
 
