@@ -1,5 +1,5 @@
 @php
-    $previewContact = new \App\Modules\Audience\Models\AudienceContact([
+    $previewContact = new \Maracuja\SiteCore\Audience\Models\AudienceContact([
         'first_name' => 'Client',
         'email' => 'client@example.test',
         'accepts_email' => true,

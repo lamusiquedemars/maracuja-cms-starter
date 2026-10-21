@@ -14,6 +14,7 @@ use App\Modules\Media\Models\MediaAsset;
 use App\Modules\Media\Policies\MediaAssetPolicy;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\ContentPermissions;
+use App\Support\Audience\ReferenceSiteAudienceIdentityLinker;
 use App\Support\FoundationAccessGate;
 use App\Support\FoundationModuleAvailability;
 use App\Support\FoundationPublicPageUrlGenerator;
@@ -28,6 +29,10 @@ use Maracuja\SiteCore\Foundation\Contracts\SiteModuleRegistry;
 use Maracuja\SiteCore\Foundation\Contracts\PublicPageUrlGenerator;
 use Maracuja\SiteCore\Contact\Contracts\LeadReceiver;
 use App\Support\ReferenceSiteModuleRegistry;
+use App\Modules\Contacts\Actions\ResolveContact;
+use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Audience\Contracts\AudienceIdentityLinker;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SiteModuleRegistry::class, ReferenceSiteModuleRegistry::class);
         $this->app->singleton(PublicPageUrlGenerator::class, FoundationPublicPageUrlGenerator::class);
         $this->app->singleton(LeadReceiver::class, ReferenceSiteLeadReceiver::class);
+        $this->app->singleton(AudienceIdentityLinker::class, ReferenceSiteAudienceIdentityLinker::class);
         $this->app->bind(ConversationAiProvider::class, function (): ConversationAiProvider {
             return match (config('maracuja.conversations.ai.provider')) {
                 'fake' => new FakeConversationAiProvider,
@@ -67,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
             app_path('Modules/Appointments/database/migrations'),
             app_path('Modules/Contacts/database/migrations'),
             app_path('Modules/Conversations/database/migrations'),
-            app_path('Modules/Audience/database/migrations'),
+            database_path('migrations/audience-legacy'),
             app_path('Modules/Acquisition/database/migrations'),
             app_path('Modules/Media/database/migrations'),
         ];
@@ -81,7 +87,25 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(CoreMediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(Conversation::class, ConversationPolicy::class);
+        $this->registerAudienceContactBridge();
         $this->registerRoleGate();
+    }
+
+    private function registerAudienceContactBridge(): void
+    {
+        AudienceContact::resolveRelationUsing('contact', fn (AudienceContact $contact) => $contact->belongsTo(Contact::class, 'contact_id'));
+
+        AudienceContact::saving(function (AudienceContact $audienceContact): void {
+            $contact = ResolveContact::run([
+                'first_name' => $audienceContact->first_name,
+                'last_name' => $audienceContact->last_name,
+                'organization_name' => $audienceContact->organization_name,
+                'email' => $audienceContact->email,
+                'source' => 'audience',
+            ]);
+
+            $audienceContact->setAttribute('contact_id', $contact->getKey());
+        });
     }
 
     private function registerRoleGate(): void

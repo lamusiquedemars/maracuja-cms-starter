@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Actions\ImportAudienceContactsFromCsv;
-use App\Modules\Audience\Models\AudienceContact;
-use App\Modules\Audience\Models\AudienceSegment;
+use Maracuja\SiteCore\Audience\Actions\ImportAudienceContactsFromCsv;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceSegment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

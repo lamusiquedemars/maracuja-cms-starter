@@ -4,10 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Modules\Appointments\Filament\Resources\AppointmentSettings\AppointmentSettingResource;
-use App\Modules\Audience\Filament\Resources\AudienceBrevoSettings\AudienceBrevoSettingResource;
-use App\Modules\Audience\Filament\Resources\AudienceContacts\AudienceContactResource;
-use App\Modules\Audience\Filament\Resources\AudienceSegments\AudienceSegmentResource;
-use App\Modules\Audience\Filament\Resources\SegmentMessages\SegmentMessageResource;
+use Maracuja\SiteCore\Brevo\Filament\Resources\AudienceBrevoSettings\AudienceBrevoSettingResource;
+use Maracuja\SiteCore\Audience\Filament\Resources\AudienceContacts\AudienceContactResource;
+use Maracuja\SiteCore\Audience\Filament\Resources\AudienceSegments\AudienceSegmentResource;
+use Maracuja\SiteCore\Audience\Filament\Resources\SegmentMessages\SegmentMessageResource;
 use App\Modules\Contacts\Filament\Resources\Contacts\ContactResource;
 use App\Modules\Conversations\Filament\Resources\Conversations\ConversationResource;
 use App\Modules\Conversations\Filament\Resources\ConversationSettings\ConversationSettingResource;

@@ -2,13 +2,13 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Actions\QueueSegmentMessage;
-use App\Modules\Audience\Actions\SendPendingSegmentMessages;
-use App\Modules\Audience\Mail\SegmentMessageMail;
-use App\Modules\Audience\Models\AudienceContact;
-use App\Modules\Audience\Models\AudienceSegment;
-use App\Modules\Audience\Models\SegmentMessage;
-use App\Modules\Audience\Models\SegmentMessageDelivery;
+use Maracuja\SiteCore\Audience\Actions\QueueSegmentMessage;
+use Maracuja\SiteCore\Audience\Actions\SendPendingSegmentMessages;
+use Maracuja\SiteCore\Audience\Mail\SegmentMessageMail;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceSegment;
+use Maracuja\SiteCore\Audience\Models\SegmentMessage;
+use Maracuja\SiteCore\Audience\Models\SegmentMessageDelivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;

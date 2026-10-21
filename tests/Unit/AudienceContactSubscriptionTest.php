@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

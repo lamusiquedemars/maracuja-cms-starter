@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Models\AudienceContact;
-use App\Modules\Audience\Models\AudienceSegment;
-use App\Modules\Audience\Models\SegmentMessage;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceSegment;
+use Maracuja\SiteCore\Audience\Models\SegmentMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Modules\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
 use App\Modules\Contacts\Actions\ResolveContact;
 use App\Modules\Contacts\Models\Contact;
 use App\Modules\Inquiries\Models\Inquiry;

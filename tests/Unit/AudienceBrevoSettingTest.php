@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Models\AudienceBrevoSetting;
-use App\Modules\Audience\Services\BrevoAudienceService;
+use Maracuja\SiteCore\Brevo\Models\AudienceBrevoSetting;
+use Maracuja\SiteCore\Brevo\Services\BrevoAudienceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;

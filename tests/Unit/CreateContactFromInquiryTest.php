@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Actions\CreateContactFromInquiry;
-use App\Modules\Audience\Models\AudienceContact;
+use App\Support\Audience\CreateContactFromInquiry;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
 use App\Modules\Inquiries\Enums\InquiryStatus;
 use App\Modules\Inquiries\Models\Inquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;

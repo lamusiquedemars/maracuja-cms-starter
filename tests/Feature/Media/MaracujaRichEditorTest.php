@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Media;
 
-use App\Modules\Audience\Models\AudienceSegment;
-use App\Modules\Audience\Models\SegmentMessage;
+use Maracuja\SiteCore\Audience\Models\AudienceSegment;
+use Maracuja\SiteCore\Audience\Models\SegmentMessage;
 use App\Modules\Media\Enums\MediaType;
 use Maracuja\SiteCore\Media\Filament\Forms\Components\MaracujaRichEditor;
 use App\Modules\Media\Models\MediaAsset;

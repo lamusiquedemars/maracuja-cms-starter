@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Models\AudienceBrevoSetting;
-use App\Modules\Audience\Models\AudienceContact;
-use App\Modules\Audience\Models\AudienceSegment;
-use App\Modules\Audience\Services\BrevoAudienceService;
+use Maracuja\SiteCore\Brevo\Models\AudienceBrevoSetting;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceSegment;
+use Maracuja\SiteCore\Brevo\Services\BrevoAudienceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;

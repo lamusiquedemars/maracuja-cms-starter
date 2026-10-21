@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Modules\Audience\Actions\CreateSegmentFromContacts;
-use App\Modules\Audience\Models\AudienceContact;
-use App\Modules\Audience\Models\AudienceSegment;
+use Maracuja\SiteCore\Audience\Actions\CreateSegmentFromContacts;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceSegment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
