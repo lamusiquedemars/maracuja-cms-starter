@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Modules\Audience\Actions\SendDueAudienceMessages;
+use Maracuja\SiteCore\Audience\Actions\SendDueAudienceMessages;
 use App\Support\Modules;
 use Illuminate\Console\Command;
 

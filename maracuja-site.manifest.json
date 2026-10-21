@@ -18,7 +18,8 @@
     "contacts": {"package": "legacy-site-module", "enabled": true},
     "appointments": {"package": "legacy-site-module", "enabled": false},
     "conversations": {"package": "legacy-site-module", "enabled": false},
-    "audience": {"package": "legacy-site-module", "enabled": false},
+    "audience": {"package": "site-core-audience", "enabled": true},
+    "brevo": {"package": "site-core-brevo", "enabled": true},
     "acquisition": {"package": "legacy-site-module", "enabled": false},
     "campaigns": {"package": "legacy-site-module", "enabled": false},
     "cremona_connector": {"package": "site-core-cremona-connector", "enabled": false}

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Contracts\View\View;

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Audience\Models\AudienceBrevoSetting;
-use App\Modules\Audience\Services\BrevoWebhookEventHandler;
+use Maracuja\SiteCore\Brevo\Models\AudienceBrevoSetting;
+use Maracuja\SiteCore\Brevo\Services\BrevoWebhookEventHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

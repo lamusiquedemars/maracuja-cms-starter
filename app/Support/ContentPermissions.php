@@ -4,10 +4,6 @@ namespace App\Support;
 
 use App\Models\User;
 use App\Modules\Appointments\Models\AppointmentSetting;
-use App\Modules\Audience\Models\AudienceBrevoSetting;
-use App\Modules\Audience\Models\AudienceContact;
-use App\Modules\Audience\Models\AudienceSegment;
-use App\Modules\Audience\Models\SegmentMessage;
 use App\Modules\Contacts\Models\Contact;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;
@@ -24,6 +20,10 @@ use Maracuja\SiteCore\Gallery\Models\Gallery;
 use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
 use Maracuja\SiteCore\Publication\Models\Article;
 use Maracuja\SiteCore\Publication\Models\NewsPost;
+use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Audience\Models\AudienceSegment;
+use Maracuja\SiteCore\Audience\Models\SegmentMessage;
+use Maracuja\SiteCore\Brevo\Models\AudienceBrevoSetting;
 
 class ContentPermissions
 {
