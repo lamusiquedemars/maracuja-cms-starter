@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\News\Models\NewsPost;
+use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\Page;
 use App\Support\Modules;
 use Illuminate\Http\Response;

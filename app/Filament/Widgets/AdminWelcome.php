@@ -2,10 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\Articles\ArticleResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\Articles\ArticleResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\ContentSlots\ContentSlotResource;
 use App\Filament\Resources\Events\EventResource;
-use App\Filament\Resources\NewsPosts\NewsPostResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\NewsPosts\NewsPostResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\Pages\PageResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\SiteNotices\SiteNoticeResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\SiteSettings\SiteSettingResource;

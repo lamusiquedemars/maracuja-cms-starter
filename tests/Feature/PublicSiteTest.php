@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Modules\ContactForm\Mail\ContactMessageConfirmation;
 use App\Modules\ContactForm\Mail\ContactMessageReceived;
-use App\Modules\Articles\Models\Article;
+use Maracuja\SiteCore\Publication\Models\Article;
 use App\Modules\Inquiries\Models\Inquiry;
 use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 use Maracuja\SiteCore\Gallery\Models\Gallery;
 use Maracuja\SiteCore\Gallery\Models\GalleryImage;
-use App\Modules\News\Models\NewsPost;
+use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\SiteNotice;
 use Maracuja\SiteCore\Foundation\Models\Page;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;

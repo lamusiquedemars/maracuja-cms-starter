@@ -6,7 +6,7 @@ use App\Models\User;
 use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 use App\Modules\Gallery\Models\Gallery;
 use App\Modules\Gallery\Models\GalleryImage;
-use App\Modules\News\Models\NewsPost;
+use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\SiteNotice;
 use Maracuja\SiteCore\Foundation\Models\Page;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;

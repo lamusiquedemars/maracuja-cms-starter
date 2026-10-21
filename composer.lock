@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b78bf832b53afa0c9f23868436e13f1",
+    "content-hash": "348e27326e906eea2cf6bbb6921b0cde",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3787,6 +3787,44 @@
                 "proprietary"
             ],
             "description": "Médiathèque et contrats de stockage pour Maracuja Site Core.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "maracuja-digital/site-core-publication",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/publication",
+                "reference": "c790ff878beb7a682530539c57ddcf022bf0f6a9"
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "illuminate/database": "^13.0",
+                "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-foundation": "@dev",
+                "maracuja-digital/site-core-media": "@dev",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Publication\\Providers\\PublicationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Publication\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Actualités et articles de Maracuja Site Core.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -11172,7 +11210,8 @@
     "stability-flags": {
         "maracuja-digital/site-core-foundation": 20,
         "maracuja-digital/site-core-gallery": 20,
-        "maracuja-digital/site-core-media": 20
+        "maracuja-digital/site-core-media": 20,
+        "maracuja-digital/site-core-publication": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Modules\News\Models\NewsPost;
+use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\Page;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;

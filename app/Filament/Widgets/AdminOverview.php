@@ -2,11 +2,11 @@
 
 namespace App\Filament\Widgets;
 
-use App\Modules\Articles\Models\Article;
+use Maracuja\SiteCore\Publication\Models\Article;
 use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 use App\Modules\Inquiries\Enums\InquiryStatus;
 use App\Modules\Inquiries\Models\Inquiry;
-use App\Modules\News\Models\NewsPost;
+use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\Page;
 use App\Support\Modules;
 use Filament\Support\Icons\Heroicon;

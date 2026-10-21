@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Resources\Articles\ArticleResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\Articles\ArticleResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\ContentSlots\ContentSlotResource;
 use App\Filament\Resources\Events\EventResource;
 use Maracuja\SiteCore\Gallery\Filament\Resources\Galleries\GalleryResource;
-use App\Filament\Resources\NewsPosts\NewsPostResource;
+use Maracuja\SiteCore\Publication\Filament\Resources\NewsPosts\NewsPostResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\Pages\PageResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\SiteNotices\SiteNoticeResource;
 use Maracuja\SiteCore\Foundation\Filament\Resources\SiteSettings\SiteSettingResource;

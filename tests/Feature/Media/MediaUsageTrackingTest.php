@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Media;
 
-use App\Modules\Articles\Models\Article;
+use Maracuja\SiteCore\Publication\Models\Article;
 use App\Modules\Media\Enums\MediaType;
 use App\Modules\Media\Exceptions\MediaAssetInUseException;
 use App\Modules\Media\Models\MediaAsset;

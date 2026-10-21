@@ -30,6 +30,8 @@ final class FoundationAccessGate implements FoundationAccessGateContract
             'foundation.content.manage' => $user->canAccessContent('content_slots'),
             'foundation.notices.manage' => $user->canAccessContent('notices'),
             'foundation.pages.manage' => $user->canAccessContent('pages'),
+            'publication.news.manage' => $user->canAccessContent('news'),
+            'publication.articles.manage' => $user->canAccessContent('articles'),
             // SEO and global settings stay reserved to the site administrator.
             'foundation.settings.manage', 'foundation.seo.manage' => false,
             default => false,

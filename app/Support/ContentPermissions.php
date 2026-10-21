@@ -4,7 +4,7 @@ namespace App\Support;
 
 use App\Models\User;
 use App\Modules\Appointments\Models\AppointmentSetting;
-use App\Modules\Articles\Models\Article;
+use Maracuja\SiteCore\Publication\Models\Article;
 use App\Modules\Audience\Models\AudienceBrevoSetting;
 use App\Modules\Audience\Models\AudienceContact;
 use App\Modules\Audience\Models\AudienceSegment;
@@ -18,7 +18,7 @@ use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\Media\Models\MediaAsset;
 use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
 use Maracuja\SiteCore\Gallery\Models\Gallery;
-use App\Modules\News\Models\NewsPost;
+use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\SiteNotice;
 use Maracuja\SiteCore\Foundation\Models\Page;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;

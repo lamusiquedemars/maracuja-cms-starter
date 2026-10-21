@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Articles\Models\Article;
+use Maracuja\SiteCore\Publication\Models\Article;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\ContentSlots;
 use App\Support\Modules;
