@@ -6,6 +6,7 @@ namespace App\Support;
 
 use App\Models\User;
 use Maracuja\SiteCore\Foundation\Contracts\FoundationAccessGate as FoundationAccessGateContract;
+use Maracuja\SiteCore\Foundation\Enums\FoundationProfile;
 
 /** Maps the generic Foundation capabilities to this site's explicit user profile. */
 final class FoundationAccessGate implements FoundationAccessGateContract
@@ -24,6 +25,19 @@ final class FoundationAccessGate implements FoundationAccessGateContract
 
         if (! $user->canEditContent()) {
             return false;
+        }
+
+        if ($user->role === User::ROLE_SITE_MANAGER && FoundationProfile::SiteManager->allows($ability)) {
+            return match ($ability) {
+                'foundation.content.manage' => $user->canAccessContent('content_slots'),
+                'foundation.notices.manage' => $user->canAccessContent('notices'),
+                'foundation.pages.manage' => $user->canAccessContent('pages'),
+                'publication.news.manage' => $user->canAccessContent('news'),
+                'publication.articles.manage' => $user->canAccessContent('articles'),
+                'events.manage', 'events.participants.manage' => $user->canAccessContent('events'),
+                'events.venues.manage' => $user->canAccessContent('venues'),
+                default => false,
+            };
         }
 
         return match ($ability) {

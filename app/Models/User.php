@@ -20,6 +20,8 @@ class User extends Authenticatable implements FilamentUser
 
     public const ROLE_EDITOR = 'editor';
 
+    public const ROLE_SITE_MANAGER = 'site_manager';
+
     public const ROLE_VIEWER = 'viewer';
 
     public const SUPER_ADMIN_EMAILS = ['ivo@maracujadigital.fr'];
@@ -66,7 +68,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canEditContent(): bool
     {
-        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_EDITOR], true);
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SITE_MANAGER, self::ROLE_EDITOR], true);
     }
 
     public function canAccessContent(string $permission): bool
@@ -87,6 +89,6 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->isAdministrator()
-            || in_array($this->role, [self::ROLE_EDITOR, self::ROLE_VIEWER], true);
+            || in_array($this->role, [self::ROLE_SITE_MANAGER, self::ROLE_EDITOR, self::ROLE_VIEWER], true);
     }
 }

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Contacts\Models\Contact;
 use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\SiteNotice;
+use Maracuja\SiteCore\Foundation\Support\FoundationAccess;
 use Filament\Auth\Pages\Login;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
@@ -62,6 +63,18 @@ class AdminAccessTest extends TestCase
         $editor = User::factory()->create(['role' => User::ROLE_EDITOR, 'is_admin' => false]);
 
         $this->assertTrue(Gate::forUser($editor)->allows('create', Contact::class));
+    }
+
+    public function test_site_manager_can_manage_editorial_content_but_not_global_settings_or_seo(): void
+    {
+        $manager = User::factory()->create(['role' => User::ROLE_SITE_MANAGER, 'is_admin' => false]);
+
+        $this->actingAs($manager);
+
+        $this->assertTrue(FoundationAccess::allows('foundation.pages.manage'));
+        $this->assertTrue(FoundationAccess::allows('publication.articles.manage'));
+        $this->assertFalse(FoundationAccess::allows('foundation.settings.manage'));
+        $this->assertFalse(FoundationAccess::allows('foundation.seo.manage'));
     }
 
     public function test_restricted_editor_only_accesses_explicit_content_capabilities(): void

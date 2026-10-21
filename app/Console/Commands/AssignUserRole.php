@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class AssignUserRole extends Command
 {
-    protected $signature = 'maracuja:assign-role {email : Adresse email de l’utilisateur} {role : admin, editor ou viewer}';
+    protected $signature = 'maracuja:assign-role {email : Adresse email de l’utilisateur} {role : admin, site_manager, editor ou viewer}';
 
     protected $description = 'Modifie le rôle d’un utilisateur sans changer son mot de passe.';
 
@@ -15,8 +15,8 @@ class AssignUserRole extends Command
     {
         $role = (string) $this->argument('role');
 
-        if (! in_array($role, [User::ROLE_ADMIN, User::ROLE_EDITOR, User::ROLE_VIEWER], true)) {
-            $this->error('Rôle invalide : admin, editor ou viewer.');
+        if (! in_array($role, [User::ROLE_ADMIN, User::ROLE_SITE_MANAGER, User::ROLE_EDITOR, User::ROLE_VIEWER], true)) {
+            $this->error('Rôle invalide : admin, site_manager, editor ou viewer.');
 
             return self::FAILURE;
         }

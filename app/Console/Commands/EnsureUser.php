@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class EnsureUser extends Command
 {
-    protected $signature = 'maracuja:ensure-user {email} {role : admin, editor ou viewer} {--name= : Nom affiché}';
+    protected $signature = 'maracuja:ensure-user {email} {role : admin, site_manager, editor ou viewer} {--name= : Nom affiché}';
 
     protected $description = 'Crée ou réinitialise un utilisateur avec son rôle Maracuja.';
 
@@ -16,8 +16,8 @@ class EnsureUser extends Command
     {
         $role = (string) $this->argument('role');
 
-        if (! in_array($role, [User::ROLE_ADMIN, User::ROLE_EDITOR, User::ROLE_VIEWER], true)) {
-            $this->error('Rôle invalide : admin, editor ou viewer.');
+        if (! in_array($role, [User::ROLE_ADMIN, User::ROLE_SITE_MANAGER, User::ROLE_EDITOR, User::ROLE_VIEWER], true)) {
+            $this->error('Rôle invalide : admin, site_manager, editor ou viewer.');
 
             return self::FAILURE;
         }
