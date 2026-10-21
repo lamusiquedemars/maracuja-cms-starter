@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Modules\Contacts\Models\Contact;
 use App\Modules\News\Models\NewsPost;
-use App\Modules\Notices\Models\SiteNotice;
+use Maracuja\SiteCore\Foundation\Models\SiteNotice;
 use Filament\Auth\Pages\Login;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;

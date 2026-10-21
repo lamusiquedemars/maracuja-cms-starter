@@ -4,7 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\AdminOverview;
 use App\Filament\Widgets\AdminWelcome;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -45,6 +45,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->discoverResources(in: base_path('vendor/maracuja-digital/site-core-foundation/src/Filament/Resources'), for: 'Maracuja\SiteCore\Foundation\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,

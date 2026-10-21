@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Modules\News\Models\NewsPost;
-use App\Modules\Pages\Models\Page;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\Page;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Contracts\View\View;
 

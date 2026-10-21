@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Modules\News\Models\NewsPost;
-use App\Modules\Pages\Models\Page;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\Page;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

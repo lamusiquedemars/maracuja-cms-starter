@@ -3,13 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Modules\ContentSlots\Models\ContentSlot;
+use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 use App\Modules\Gallery\Models\Gallery;
 use App\Modules\Gallery\Models\GalleryImage;
 use App\Modules\News\Models\NewsPost;
-use App\Modules\Notices\Models\SiteNotice;
-use App\Modules\Pages\Models\Page;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteNotice;
+use Maracuja\SiteCore\Foundation\Models\Page;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;

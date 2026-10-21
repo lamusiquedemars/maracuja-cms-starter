@@ -6,7 +6,7 @@ use App\Modules\Articles\Models\Article;
 use App\Modules\Media\Enums\MediaType;
 use App\Modules\Media\Exceptions\MediaAssetInUseException;
 use App\Modules\Media\Models\MediaAsset;
-use App\Modules\Pages\Models\Page;
+use Maracuja\SiteCore\Foundation\Models\Page;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;

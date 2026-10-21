@@ -3,7 +3,7 @@
 namespace App\Modules\Conversations\Services;
 
 use App\Modules\Conversations\Models\ConversationSetting;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 
 class ConversationInstructionsBuilder
 {

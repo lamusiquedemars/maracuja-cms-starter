@@ -3,14 +3,14 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\Articles\ArticleResource;
-use App\Filament\Resources\ContentSlots\ContentSlotResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\ContentSlots\ContentSlotResource;
 use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\NewsPosts\NewsPostResource;
-use App\Filament\Resources\Pages\PageResource;
-use App\Filament\Resources\SiteNotices\SiteNoticeResource;
-use App\Filament\Resources\SiteSettings\SiteSettingResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\Pages\PageResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\SiteNotices\SiteNoticeResource;
+use Maracuja\SiteCore\Foundation\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Modules\Inquiries\Filament\Resources\Inquiries\InquiryResource;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Schema;

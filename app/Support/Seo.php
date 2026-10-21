@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Support\Str;
 
 class Seo

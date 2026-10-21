@@ -12,6 +12,7 @@
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "maracuja-digital/site-core-gallery": "^0.4",
+        "maracuja-digital/site-core-foundation": "^0.1",
         "maracuja-digital/site-core-media": "^0.3"
     },
     "require-dev": {
@@ -38,6 +39,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/lamusiquedemars/maracuja-site-core-gallery.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/lamusiquedemars/maracuja-site-core-foundation.git"
         }
     ],
     "autoload-dev": {

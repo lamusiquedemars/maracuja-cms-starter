@@ -5,7 +5,7 @@ namespace App\Modules\Appointments\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Appointments\Enums\AppointmentProvider;
 use App\Modules\Appointments\Models\AppointmentSetting;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Contracts\View\View;
 

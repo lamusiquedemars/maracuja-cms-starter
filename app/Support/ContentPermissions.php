@@ -10,7 +10,7 @@ use App\Modules\Audience\Models\AudienceContact;
 use App\Modules\Audience\Models\AudienceSegment;
 use App\Modules\Audience\Models\SegmentMessage;
 use App\Modules\Contacts\Models\Contact;
-use App\Modules\ContentSlots\Models\ContentSlot;
+use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Events\Models\Event;
@@ -19,9 +19,9 @@ use App\Modules\Media\Models\MediaAsset;
 use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
 use Maracuja\SiteCore\Gallery\Models\Gallery;
 use App\Modules\News\Models\NewsPost;
-use App\Modules\Notices\Models\SiteNotice;
-use App\Modules\Pages\Models\Page;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteNotice;
+use Maracuja\SiteCore\Foundation\Models\Page;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Modules\Venues\Models\Venue;
 
 class ContentPermissions

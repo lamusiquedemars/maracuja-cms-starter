@@ -4,7 +4,7 @@ namespace Tests\Feature\Conversations;
 
 use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Conversations\Services\ConversationInstructionsBuilder;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;

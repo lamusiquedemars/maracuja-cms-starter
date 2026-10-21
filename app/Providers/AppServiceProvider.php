@@ -12,12 +12,18 @@ use App\Modules\Conversations\Providers\FakeConversationAiProvider;
 use App\Modules\Conversations\Providers\OpenAiConversationProvider;
 use App\Modules\Media\Models\MediaAsset;
 use App\Modules\Media\Policies\MediaAssetPolicy;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\ContentPermissions;
+use App\Support\FoundationAccessGate;
+use App\Support\FoundationModuleAvailability;
+use App\Support\FoundationPublicPageUrlGenerator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
+use Maracuja\SiteCore\Foundation\Contracts\FoundationAccessGate as FoundationAccessGateContract;
+use Maracuja\SiteCore\Foundation\Contracts\ModuleAvailability;
+use Maracuja\SiteCore\Foundation\Contracts\PublicPageUrlGenerator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(FoundationAccessGateContract::class, FoundationAccessGate::class);
+        $this->app->singleton(ModuleAvailability::class, FoundationModuleAvailability::class);
+        $this->app->singleton(PublicPageUrlGenerator::class, FoundationPublicPageUrlGenerator::class);
         $this->app->bind(ConversationAiProvider::class, function (): ConversationAiProvider {
             return match (config('maracuja.conversations.ai.provider')) {
                 'fake' => new FakeConversationAiProvider,

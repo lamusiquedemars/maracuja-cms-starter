@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Modules\ContentSlots\Models\ContentSlot;
+use Maracuja\SiteCore\Foundation\Models\ContentSlot;
 
 class ContentSlots
 {

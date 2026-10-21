@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Modules\Inquiries\Models\Inquiry;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;

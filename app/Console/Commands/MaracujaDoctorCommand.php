@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;

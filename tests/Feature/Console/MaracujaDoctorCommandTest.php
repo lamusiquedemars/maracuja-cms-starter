@@ -3,7 +3,7 @@
 namespace Tests\Feature\Console;
 
 use App\Models\User;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

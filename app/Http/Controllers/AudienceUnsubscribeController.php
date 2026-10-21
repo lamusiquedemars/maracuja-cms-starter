@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Modules\Audience\Models\AudienceContact;
-use App\Modules\SiteSettings\Models\SiteSetting;
+use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\Modules;
 use Illuminate\Contracts\View\View;
 
