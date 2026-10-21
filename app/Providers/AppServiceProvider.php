@@ -24,8 +24,10 @@ use RuntimeException;
 use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
 use Maracuja\SiteCore\Foundation\Contracts\FoundationAccessGate as FoundationAccessGateContract;
 use Maracuja\SiteCore\Foundation\Contracts\ModuleAvailability;
+use Maracuja\SiteCore\Foundation\Contracts\SiteModuleRegistry;
 use Maracuja\SiteCore\Foundation\Contracts\PublicPageUrlGenerator;
 use Maracuja\SiteCore\Contact\Contracts\LeadReceiver;
+use App\Support\ReferenceSiteModuleRegistry;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(FoundationAccessGateContract::class, FoundationAccessGate::class);
         $this->app->singleton(ModuleAvailability::class, FoundationModuleAvailability::class);
+        $this->app->singleton(SiteModuleRegistry::class, ReferenceSiteModuleRegistry::class);
         $this->app->singleton(PublicPageUrlGenerator::class, FoundationPublicPageUrlGenerator::class);
         $this->app->singleton(LeadReceiver::class, ReferenceSiteLeadReceiver::class);
         $this->app->bind(ConversationAiProvider::class, function (): ConversationAiProvider {
