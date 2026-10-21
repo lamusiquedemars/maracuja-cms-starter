@@ -9,6 +9,7 @@ use App\Support\Modules;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -41,10 +42,19 @@ final class UserResource extends Resource
                 User::ROLE_SITE_MANAGER => 'Responsable du site',
                 User::ROLE_EDITOR => 'Éditeur ciblé',
                 User::ROLE_VIEWER => 'Lecteur',
-            ])->required()->live()->helperText('Base de départ ; les modules cochés ci-dessous restent la règle effective.'),
+            ])->required()->live()->helperText('Base de départ ; les modules cochés ci-dessous deviennent une exception explicite.'),
+            Placeholder::make('profile_permissions')->label('Droits hérités du profil')->content(function (?User $record): string {
+                if ($record?->content_permissions !== null) return 'Cet utilisateur utilise une personnalisation explicite des modules.';
+                return match ($record?->role) {
+                    User::ROLE_ADMIN => 'Administrateur : tous les modules actifs, réglages globaux et SEO.',
+                    User::ROLE_SITE_MANAGER => 'Responsable : tous les modules éditoriaux actifs, sans réglages globaux ni SEO.',
+                    User::ROLE_EDITOR => 'Éditeur : droits hérités pendant la transition ; cochez des modules pour le restreindre explicitement.',
+                    default => 'Lecteur : consultation interne uniquement.',
+                };
+            }),
             CheckboxList::make('content_permissions')->label('Modules autorisés')->options(
                 collect(ContentPermissions::labels())->filter(fn (string $label, string $module): bool => Modules::enabled($module))->all()
-            )->columns(2)->helperText('Décochez un module pour le retirer explicitement. Les réglages globaux et le SEO restent réservés aux administrateurs.'),
+            )->columns(2)->helperText('Ces cases personnalisent le profil. Laisser la liste vide n’est pas la même chose que ne rien personnaliser : une liste enregistrée vide retire tous les modules.'),
         ]);
     }
 

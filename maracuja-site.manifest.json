@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "site_key": "maracuja-site-reference",
+  "core_version": "dev-main",
+  "modules": {
+    "site_settings": {"package": "site-core-foundation", "enabled": true},
+    "pages": {"package": "site-core-foundation", "enabled": true},
+    "content_slots": {"package": "site-core-foundation", "enabled": true},
+    "notices": {"package": "site-core-foundation", "enabled": true},
+    "media": {"package": "site-core-media", "enabled": true},
+    "gallery": {"package": "site-core-gallery", "enabled": true},
+    "news": {"package": "site-core-publication", "enabled": true},
+    "articles": {"package": "site-core-publication", "enabled": true},
+    "events": {"package": "site-core-events", "enabled": true},
+    "venues": {"package": "site-core-events", "enabled": true},
+    "contact_form": {"package": "site-core-contact", "enabled": true},
+    "cremona_connector": {"package": "site-core-cremona-connector", "enabled": false}
+  }
+}
