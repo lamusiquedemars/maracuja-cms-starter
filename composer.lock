@@ -3249,14 +3249,14 @@
             "dist": {
                 "type": "path",
                 "url": "../maracuja-site-core/packages/foundation",
-                "reference": "41ad1bb569d6fb3075123adc73605c2b0efdaadc"
+                "reference": "19381839475561e51c543a7d845dd98bb9e1d382"
             },
             "require": {
                 "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/filesystem": "^13.0",
                 "illuminate/support": "^13.0",
-                "maracuja-digital/site-core-media": "^0.3 || @dev",
+                "maracuja-digital/site-core-media": "^0.3 || dev-main",
                 "php": "^8.4"
             },
             "type": "library",
@@ -3287,14 +3287,14 @@
             "dist": {
                 "type": "path",
                 "url": "../maracuja-site-core/packages/gallery",
-                "reference": "d980bddaef4e42892daddc20aa1f7c92fd6f8b89"
+                "reference": "e2a2cf7010983c8eeaadccaf5d1620c0a1c46506"
             },
             "require": {
                 "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/filesystem": "^13.0",
                 "illuminate/support": "^13.0",
-                "maracuja-digital/site-core-media": "@dev",
+                "maracuja-digital/site-core-media": "dev-main",
                 "php": "^8.4"
             },
             "type": "library",
@@ -3363,14 +3363,14 @@
             "dist": {
                 "type": "path",
                 "url": "../maracuja-site-core/packages/publication",
-                "reference": "c790ff878beb7a682530539c57ddcf022bf0f6a9"
+                "reference": "7cd86de8171aa5bf071a2eb9f9a2bcafc59263fa"
             },
             "require": {
                 "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/support": "^13.0",
-                "maracuja-digital/site-core-foundation": "@dev",
-                "maracuja-digital/site-core-media": "@dev",
+                "maracuja-digital/site-core-foundation": "dev-main",
+                "maracuja-digital/site-core-media": "dev-main",
                 "php": "^8.4"
             },
             "type": "library",
