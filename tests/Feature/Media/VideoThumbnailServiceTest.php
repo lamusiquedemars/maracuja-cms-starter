@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Media;
 
-use App\Modules\Media\Enums\MediaType;
-use App\Modules\Media\Models\MediaAsset;
-use App\Modules\Media\Services\VideoThumbnailService;
+use Maracuja\SiteCore\Media\Enums\MediaType;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Services\VideoThumbnailService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Carbon;

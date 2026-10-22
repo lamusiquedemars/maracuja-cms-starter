@@ -3,9 +3,9 @@
 namespace Tests\Feature\Media;
 
 use App\Models\User;
-use App\Modules\Media\Enums\MediaType;
-use App\Modules\Media\Models\MediaAsset;
-use App\Modules\Media\Services\MediaStorageService;
+use Maracuja\SiteCore\Media\Enums\MediaType;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Services\MediaStorageService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -98,7 +98,7 @@ class MediaStorageServiceTest extends TestCase
 
     public function test_it_rejects_an_image_larger_than_the_configured_limit(): void
     {
-        config(['maracuja.media.image_max_size_kb' => 1]);
+        config(['maracuja-media.image_max_size_kb' => 1]);
         $file = UploadedFile::fake()->image('large.jpg')->size(2);
 
         $this->expectException(ValidationException::class);

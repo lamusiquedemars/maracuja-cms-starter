@@ -2,9 +2,9 @@
 
 namespace App\Modules\Media\Services;
 
-use App\Modules\Media\Models\MediaAsset;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use RuntimeException;
 
 class MediaMigrationPlanner

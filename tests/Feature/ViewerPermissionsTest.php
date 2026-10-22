@@ -12,7 +12,7 @@ use App\Modules\Contacts\Filament\Resources\Contacts\ContactResource;
 use App\Modules\Conversations\Filament\Resources\Conversations\ConversationResource;
 use App\Modules\Conversations\Filament\Resources\ConversationSettings\ConversationSettingResource;
 use App\Modules\Inquiries\Filament\Resources\Inquiries\InquiryResource;
-use App\Modules\Media\Filament\Resources\MediaAssets\MediaAssetResource;
+use Maracuja\SiteCore\Media\Filament\Resources\MediaAssets\MediaAssetResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Maracuja\SiteCore\Events\Filament\Resources\Events\EventResource;

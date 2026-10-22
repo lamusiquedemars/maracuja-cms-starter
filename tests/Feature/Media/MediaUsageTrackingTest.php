@@ -3,9 +3,9 @@
 namespace Tests\Feature\Media;
 
 use Maracuja\SiteCore\Publication\Models\Article;
-use App\Modules\Media\Enums\MediaType;
-use App\Modules\Media\Exceptions\MediaAssetInUseException;
-use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Enums\MediaType;
+use Maracuja\SiteCore\Media\Exceptions\MediaAssetInUseException;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use Maracuja\SiteCore\Foundation\Models\Page;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;

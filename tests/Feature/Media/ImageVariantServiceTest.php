@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Media;
 
-use App\Modules\Media\Services\MediaStorageService;
+use Maracuja\SiteCore\Media\Services\MediaStorageService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

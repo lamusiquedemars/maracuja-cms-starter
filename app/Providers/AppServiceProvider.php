@@ -10,7 +10,6 @@ use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Policies\ConversationPolicy;
 use App\Modules\Conversations\Providers\FakeConversationAiProvider;
 use App\Modules\Conversations\Providers\OpenAiConversationProvider;
-use App\Modules\Media\Models\MediaAsset;
 use App\Modules\Media\Policies\MediaAssetPolicy;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use App\Support\ContentPermissions;
@@ -22,7 +21,7 @@ use App\Support\ReferenceSiteLeadReceiver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
-use Maracuja\SiteCore\Media\Models\MediaAsset as CoreMediaAsset;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use Maracuja\SiteCore\Foundation\Contracts\FoundationAccessGate as FoundationAccessGateContract;
 use Maracuja\SiteCore\Foundation\Contracts\ModuleAvailability;
 use Maracuja\SiteCore\Foundation\Contracts\SiteModuleRegistry;
@@ -85,7 +84,6 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
-        Gate::policy(CoreMediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(Conversation::class, ConversationPolicy::class);
         $this->registerAudienceContactBridge();
         $this->registerRoleGate();

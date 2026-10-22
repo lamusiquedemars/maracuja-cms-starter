@@ -8,7 +8,7 @@ use App\Modules\Contacts\Models\Contact;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Inquiries\Models\Inquiry;
-use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use Maracuja\SiteCore\Events\Models\Event;
 use Maracuja\SiteCore\Events\Models\Participant;
 use Maracuja\SiteCore\Events\Models\Venue;

@@ -4,9 +4,9 @@ namespace Tests\Feature\Media;
 
 use Maracuja\SiteCore\Audience\Models\AudienceSegment;
 use Maracuja\SiteCore\Audience\Models\SegmentMessage;
-use App\Modules\Media\Enums\MediaType;
+use Maracuja\SiteCore\Media\Enums\MediaType;
 use Maracuja\SiteCore\Media\Filament\Forms\Components\MaracujaRichEditor;
-use App\Modules\Media\Models\MediaAsset;
+use Maracuja\SiteCore\Media\Models\MediaAsset;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
