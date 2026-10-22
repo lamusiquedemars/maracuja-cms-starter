@@ -31,10 +31,12 @@ use Maracuja\SiteCore\Foundation\Contracts\PublicPageUrlGenerator;
 use Maracuja\SiteCore\Contact\Contracts\LeadReceiver;
 use App\Support\ReferenceSiteModuleRegistry;
 use App\Support\ReferenceSitePresentation;
+use App\Support\ReferenceSiteMediaAccessGate;
 use Maracuja\SiteCore\Contact\Actions\ResolveContact;
 use Maracuja\SiteCore\Contact\Models\Contact;
 use Maracuja\SiteCore\Audience\Contracts\AudienceIdentityLinker;
 use Maracuja\SiteCore\Audience\Models\AudienceContact;
+use Maracuja\SiteCore\Media\Contracts\MediaAccessGate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ModuleAvailability::class, FoundationModuleAvailability::class);
         $this->app->singleton(SiteModuleRegistry::class, ReferenceSiteModuleRegistry::class);
         $this->app->singleton(SitePresentation::class, ReferenceSitePresentation::class);
+        $this->app->singleton(MediaAccessGate::class, ReferenceSiteMediaAccessGate::class);
         $this->app->singleton(PublicPageUrlGenerator::class, FoundationPublicPageUrlGenerator::class);
         $this->app->singleton(LeadReceiver::class, ReferenceSiteLeadReceiver::class);
         $this->app->singleton(AudienceIdentityLinker::class, ReferenceSiteAudienceIdentityLinker::class);
