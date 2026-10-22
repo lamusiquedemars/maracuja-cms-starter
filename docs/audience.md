@@ -1,13 +1,13 @@
 # Audience
 
-`Audience` est un module laboratoire destiné aux contacts, segments et messages ciblés.
+`Audience` est un module laboratoire destiné aux abonnés, segments et campagnes ciblées.
 
 Il peut devenir vendable dans un profil `univers`, mais il n’est pas encore une promesse commerciale standard.
 
 ## Ce Que Fait Le Module
 
-- gérer des contacts;
-- regrouper des contacts en segments;
+- gérer des abonnés consentants;
+- regrouper des abonnés en segments;
 - importer un CSV de contacts depuis un CRM externe;
 - importer des contacts depuis les demandes entrantes;
 - envoyer un message à un segment;
@@ -24,15 +24,20 @@ Il peut devenir vendable dans un profil `univers`, mais il n’est pas encore un
 
 ## Objets Métier
 
-### Contacts
+### Contacts et abonnés
 
-Un contact représente une personne réutilisable dans le temps.
+`Contacts` est le registre de toute personne connue du site : demande, rendez-vous,
+échange ou import. Un contact ne reçoit aucune communication marketing par défaut.
+
+`Audience > Abonnés` est facultatif et porte le consentement marketing, les
+segments, les désinscriptions et les informations de diffusion. Un abonné est
+toujours rattaché à un contact ; ce n’est pas une seconde fiche saisie à la main.
 
 Champs clés:
 
 - nom;
 - email;
-- consentement email;
+- consentement email, uniquement sur l’abonnement;
 - date de désinscription;
 - date de dernier contact.
 
@@ -121,9 +126,10 @@ Règles:
 
 ## UX Recommandée
 
-- page `Contacts` comme base de pilotage;
+- page `Relation client > Contacts` comme base de pilotage;
+- page `Audience > Abonnés` pour les personnes ayant explicitement consenti;
 - page `Segments` comme vue de synthèse;
-- page `Messages` comme historique d’envoi;
+- page `Campagnes` comme historique et préparation des envois;
 - filtres, recherche et actions groupées;
 - avertissement avant envoi réel;
 - estimation claire du nombre de destinataires;
@@ -139,11 +145,26 @@ Règles:
 
 ## Brevo
 
-La bonne logique aujourd’hui est:
+Brevo est un connecteur facultatif, configuré dans `Réglages > Brevo`. Il sert
+à la diffusion et au retour d’événements, mais ne devient pas la source métier :
+les abonnés et leurs segments restent dans Maracuja.
 
-- exporter d’abord en CSV;
-- intégrer l’API plus tard seulement si le besoin marketing devient réel;
-- ne pas ajouter l’intégration tant que le cas d’usage reste léger.
+Pour un usage léger, le canal SMTP reste disponible. Pour une campagne marketing
+réelle, Brevo est préférable.
+
+## Jeu de démonstration local
+
+Le site témoin ne doit jamais réutiliser des données client. Le seeder local crée
+trois contacts, deux abonnés consentants, trois segments et une campagne Brevo en
+brouillon, sans envoyer d’email :
+
+```bash
+php artisan db:seed --class=Database\\Seeders\\ReferenceAudienceDemoSeeder
+```
+
+Il est volontairement bloqué hors des environnements `local` et `testing`. Il
+remplace uniquement les données Audience de démonstration ; il ne touche ni aux
+réglages Brevo ni aux autres données du site.
 
 ## Position Produit
 
