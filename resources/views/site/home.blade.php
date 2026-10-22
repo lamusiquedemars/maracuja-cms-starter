@@ -65,7 +65,7 @@
     heading-variant="decorated">
     <x-site.gallery
         :images="$galleryImages"
-        :layout="config('maracuja.gallery.layout')"
+        :layout="\App\Support\SiteManifest::presentation()['gallery_preset'] ?? config('maracuja.gallery.layout')"
         :lightbox="config('maracuja.gallery.lightbox')" />
 </x-site.section>
 @endif

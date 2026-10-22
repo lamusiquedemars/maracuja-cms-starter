@@ -2,6 +2,10 @@
   "schema_version": 1,
   "site_key": "maracuja-site-reference",
   "core_version": "dev-main",
+  "presentation": {
+    "theme": "default",
+    "gallery_preset": "grid"
+  },
   "modules": {
     "site_settings": {"package": "site-core-foundation", "enabled": true},
     "pages": {"package": "site-core-foundation", "enabled": true},
