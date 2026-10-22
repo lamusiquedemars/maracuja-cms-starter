@@ -3,14 +3,12 @@
 namespace App\Modules\Inquiries\Models;
 
 use App\Modules\Appointments\Enums\AppointmentStatus;
-use Maracuja\SiteCore\Contact\Actions\ResolveContact;
-use Maracuja\SiteCore\Contact\Models\Contact;
 use App\Modules\Conversations\Models\Conversation;
-use App\Modules\Inquiries\Enums\InquiryStatus;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Maracuja\SiteCore\Contact\Models\Inquiry as CoreInquiry;
 
-class Inquiry extends Model
+/** Site adapter: conversations and appointment booking are not Core concerns. */
+class Inquiry extends CoreInquiry
 {
     protected $fillable = [
         'contact_id',
@@ -45,36 +43,12 @@ class Inquiry extends Model
     protected function casts(): array
     {
         return [
-            'status' => InquiryStatus::class,
+            ...parent::casts(),
             'appointment_status' => AppointmentStatus::class,
             'booking_opened_at' => 'datetime',
             'scheduled_start_at' => 'datetime',
             'scheduled_end_at' => 'datetime',
-            'consent_at' => 'datetime',
-            'attribution_first_touch' => 'array',
-            'attribution_last_touch' => 'array',
-            'attribution_confidence' => 'decimal:2',
-            'read_at' => 'datetime',
-            'handled_at' => 'datetime',
-            'archived_at' => 'datetime',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::saving(function (self $inquiry): void {
-            $inquiry->contact_id = ResolveContact::run([
-                'display_name' => $inquiry->name,
-                'email' => $inquiry->email,
-                'phone' => $inquiry->phone,
-                'source' => 'inquiry',
-            ])->getKey();
-        });
-    }
-
-    public function contact(): BelongsTo
-    {
-        return $this->belongsTo(Contact::class);
     }
 
     public function conversation(): BelongsTo
@@ -82,38 +56,4 @@ class Inquiry extends Model
         return $this->belongsTo(Conversation::class);
     }
 
-    public function markRead(): void
-    {
-        if ($this->read_at === null) {
-            $this->forceFill([
-                'read_at' => now(),
-            ])->save();
-        }
-    }
-
-    public function moveTo(InquiryStatus $status): void
-    {
-        $updates = [
-            'status' => $status,
-        ];
-
-        if ($this->read_at === null) {
-            $updates['read_at'] = now();
-        }
-
-        if ($status === InquiryStatus::Handled) {
-            $updates['handled_at'] = now();
-        }
-
-        if ($status === InquiryStatus::Archived) {
-            $updates['archived_at'] = now();
-        }
-
-        $this->update($updates);
-    }
-
-    public function markWaitingCustomer(): void
-    {
-        $this->moveTo(InquiryStatus::WaitingCustomer);
-    }
 }

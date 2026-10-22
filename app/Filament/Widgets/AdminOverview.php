@@ -4,7 +4,7 @@ namespace App\Filament\Widgets;
 
 use Maracuja\SiteCore\Publication\Models\Article;
 use Maracuja\SiteCore\Foundation\Models\ContentSlot;
-use App\Modules\Inquiries\Enums\InquiryStatus;
+use Maracuja\SiteCore\Contact\Enums\InquiryStatus;
 use App\Modules\Inquiries\Models\Inquiry;
 use Maracuja\SiteCore\Publication\Models\NewsPost;
 use Maracuja\SiteCore\Foundation\Models\Page;

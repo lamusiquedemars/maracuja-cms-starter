@@ -3,7 +3,7 @@
 namespace App\Modules\Inquiries\Filament\Resources\Inquiries;
 
 use App\Support\Audience\CreateContactFromInquiry;
-use App\Modules\Inquiries\Enums\InquiryStatus;
+use Maracuja\SiteCore\Contact\Enums\InquiryStatus;
 use App\Modules\Inquiries\Filament\Resources\Inquiries\Pages\ManageInquiries;
 use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\Inquiries\Support\InquiryReplyLink;

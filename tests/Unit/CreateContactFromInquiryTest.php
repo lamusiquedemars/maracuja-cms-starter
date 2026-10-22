@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Support\Audience\CreateContactFromInquiry;
 use Maracuja\SiteCore\Audience\Models\AudienceContact;
-use App\Modules\Inquiries\Enums\InquiryStatus;
+use Maracuja\SiteCore\Contact\Enums\InquiryStatus;
 use App\Modules\Inquiries\Models\Inquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

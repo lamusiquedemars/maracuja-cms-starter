@@ -6,7 +6,7 @@ use Maracuja\SiteCore\Contact\Actions\ResolveContact;
 use App\Modules\Conversations\Mail\ConversationCallbackReceived;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;
-use App\Modules\Inquiries\Enums\InquiryStatus;
+use Maracuja\SiteCore\Contact\Enums\InquiryStatus;
 use App\Modules\Inquiries\Models\Inquiry;
 use Maracuja\SiteCore\Foundation\Models\SiteSetting;
 use Illuminate\Support\Facades\DB;
