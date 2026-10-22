@@ -4,7 +4,7 @@ namespace Tests\Feature\Contacts;
 
 use App\Models\User;
 use App\Modules\Contacts\Filament\Resources\Contacts\Pages\ManageContacts;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

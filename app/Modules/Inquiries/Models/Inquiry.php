@@ -3,8 +3,8 @@
 namespace App\Modules\Inquiries\Models;
 
 use App\Modules\Appointments\Enums\AppointmentStatus;
-use App\Modules\Contacts\Actions\ResolveContact;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Actions\ResolveContact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Inquiries\Enums\InquiryStatus;
 use Illuminate\Database\Eloquent\Model;

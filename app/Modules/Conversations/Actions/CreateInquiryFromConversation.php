@@ -2,7 +2,7 @@
 
 namespace App\Modules\Conversations\Actions;
 
-use App\Modules\Contacts\Actions\ResolveContact;
+use Maracuja\SiteCore\Contact\Actions\ResolveContact;
 use App\Modules\Conversations\Mail\ConversationCallbackReceived;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;

@@ -4,7 +4,7 @@ namespace App\Support;
 
 use App\Models\User;
 use App\Modules\Appointments\Models\AppointmentSetting;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use App\Modules\Conversations\Models\Conversation;
 use App\Modules\Conversations\Models\ConversationSetting;
 use App\Modules\Inquiries\Models\Inquiry;

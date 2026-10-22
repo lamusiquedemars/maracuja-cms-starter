@@ -3,7 +3,7 @@
 namespace App\Modules\Contacts\Filament\Resources\Contacts;
 
 use App\Modules\Contacts\Filament\Resources\Contacts\Pages\ManageContacts;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use App\Support\Modules;
 use BackedEnum;
 use Filament\Actions\DeleteAction;

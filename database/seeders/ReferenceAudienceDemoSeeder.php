@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use LogicException;

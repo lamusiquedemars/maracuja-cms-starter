@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use Database\Seeders\ReferenceAudienceDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Maracuja\SiteCore\Audience\Models\AudienceContact;

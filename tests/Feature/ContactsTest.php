@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use Maracuja\SiteCore\Audience\Models\AudienceContact;
-use App\Modules\Contacts\Actions\ResolveContact;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Actions\ResolveContact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use App\Modules\Inquiries\Models\Inquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

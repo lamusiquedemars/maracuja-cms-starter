@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Modules\Conversations\Console\Commands\PruneConversationsCommand;
 use App\Modules\Conversations\Contracts\ConversationAiProvider;
 use App\Modules\Conversations\Models\Conversation;
+use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\Conversations\Policies\ConversationPolicy;
 use App\Modules\Conversations\Providers\FakeConversationAiProvider;
 use App\Modules\Conversations\Providers\OpenAiConversationProvider;
@@ -28,8 +29,8 @@ use Maracuja\SiteCore\Foundation\Contracts\SiteModuleRegistry;
 use Maracuja\SiteCore\Foundation\Contracts\PublicPageUrlGenerator;
 use Maracuja\SiteCore\Contact\Contracts\LeadReceiver;
 use App\Support\ReferenceSiteModuleRegistry;
-use App\Modules\Contacts\Actions\ResolveContact;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Actions\ResolveContact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use Maracuja\SiteCore\Audience\Contracts\AudienceIdentityLinker;
 use Maracuja\SiteCore\Audience\Models\AudienceContact;
 
@@ -91,6 +92,11 @@ class AppServiceProvider extends ServiceProvider
 
     private function registerAudienceContactBridge(): void
     {
+        // Audience, inquiries and conversations are optional site modules.
+        // The shared Contact identity deliberately stays unaware of them.
+        Contact::resolveRelationUsing('audienceContacts', fn (Contact $contact) => $contact->hasMany(AudienceContact::class));
+        Contact::resolveRelationUsing('inquiries', fn (Contact $contact) => $contact->hasMany(Inquiry::class));
+
         AudienceContact::resolveRelationUsing('contact', fn (AudienceContact $contact) => $contact->belongsTo(Contact::class, 'contact_id'));
 
         AudienceContact::saving(function (AudienceContact $audienceContact): void {

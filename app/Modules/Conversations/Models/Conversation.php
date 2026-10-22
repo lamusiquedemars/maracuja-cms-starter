@@ -3,7 +3,7 @@
 namespace App\Modules\Conversations\Models;
 
 use App\Models\User;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use App\Modules\Conversations\Enums\ConversationChannel;
 use App\Modules\Conversations\Enums\ConversationStatus;
 use App\Modules\Conversations\Enums\ConversationUrgency;

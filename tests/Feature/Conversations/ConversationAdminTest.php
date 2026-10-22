@@ -3,7 +3,7 @@
 namespace Tests\Feature\Conversations;
 
 use App\Models\User;
-use App\Modules\Contacts\Models\Contact;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use App\Modules\Conversations\Actions\AddMessage;
 use App\Modules\Conversations\Actions\StartAnonymousConversation;
 use App\Modules\Conversations\Enums\MessageAuthorType;
