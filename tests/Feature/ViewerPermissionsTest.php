@@ -4,13 +4,11 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\Articles\ArticleResource;
 use App\Filament\Resources\ContentSlots\ContentSlotResource;
-use App\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Galleries\GalleryResource;
 use App\Filament\Resources\NewsPosts\NewsPostResource;
 use App\Filament\Resources\Pages\PageResource;
 use App\Filament\Resources\SiteNotices\SiteNoticeResource;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
-use App\Filament\Resources\Venues\VenueResource;
 use App\Models\User;
 use App\Modules\Appointments\Filament\Resources\AppointmentSettings\AppointmentSettingResource;
 use App\Modules\Audience\Filament\Resources\AudienceBrevoSettings\AudienceBrevoSettingResource;
@@ -24,6 +22,8 @@ use App\Modules\Inquiries\Filament\Resources\Inquiries\InquiryResource;
 use App\Modules\Media\Filament\Resources\MediaAssets\MediaAssetResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Maracuja\SiteCore\Events\Filament\Resources\Events\EventResource;
+use Maracuja\SiteCore\Events\Filament\Resources\Venues\VenueResource;
 use Tests\TestCase;
 
 class ViewerPermissionsTest extends TestCase

@@ -20,6 +20,7 @@
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",
         "maracuja-digital/site-core-events": "dev-main",
+        "maracuja-digital/site-core-contact": "dev-main",
         "maracuja-digital/site-core-foundation": "dev-main",
         "maracuja-digital/site-core-gallery": "dev-main",
         "maracuja-digital/site-core-media": "dev-main",

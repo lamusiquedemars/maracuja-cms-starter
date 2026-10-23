@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\ContactForm\Data\ContactMessage;
-use App\Modules\ContactForm\Mail\ContactMessageConfirmation;
-use App\Modules\ContactForm\Mail\ContactMessageReceived;
-use App\Modules\Inquiries\Actions\StoreInquiry;
 use App\Modules\Pages\Models\Page;
 use App\Modules\SiteSettings\Models\SiteSetting;
 use App\Support\Modules;
@@ -13,6 +9,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Maracuja\SiteCore\Contact\Actions\StoreInquiry;
+use Maracuja\SiteCore\Contact\Data\ContactRequestData;
+use Maracuja\SiteCore\Contact\Mail\ContactRequestConfirmation;
+use Maracuja\SiteCore\Contact\Mail\ContactRequestReceived;
 
 class ContactController extends Controller
 {
@@ -54,18 +54,18 @@ class ContactController extends Controller
             $data['name'] = $data['email'];
         }
 
-        $message = ContactMessage::fromArray($data);
+        $message = ContactRequestData::fromArray($data);
 
-        if (Modules::enabled('inquiries') && class_exists(StoreInquiry::class)) {
+        if (Modules::enabled('inquiries')) {
             StoreInquiry::run($message);
         }
 
         if ($settings->contact_form_send_admin_email && $settings->contact_email) {
-            Mail::to($settings->contact_email)->send(new ContactMessageReceived($message));
+            Mail::to($settings->contact_email)->send(new ContactRequestReceived($message));
         }
 
         if ($settings->contact_form_send_confirmation_email) {
-            Mail::to($message->email)->send(new ContactMessageConfirmation($message));
+            Mail::to($message->email)->send(new ContactRequestConfirmation($message));
         }
 
         return redirect()
