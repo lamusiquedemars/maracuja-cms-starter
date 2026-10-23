@@ -41,6 +41,7 @@ class MediaIdSelect extends Select
                     ->label(__('admin.media.file'))
                     ->storeFiles(false)
                     ->acceptedFileTypes($this->acceptedFileTypes())
+                    ->orientImagesFromExif(false)
                     ->maxSize($this->maximumSize())
                     ->required(),
             ])
@@ -97,7 +98,7 @@ class MediaIdSelect extends Select
     private function acceptedFileTypes(): array
     {
         return $this->acceptedMediaType === MediaType::Image
-            ? ['image/jpeg', 'image/png', 'image/webp']
+            ? ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', '.jpg', '.jpeg', '.webp', '.heic', '.heif']
             : ['application/pdf'];
     }
 
