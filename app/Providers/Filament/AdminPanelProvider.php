@@ -86,6 +86,13 @@ class AdminPanelProvider extends PanelProvider
             );
         }
 
+        if (Modules::enabled('audience') && is_dir(base_path('vendor/maracuja-digital/site-core-brevo/src/Filament/Resources'))) {
+            $panel->discoverResources(
+                in: base_path('vendor/maracuja-digital/site-core-brevo/src/Filament/Resources'),
+                for: 'Maracuja\SiteCore\Brevo\Filament\Resources',
+            );
+        }
+
         if (Modules::enabled('events') && is_dir(base_path('vendor/maracuja-digital/site-core-events/src/Filament/Resources'))) {
             $panel->discoverResources(
                 in: base_path('vendor/maracuja-digital/site-core-events/src/Filament/Resources'),
