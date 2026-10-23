@@ -1,3 +1,3 @@
 <?php
 
-return ['load_migrations' => false];
+return ['load_migrations' => true];
