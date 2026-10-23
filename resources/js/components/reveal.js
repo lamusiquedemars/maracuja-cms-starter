@@ -13,6 +13,14 @@ export function initReveal(root = document) {
         return;
     }
 
+    if (!('IntersectionObserver' in window)) {
+        items.forEach((item) => item.classList.add('is-visible'));
+
+        return;
+    }
+
+    document.documentElement.classList.add('reveal-ready');
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (!entry.isIntersecting) {
