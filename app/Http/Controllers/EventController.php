@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Events\Models\Event;
 use App\Modules\SiteSettings\Models\SiteSetting;
 use App\Support\ContentSlots;
 use App\Support\Modules;
 use Illuminate\View\View;
+use Maracuja\SiteCore\Events\Models\Event;
 
 class EventController extends Controller
 {

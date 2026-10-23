@@ -49,7 +49,7 @@
                     </div>
                 @endif
 
-                @if ($event->status !== \App\Modules\Events\Models\Event::STATUS_SCHEDULED)
+                @if ($event->status !== \Maracuja\SiteCore\Events\Models\Event::STATUS_SCHEDULED)
                     <div>
                         <dt>Statut</dt>
                         <dd>{{ $event->statusLabel() }}</dd>

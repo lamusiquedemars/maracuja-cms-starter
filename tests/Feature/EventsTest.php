@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Modules\Events\Models\Event;
 use App\Modules\SiteSettings\Models\SiteSetting;
-use App\Modules\Venues\Models\Venue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Maracuja\SiteCore\Events\Models\Event;
+use Maracuja\SiteCore\Events\Models\Venue;
 use Tests\TestCase;
 
 class EventsTest extends TestCase

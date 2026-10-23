@@ -13,6 +13,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -41,6 +42,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('2.5rem')
             ->colors([
                 'primary' => Color::Amber,
+            ])
+            ->assets([
+                Js::make('safari-livewire-upload-fix', resource_path('js/filament/safari-livewire-upload-fix.js')),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -100,6 +104,13 @@ class AdminPanelProvider extends PanelProvider
             $panel->discoverResources(
                 in: app_path('Modules/Audience/Filament/Resources'),
                 for: 'App\Modules\Audience\Filament\Resources',
+            );
+        }
+
+        if (Modules::enabled('events') && is_dir(base_path('vendor/maracuja-digital/site-core-events/src/Filament/Resources'))) {
+            $panel->discoverResources(
+                in: base_path('vendor/maracuja-digital/site-core-events/src/Filament/Resources'),
+                for: 'Maracuja\\SiteCore\\Events\\Filament\\Resources',
             );
         }
 

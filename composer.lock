@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98b274f428c911c73d855b49b6a5bae0",
+    "content-hash": "0c0c80b603e21844cab228e38fa46858",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -3244,6 +3244,44 @@
             "time": "2026-09-28T18:12:47+00:00"
         },
         {
+            "name": "maracuja-digital/site-core-events",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/events",
+                "reference": "aef575349299155d01d38a5da2ceb99aa665be7d"
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "illuminate/database": "^13.0",
+                "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-foundation": "dev-main",
+                "maracuja-digital/site-core-media": "dev-main",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Events\\Providers\\EventsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Events\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Agenda public, lieux et intervenants de Maracuja Site Core.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "maracuja-digital/site-core-foundation",
             "version": "dev-main",
             "dist": {
@@ -3287,13 +3325,14 @@
             "dist": {
                 "type": "path",
                 "url": "../maracuja-site-core/packages/gallery",
-                "reference": "e2a2cf7010983c8eeaadccaf5d1620c0a1c46506"
+                "reference": "422034883090b01eac3efa4f69ff8be23097453a"
             },
             "require": {
                 "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/filesystem": "^13.0",
                 "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-foundation": "dev-main",
                 "maracuja-digital/site-core-media": "dev-main",
                 "php": "^8.4"
             },
@@ -10470,6 +10509,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "maracuja-digital/site-core-events": 20,
         "maracuja-digital/site-core-foundation": 20,
         "maracuja-digital/site-core-gallery": 20,
         "maracuja-digital/site-core-media": 20,
