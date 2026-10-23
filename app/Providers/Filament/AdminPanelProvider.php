@@ -72,38 +72,17 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
 
-        if (Modules::enabled('inquiries') && is_dir(app_path('Modules/Inquiries/Filament/Resources'))) {
+        if (Modules::enabled('contact_form') && is_dir(base_path('vendor/maracuja-digital/site-core-contact/src/Filament/Resources'))) {
             $panel->discoverResources(
-                in: app_path('Modules/Inquiries/Filament/Resources'),
-                for: 'App\Modules\Inquiries\Filament\Resources',
+                in: base_path('vendor/maracuja-digital/site-core-contact/src/Filament/Resources'),
+                for: 'Maracuja\SiteCore\Contact\Filament\Resources',
             );
         }
 
-        if (Modules::enabled('contacts') && is_dir(app_path('Modules/Contacts/Filament/Resources'))) {
+        if (Modules::enabled('audience') && is_dir(base_path('vendor/maracuja-digital/site-core-audience/src/Filament/Resources'))) {
             $panel->discoverResources(
-                in: app_path('Modules/Contacts/Filament/Resources'),
-                for: 'App\Modules\Contacts\Filament\Resources',
-            );
-        }
-
-        if (is_dir(app_path('Modules/Conversations/Filament/Resources'))) {
-            $panel->discoverResources(
-                in: app_path('Modules/Conversations/Filament/Resources'),
-                for: 'App\Modules\Conversations\Filament\Resources',
-            );
-        }
-
-        if (Modules::enabled('appointments') && is_dir(app_path('Modules/Appointments/Filament/Resources'))) {
-            $panel->discoverResources(
-                in: app_path('Modules/Appointments/Filament/Resources'),
-                for: 'App\Modules\Appointments\Filament\Resources',
-            );
-        }
-
-        if (Modules::enabled('audience') && is_dir(app_path('Modules/Audience/Filament/Resources'))) {
-            $panel->discoverResources(
-                in: app_path('Modules/Audience/Filament/Resources'),
-                for: 'App\Modules\Audience\Filament\Resources',
+                in: base_path('vendor/maracuja-digital/site-core-audience/src/Filament/Resources'),
+                for: 'Maracuja\SiteCore\Audience\Filament\Resources',
             );
         }
 

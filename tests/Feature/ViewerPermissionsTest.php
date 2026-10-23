@@ -10,20 +10,16 @@ use App\Filament\Resources\Pages\PageResource;
 use App\Filament\Resources\SiteNotices\SiteNoticeResource;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
 use App\Models\User;
-use App\Modules\Appointments\Filament\Resources\AppointmentSettings\AppointmentSettingResource;
-use App\Modules\Audience\Filament\Resources\AudienceBrevoSettings\AudienceBrevoSettingResource;
-use App\Modules\Audience\Filament\Resources\AudienceContacts\AudienceContactResource;
-use App\Modules\Audience\Filament\Resources\AudienceSegments\AudienceSegmentResource;
-use App\Modules\Audience\Filament\Resources\SegmentMessages\SegmentMessageResource;
-use App\Modules\Contacts\Filament\Resources\Contacts\ContactResource;
-use App\Modules\Conversations\Filament\Resources\Conversations\ConversationResource;
-use App\Modules\Conversations\Filament\Resources\ConversationSettings\ConversationSettingResource;
-use App\Modules\Inquiries\Filament\Resources\Inquiries\InquiryResource;
 use App\Modules\Media\Filament\Resources\MediaAssets\MediaAssetResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Maracuja\SiteCore\Events\Filament\Resources\Events\EventResource;
 use Maracuja\SiteCore\Events\Filament\Resources\Venues\VenueResource;
+use Maracuja\SiteCore\Contact\Filament\Resources\Inquiries\InquiryResource;
+use Maracuja\SiteCore\Audience\Filament\Resources\AudienceContacts\AudienceContactResource;
+use Maracuja\SiteCore\Audience\Filament\Resources\AudienceSegments\AudienceSegmentResource;
+use Maracuja\SiteCore\Audience\Filament\Resources\SegmentMessages\SegmentMessageResource;
+use Maracuja\SiteCore\Brevo\Filament\Resources\AudienceBrevoSettings\AudienceBrevoSettingResource;
 use Tests\TestCase;
 
 class ViewerPermissionsTest extends TestCase
@@ -62,14 +58,10 @@ class ViewerPermissionsTest extends TestCase
             SiteNoticeResource::class,
             SiteSettingResource::class,
             VenueResource::class,
-            AppointmentSettingResource::class,
             AudienceBrevoSettingResource::class,
             AudienceContactResource::class,
             AudienceSegmentResource::class,
             SegmentMessageResource::class,
-            ContactResource::class,
-            ConversationResource::class,
-            ConversationSettingResource::class,
             InquiryResource::class,
             MediaAssetResource::class,
         ];

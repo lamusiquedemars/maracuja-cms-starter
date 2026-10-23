@@ -4,8 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Modules\Articles\Models\Article;
 use App\Modules\ContentSlots\Models\ContentSlot;
-use App\Modules\Inquiries\Enums\InquiryStatus;
-use App\Modules\Inquiries\Models\Inquiry;
 use App\Modules\News\Models\NewsPost;
 use App\Modules\Pages\Models\Page;
 use App\Support\Modules;
@@ -14,6 +12,8 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Maracuja\SiteCore\Contact\Enums\InquiryStatus;
+use Maracuja\SiteCore\Contact\Models\Inquiry;
 
 class AdminOverview extends StatsOverviewWidget
 {
@@ -59,7 +59,7 @@ class AdminOverview extends StatsOverviewWidget
             $count += $this->count(ContentSlot::class, 'content_slots');
         }
 
-        if (Modules::enabled('inquiries')) {
+        if (Modules::enabled('contact_form')) {
             $count += $this->inquiriesToHandleCount();
         }
 
@@ -68,7 +68,7 @@ class AdminOverview extends StatsOverviewWidget
 
     private function inquiriesToHandleCount(): int
     {
-        if (! Modules::enabled('inquiries') || ! Schema::hasTable('inquiries')) {
+        if (! Modules::enabled('contact_form') || ! Schema::hasTable('inquiries')) {
             return 0;
         }
 

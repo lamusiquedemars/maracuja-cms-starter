@@ -28,14 +28,10 @@ class Modules
             'news' => app_path('Modules/News'),
             'articles' => app_path('Modules/Articles'),
             'venues' => app_path('Modules/Venues'),
-            'events' => app_path('Modules/Events'),
+            'events' => base_path('vendor/maracuja-digital/site-core-events'),
             'gallery' => app_path('Modules/Gallery'),
-            'contact_form' => app_path('Modules/ContactForm'),
-            'inquiries' => app_path('Modules/Inquiries'),
-            'appointments' => app_path('Modules/Appointments'),
-            'contacts' => app_path('Modules/Contacts'),
-            'conversations' => app_path('Modules/Conversations'),
-            'audience' => app_path('Modules/Audience'),
+            'contact_form' => base_path('vendor/maracuja-digital/site-core-contact'),
+            'audience' => base_path('vendor/maracuja-digital/site-core-audience'),
             'campaigns' => app_path('Modules/Campaigns'),
         ];
 

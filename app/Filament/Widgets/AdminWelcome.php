@@ -9,12 +9,12 @@ use App\Filament\Resources\NewsPosts\NewsPostResource;
 use App\Filament\Resources\Pages\PageResource;
 use App\Filament\Resources\SiteNotices\SiteNoticeResource;
 use App\Filament\Resources\SiteSettings\SiteSettingResource;
-use App\Modules\Inquiries\Filament\Resources\Inquiries\InquiryResource;
 use App\Modules\SiteSettings\Models\SiteSetting;
 use App\Support\Modules;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Schema;
 use Maracuja\SiteCore\Events\Filament\Resources\Events\EventResource;
+use Maracuja\SiteCore\Contact\Filament\Resources\Inquiries\InquiryResource;
 
 class AdminWelcome extends Widget
 {
@@ -43,7 +43,7 @@ class AdminWelcome extends Widget
         return array_values(array_filter([
             $this->moduleAction('pages', PageResource::class, 'Mettre à jour une page', 'Titres, textes principaux et SEO.'),
             $this->moduleAction('content_slots', ContentSlotResource::class, 'Modifier un texte court', 'Accroches, phrases de section et micro-contenus.'),
-            $this->moduleAction('inquiries', InquiryResource::class, 'Traiter les demandes', 'Messages entrants, réponses et suivi client.', 'inquiries'),
+            $this->moduleAction('contact_form', InquiryResource::class, 'Traiter les demandes', 'Messages entrants et réponses.', 'inquiries'),
             $this->moduleAction('site_settings', SiteSettingResource::class, 'Régler les informations du site', 'Nom, contact, réseaux, SEO et visuels par défaut.'),
         ]));
     }

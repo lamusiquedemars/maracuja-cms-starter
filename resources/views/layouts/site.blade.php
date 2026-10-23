@@ -104,11 +104,5 @@
         <span class="back-to-top__icon" aria-hidden="true">↑</span>
     </button>
 
-    @if (
-        \App\Support\Modules::enabled('conversations')
-        && \App\Modules\Conversations\Models\ConversationSetting::current()->is_enabled
-    )
-        @include('site.partials.conversation-widget')
-    @endif
 </body>
 </html>

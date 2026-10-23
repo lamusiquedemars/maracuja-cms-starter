@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Modules\Contacts\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Maracuja\SiteCore\Contact\Models\Contact;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase

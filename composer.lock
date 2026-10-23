@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0607da82e515ca28a7e0c4935c8a46c",
+    "content-hash": "02f08628cfbc352274f13515098a2dff",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -3244,17 +3244,96 @@
             "time": "2026-09-28T18:12:47+00:00"
         },
         {
+            "name": "maracuja-digital/site-core-audience",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/audience",
+                "reference": "21efed3917cfb6ff4b3c584cf2dc67492f9ad2d6"
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "illuminate/database": "^13.0",
+                "illuminate/mail": "^13.0",
+                "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-media": "dev-main",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Audience\\Providers\\AudienceServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Audience\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Consentement marketing, contacts, segments et campagnes de Maracuja Site Core.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "maracuja-digital/site-core-brevo",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../maracuja-site-core/packages/brevo",
+                "reference": "7c6a67c021c345ef178a1f7bafcd6a722f16cb8d"
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "illuminate/database": "^13.0",
+                "illuminate/http": "^13.0",
+                "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-audience": "dev-main",
+                "nesbot/carbon": "^3.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Maracuja\\SiteCore\\Brevo\\Providers\\BrevoServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Maracuja\\SiteCore\\Brevo\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Adaptateur Brevo optionnel pour Maracuja Site Core Audience.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "maracuja-digital/site-core-contact",
             "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../maracuja-site-core/packages/contact",
-                "reference": "f8fcf0c0c1a2ec1619f399faae1704d58fedcf54"
+                "reference": "7f3c1df93e623e87ea9e63ee70c04de500eb5ab0"
             },
             "require": {
+                "filament/filament": "^4.0",
                 "illuminate/database": "^13.0",
                 "illuminate/mail": "^13.0",
                 "illuminate/support": "^13.0",
+                "maracuja-digital/site-core-foundation": "dev-main",
                 "php": "^8.4"
             },
             "type": "library",
@@ -10545,6 +10624,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "maracuja-digital/site-core-audience": 20,
+        "maracuja-digital/site-core-brevo": 20,
         "maracuja-digital/site-core-contact": 20,
         "maracuja-digital/site-core-events": 20,
         "maracuja-digital/site-core-foundation": 20,

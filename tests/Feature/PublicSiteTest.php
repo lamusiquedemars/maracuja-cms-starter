@@ -356,10 +356,8 @@ class PublicSiteTest extends TestCase
         Mail::assertSent(ContactRequestReceived::class);
     }
 
-    public function test_contact_form_sends_mail_without_storing_inquiry_when_inquiries_module_is_not_enabled(): void
+    public function test_contact_form_stores_every_request_when_contact_is_enabled(): void
     {
-        config(['maracuja.modules.inquiries' => false]);
-
         Mail::fake();
 
         SiteSetting::query()->create([
@@ -374,7 +372,7 @@ class PublicSiteTest extends TestCase
             'message' => 'Bonjour depuis le formulaire.',
         ])->assertRedirect('/contact');
 
-        $this->assertDatabaseCount(Inquiry::class, 0);
+        $this->assertDatabaseCount(Inquiry::class, 1);
 
         Mail::assertSent(ContactRequestReceived::class);
     }

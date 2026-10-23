@@ -13,7 +13,6 @@ class ModulesTest extends TestCase
             'maracuja.modules.site_settings' => true,
             'maracuja.modules.pages' => true,
             'maracuja.modules.contact_form' => true,
-            'maracuja.modules.inquiries' => false,
             'maracuja.modules.notices' => false,
             'maracuja.modules.content_slots' => false,
             'maracuja.modules.news' => false,
@@ -24,7 +23,6 @@ class ModulesTest extends TestCase
         $this->assertTrue(Modules::enabled('site_settings'));
         $this->assertTrue(Modules::enabled('pages'));
         $this->assertTrue(Modules::enabled('contact_form'));
-        $this->assertFalse(Modules::enabled('inquiries'));
         $this->assertFalse(Modules::enabled('notices'));
         $this->assertFalse(Modules::enabled('content_slots'));
         $this->assertFalse(Modules::enabled('news'));
@@ -38,24 +36,11 @@ class ModulesTest extends TestCase
             'maracuja.modules.gallery' => false,
             'maracuja.modules.news' => true,
             'maracuja.modules.articles' => true,
-            'maracuja.modules.inquiries' => true,
         ]);
 
         $this->assertFalse(Modules::enabled('gallery'));
         $this->assertTrue(Modules::enabled('news'));
         $this->assertTrue(Modules::enabled('articles'));
-        $this->assertTrue(Modules::enabled('inquiries'));
-    }
-
-    public function test_extra_module_can_be_enabled_explicitly(): void
-    {
-        config([
-            'maracuja.modules.contact_form' => true,
-            'maracuja.modules.inquiries' => true,
-        ]);
-
-        $this->assertTrue(Modules::enabled('contact_form'));
-        $this->assertTrue(Modules::enabled('inquiries'));
     }
 
     public function test_missing_module_directory_is_always_disabled(): void
